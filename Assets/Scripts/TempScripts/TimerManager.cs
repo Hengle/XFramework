@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OnEventDelegate = System.Action<object, JMEventArgs>;
-using Assets.Scripts.Singleton;
 
 /// <summary>
 /// 计时器管理
