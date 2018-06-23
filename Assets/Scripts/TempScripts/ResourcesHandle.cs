@@ -26,33 +26,33 @@
 
     public enum eRESOURCETYPE
     {
-        [StringValue("RES_ERROR")]
+
         RES_ERROR = 0,
-        [StringValue("RES_GAMEOBJ")]
+
         RES_GAMEOBJ = 1 << 0,
-        [StringValue("RES_TEXTURE2D")]
+
         RES_TEXTURE2D = 1 << 1,
-        [StringValue("RES_AUDIO")]
+
         RES_AUDIO = 1 << 2,
-        [StringValue("RES_UI_FONT")]
+
         RES_UI_FONT = 1 << 3,
-        [StringValue("RES_UI_ATLAS")]
+
         RES_UI_ATLAS = 1 << 4,
-        [StringValue("RES_TRUETYPE_FONT")]
+
         RES_TRUETYPE_FONT = 1 << 5,
-        [StringValue("RES_TEXT_ASSET")]
+
         RES_TEXT_ASSET = 1 << 6,
-        [StringValue("RES_SCRIPTABLEOBJ")]
+
         RES_SCRIPTABLEOBJ = 1 << 7,
     }
 
     public enum eSTORAGETYPE
     {
-        [StringValue("STORAGE_ERROR")]
+
         STORAGE_ERROR = 0,
-        [StringValue("STORAGE_SCENE")]
+
         STORAGE_SCENE = 1 << 0,
-        [StringValue("STORAGE_PERMANENT")]
+
         STORAGE_PERMANENT = 1 << 1,
     }
 

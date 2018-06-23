@@ -18,26 +18,26 @@ public abstract class GCPoolBase
     {
         if (null == spawnPool)
         {
-            string path = "";
-            if (GCPoolManager.Instance.IsStataicPool(PoolType))
-            {
-                path = UtilityConfig.IphStaticPoolPath + PoolName;
-            }
-            else
-            {
-                path = UtilityConfig.PoolPath + PoolName;
-            }
+            //string path = "";
+            //if (GCPoolManager.Instance.IsStataicPool(PoolType))
+            //{
+            //    path = UtilityConfig.IphStaticPoolPath + PoolName;
+            //}
+            //else
+            //{
+            //    path = UtilityConfig.PoolPath + PoolName;
+            //}
 
-            ResourceItem item = new ResourceItem(path, eRESOURCETYPE.RES_GAMEOBJ, eSTORAGETYPE.STORAGE_SCENE);
-            ResourceCenter.instance.loadSingleResource(item, (obj, name, args) =>
-            {
-                if (null != obj)
-                {
-                    GameObject effectGmobj = Object.Instantiate(obj) as GameObject;
-                    spawnPool = effectGmobj.GetComponent<SpawnPool>();
-                    spawnPool.name = PoolName;
-                }
-            }, null);
+            //ResourceItem item = new ResourceItem(path, eRESOURCETYPE.RES_GAMEOBJ, eSTORAGETYPE.STORAGE_SCENE);
+            //ResourceCenter.instance.loadSingleResource(item, (obj, name, args) =>
+            //{
+            //    if (null != obj)
+            //    {
+            //        GameObject effectGmobj = Object.Instantiate(obj) as GameObject;
+            //        spawnPool = effectGmobj.GetComponent<SpawnPool>();
+            //        spawnPool.name = PoolName;
+            //    }
+            //}, null);
         }
     }
     /// <summary>
@@ -132,21 +132,21 @@ public abstract class GCPoolBase
     /// <param name="callBack">回调</param>
     private static void LoadPrefabOutPool(GCPoolType PoolType,  string prefabName, OnLoadOK callBack)
     {
-        switch (PoolType)
-        {
-            case GCPoolType.PUBLICPOOL:
-                {
-                    m_prefabPath = UtilityConfig.PublicPrefabPath + prefabName;
-                    break;
-                }
-        }
+        //switch (PoolType)
+        //{
+        //    case GCPoolType.PUBLICPOOL:
+        //        {
+        //            m_prefabPath = UtilityConfig.PublicPrefabPath + prefabName;
+        //            break;
+        //        }
+        //}
 
-        ResourceItem item = new ResourceItem(m_prefabPath, eRESOURCETYPE.RES_GAMEOBJ, eSTORAGETYPE.STORAGE_SCENE, true, true);
-        if (item == null)
-        {
-            Debug.LogError("缓存池没有对象时Load需求的prefab失败,请检查路径是否正确,对应的prefab 名称为：" + prefabName);
-        }
-        ResourceCenter.instance.loadSingleResource(item, OnLoadSingleResourceOK, null, callBack);
+        //ResourceItem item = new ResourceItem(m_prefabPath, eRESOURCETYPE.RES_GAMEOBJ, eSTORAGETYPE.STORAGE_SCENE, true, true);
+        //if (item == null)
+        //{
+        //    Debug.LogError("缓存池没有对象时Load需求的prefab失败,请检查路径是否正确,对应的prefab 名称为：" + prefabName);
+        //}
+        //ResourceCenter.instance.loadSingleResource(item, OnLoadSingleResourceOK, null, callBack);
     }
 
     private static void OnLoadSingleResourceOK(Object obj, string name, params object[] args)

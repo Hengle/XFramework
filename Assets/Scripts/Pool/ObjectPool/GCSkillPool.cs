@@ -29,14 +29,15 @@ public class GCSkillPool : GCPoolBase
     public GameObject SpawnPool(string objName)
     {
         Transform trs = spawnPool.Spawn(objName);
-        if (trs)
-        {
-            trs.transform.SetParent(UITools.Instance.Skill, false);
-            trs.transform.localScale = Vector3.one;
-            return trs.gameObject;
-        }
-        else
-            return PreloadManager.Instance.GetSkill();
+        //if (trs)
+        //{
+        //    trs.transform.SetParent(UITools.Instance.Skill, false);
+        //    trs.transform.localScale = Vector3.one;
+        //    return trs.gameObject;
+        //}
+        //else
+        //    return PreloadManager.Instance.GetSkill();
+        return null;
     }
 
     /// <summary>
