@@ -5,7 +5,7 @@ using UnityEngine;
 public class HorseRaceTest : SingletonTemplate<HorseRaceTest>
 {
 
-    public GameObject noticeTip_Panel;
+    //public GameObject noticeTip_Panel;
     public void press01()
     {
         HorseRaceController.Instance.AddMessage("第一条消息", 5);
@@ -14,6 +14,6 @@ public class HorseRaceTest : SingletonTemplate<HorseRaceTest>
     }
     public void press02()
     {
-        HorseRaceController.Instance.AddMessage("长消息。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。", 1);
+        HorseRaceController.Instance.AddMessage("长消息。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。", 3);
     }
 }
