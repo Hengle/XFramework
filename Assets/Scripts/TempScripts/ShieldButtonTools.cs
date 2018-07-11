@@ -81,19 +81,19 @@ public class ShieldButtonManager
             case ShieldBtnType.INTERACTABLE:
                 {
                     m_Btn.interactable = false;
-                    timer.addEventListener(JMEventDispatchType.EVENT_TIMER, ShieldInteractable);
+                    timer.addEventListener(EventDispatchType.EVENT_TIMER, ShieldInteractable);
                 }
                 break;
             case ShieldBtnType.ENABLE:
                 {
                     m_Btn.enabled = false;
-                    timer.addEventListener(JMEventDispatchType.EVENT_TIMER, ShieldEnable);
+                    timer.addEventListener(EventDispatchType.EVENT_TIMER, ShieldEnable);
                 }
                 break;
             case ShieldBtnType.RAYCASTTARGET:
                 {
                     m_Btn.image.raycastTarget = false;
-                    timer.addEventListener(JMEventDispatchType.EVENT_TIMER, ShieldRaycastTarget);
+                    timer.addEventListener(EventDispatchType.EVENT_TIMER, ShieldRaycastTarget);
                 }
                 break;
             default:
@@ -102,7 +102,7 @@ public class ShieldButtonManager
         timer.Start();
     }
 
-    private void ShieldInteractable(object obj, JMEventArgs arg)
+    private void ShieldInteractable(object obj, EventArgs arg)
     {
         if (m_Btn.interactable)
         {
@@ -112,7 +112,7 @@ public class ShieldButtonManager
         m_Btn.interactable = true;
     }
 
-    private void ShieldEnable(object obj, JMEventArgs arg)
+    private void ShieldEnable(object obj, EventArgs arg)
     {
         if (m_Btn.enabled)
         {
@@ -122,7 +122,7 @@ public class ShieldButtonManager
         m_Btn.enabled = true;
     }
 
-    private void ShieldRaycastTarget(object obj, JMEventArgs arg)
+    private void ShieldRaycastTarget(object obj, EventArgs arg)
     {
         if (m_Btn.image.raycastTarget)
         {

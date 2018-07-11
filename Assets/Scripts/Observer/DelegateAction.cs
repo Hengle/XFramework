@@ -3,9 +3,9 @@
 ///delegate
 ///<summary>
 //=====================================================================================/
-namespace JM
+namespace XDEDZL
 {
-    public delegate void JMDelegateAction();
-    public delegate void JMDelegateAction<T>(T arg);
-    public delegate void JMDelegateAction<T, U>(T arg1, U arg2);
+    public delegate void DelegateAction();
+    public delegate void DelegateAction<T>(T arg);
+    public delegate void DelegateAction<T, U>(T arg1, U arg2);
 }

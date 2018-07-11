@@ -3,24 +3,24 @@
 ///主题 有多少个basedata类型 就会有多少主题
 ///<summary>
 //=====================================================================================/
-namespace JM
+namespace XDEDZL
 {
     //using JMUI;
     using System.Collections.Generic;
 
     public class JMDataSubjectManager : SingletonTemplate<JMDataSubjectManager> //改模板应改使用JM内的 方便以后移植,暂时这样写
     {
-        protected class Subject : JMObservableSubjectTemplate<JMBaseData, int, object>
+        protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         { }
 
-        private Dictionary<JMDataType, Entry> m_subjectDic = new Dictionary<JMDataType, Entry>();
+        private Dictionary<DataType, Entry> m_subjectDic = new Dictionary<DataType, Entry>();
 
         private class Entry
         {
-            public JMDataType dataType;
+            public DataType dataType;
             public Subject subject = new Subject();
 
-            public Entry(JMDataType type)
+            public Entry(DataType type)
             {
                 dataType = type;
             }
@@ -31,7 +31,7 @@ namespace JM
         /// </summary>
         /// <param name="dataType"></param>
         /// <param name="observer"></param>
-        public void AddOnChangedCallback(JMDataType dataType, JMUIObserver observer)
+        public void AddOnChangedCallback(DataType dataType, UIObserver observer)
         {
             Entry en = null;
             if (!m_subjectDic.ContainsKey(dataType))
@@ -42,7 +42,7 @@ namespace JM
             m_subjectDic[dataType].subject.Attach(observer.OnDataChange);
         }
 
-        public void RemoveOnChangedCallback(JMDataType dataType, JMUIObserver observer)
+        public void RemoveOnChangedCallback(DataType dataType, UIObserver observer)
         {
             if (m_subjectDic.ContainsKey(dataType))
             {
@@ -50,9 +50,9 @@ namespace JM
             }
         }
 
-        public static T GetData<T>() where T : JMBaseData, new()
+        public static T GetData<T>() where T : BaseData, new()
         {
-            return JMBaseData.GetData<T>();
+            return BaseData.GetData<T>();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace JM
         /// <param name="data">data主题</param>
         /// <param name="type">事件类型</param>
         /// <param name="obj">映射参数</param>
-        public void Notify(JMBaseData data, int type = 0, object obj = null)
+        public void Notify(BaseData data, int type = 0, object obj = null)
         {
             if (m_subjectDic.ContainsKey(data.dataType))
                 m_subjectDic[data.dataType].subject.Notify(data, type, obj);

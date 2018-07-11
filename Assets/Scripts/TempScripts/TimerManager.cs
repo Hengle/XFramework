@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using OnEventDelegate = System.Action<object, JMEventArgs>;
+using OnEventDelegate = System.Action<object, EventArgs>;
 
 /// <summary>
 /// 计时器管理
@@ -47,9 +47,9 @@ public class TimerManager : SingletonTemplate<TimerManager>
 /// 计时器
 /// 最小处理间隔1毫秒
 /// </summary>
-public class Timer : JMEventDispatcher
+public class Timer : EventDispatcher
 {
-    private readonly Dictionary<JMEventDispatchType, List<OnEventDelegate>> events = new Dictionary<JMEventDispatchType, List<OnEventDelegate>>();
+    private readonly Dictionary<EventDispatchType, List<OnEventDelegate>> events = new Dictionary<EventDispatchType, List<OnEventDelegate>>();
 
     private bool _isRunning;
     private float _useTime; //已执行时间（每次满足运行间隔就会加这个）
@@ -85,7 +85,7 @@ public class Timer : JMEventDispatcher
                 {
                     TimerManager.Instance.RemoveTimer(this);
                 }
-                DispatchEvent(JMEventDispatchType.EVENT_TIME_RUNCHANGE, _isRunning);
+                DispatchEvent(EventDispatchType.EVENT_TIME_RUNCHANGE, _isRunning);
             }
         }
     }
@@ -128,7 +128,7 @@ public class Timer : JMEventDispatcher
             {
                 UseCount++;
                 _useTime += f;
-                DispatchEvent(JMEventDispatchType.EVENT_TIMER);
+                DispatchEvent(EventDispatchType.EVENT_TIMER);
             }
         }
         if (UseCount >= RepeatCount)
@@ -161,7 +161,7 @@ public class Timer : JMEventDispatcher
     /// </summary>
     /// <param name="type"></param>
     /// <param name="fun"></param>
-    public void addEventListener(JMEventDispatchType type, OnEventDelegate fun)
+    public void addEventListener(EventDispatchType type, OnEventDelegate fun)
     {
         if (!events.ContainsKey(type))
         {
@@ -175,7 +175,7 @@ public class Timer : JMEventDispatcher
     /// </summary>
     /// <param name="type"></param>
     /// <param name="fun"></param>
-    public void removeEventListener(JMEventDispatchType type, OnEventDelegate fun)
+    public void removeEventListener(EventDispatchType type, OnEventDelegate fun)
     {
         if (!events.ContainsKey(type))
         {
@@ -185,12 +185,12 @@ public class Timer : JMEventDispatcher
         events[type].Remove(fun);
     }
 
-    private void eventAction(object sender, JMEventArgs data)
+    private void eventAction(object sender, EventArgs data)
     {
-        var arr = Enum.GetValues(typeof (JMEventDispatchType));
+        var arr = Enum.GetValues(typeof (EventDispatchType));
         for (var i = 0; i < arr.Length; i++)
         {
-            var e = (JMEventDispatchType) arr.GetValue(i);
+            var e = (EventDispatchType) arr.GetValue(i);
             if (data.eventType == e)
             {
                 if (events.ContainsKey(e) && events[e].Count > 0)
