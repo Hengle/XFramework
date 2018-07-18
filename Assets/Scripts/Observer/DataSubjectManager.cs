@@ -5,10 +5,10 @@
 //=====================================================================================/
 namespace XDEDZL
 {
-    //using JMUI;
+    //using UI;
     using System.Collections.Generic;
 
-    public class JMDataSubjectManager : SingletonTemplate<JMDataSubjectManager> //改模板应改使用JM内的 方便以后移植,暂时这样写
+    public class DataSubjectManager : SingletonTemplate<DataSubjectManager> //改模板应改使用JM内的 方便以后移植,暂时这样写
     {
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         { }
