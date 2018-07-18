@@ -8,10 +8,12 @@ namespace XDEDZL
     //using UI;
     using System.Collections.Generic;
 
-    public class DataSubjectManager : SingletonTemplate<DataSubjectManager> //改模板应改使用JM内的 方便以后移植,暂时这样写
+    public class DataSubjectManager : SingletonTemplate<DataSubjectManager> //改模板应改使用XDEDZL内的 方便以后移植,暂时这样写
     {
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
-        { }
+        {
+            //主题，这么写应该只是为了方便看吧，否则把ObservableSubjectTemplate直接写成嵌套类会很乱
+        }
 
         private Dictionary<DataType, Entry> m_subjectDic = new Dictionary<DataType, Entry>();
 
@@ -50,6 +52,7 @@ namespace XDEDZL
             }
         }
 
+        //这里会返回一个BaseData的派生类
         public static T GetData<T>() where T : BaseData, new()
         {
             return BaseData.GetData<T>();

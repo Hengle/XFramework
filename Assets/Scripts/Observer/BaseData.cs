@@ -5,6 +5,8 @@ namespace XDEDZL
 {
     using System;
     using System.Collections.Generic;
+
+    //数据类型枚举
     public enum DataType
     {
         /// <summary>
@@ -32,11 +34,12 @@ namespace XDEDZL
 
     public abstract class BaseData
     {
-        private static Dictionary<Type, BaseData> s_uiDataByInstanceTypeDic = new Dictionary<Type, BaseData>();
+        private static Dictionary<Type, BaseData> s_uiDataByInstanceTypeDic = new Dictionary<Type, BaseData>();//类型和数据类对应的字典
 
         protected BaseData()
         { }
 
+        //T应该是继承自BaseData，转话成T返回
         public static T DataConvert<T>(BaseData data) where T : class
         {
             T tDate = data as T;
@@ -45,16 +48,19 @@ namespace XDEDZL
             return tDate;
         }
 
+        //判断是否包含type类型
         private static bool ContainsKey(Type type)
         {
             return s_uiDataByInstanceTypeDic.ContainsKey(type);
         }
 
+        //为字典添加类
         private static void AddData(BaseData data)
         {
             s_uiDataByInstanceTypeDic[data.GetType()] = data;
         }
 
+        //new()限定T必须有一个无参构造函数
         public static T GetData<T>() where T : BaseData, new()
         {
             T data = null;
