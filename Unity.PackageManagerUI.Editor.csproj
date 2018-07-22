@@ -322,9 +322,6 @@
     <Reference Include="DOTweenProEditor">
       <HintPath>Assets/Other/Demigiant/DOTweenPro/Editor/DOTweenProEditor.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Advertisements">
-      <HintPath>C:/Users/xdedzl/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/xdedzl/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
     </Reference>
@@ -441,10 +438,62 @@
     <None Include="Packages\com.unity.package-manager-ui\Editor\Resources\Templates\PackagesLoading.uxml" />
     <None Include="Packages\com.unity.package-manager-ui\Editor\Unity.PackageManagerUI.Editor.asmdef" />
     <None Include="Packages\com.unity.package-manager-ui\Tests\Editor\Unity.PackageManagerUI.EditorTests.asmdef" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Shaders\BlitNoAlpha.shader" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Shaders\Checkerboard.shader" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Blackboard.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\BooleanSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ChannelEnumControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ChannelEnumMaskControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ChannelMixerControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ColorControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ColorRGBASlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ColorRGBSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\CubemapSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\DielectricSpecularControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\EnumControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\EnumConversionControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\GradientControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\GradientSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\IntegerControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\MultiFloatControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\MultiFloatSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ScreenPositionSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\SliderControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\Texture3DSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\TextureArraySlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\TextureSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\ToggleControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\Controls\UVSlotControlView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\GraphEditorView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\MasterPreviewView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\MaterialGraph.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\MaterialGraphView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\MaterialNodeView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\NodeSettings.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\PixelCacheProfiler.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\PortInputView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\PropertyNameReferenceField.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\PropertyRow.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\PropertySheet.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\ShaderGraphBlackboard.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\ShaderPort.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\Styles\ShaderPropertyView.uss" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\UXML\GraphView\Blackboard.uxml" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\UXML\GraphView\BlackboardField.uxml" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\UXML\GraphView\BlackboardRow.uxml" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\UXML\GraphView\BlackboardSection.uxml" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\UXML\NodeSettings.uxml" />
+    <None Include="Packages\com.unity.shadergraph\Editor\Resources\UXML\PixelCacheProfiler.uxml" />
     <None Include="Packages\com.unity.shadergraph\Editor\Templates\shader.template" />
     <None Include="Packages\com.unity.shadergraph\Editor\Templates\subshader.template" />
     <None Include="Packages\com.unity.shadergraph\Editor\Templates\tesselationSubshader.template" />
     <None Include="Packages\com.unity.shadergraph\Editor\Unity.ShaderGraph.Editor.asmdef" />
+    <None Include="Packages\com.unity.shadergraph\ShaderGraphLibrary\Functions.hlsl" />
+    <None Include="Packages\com.unity.shadergraph\ShaderGraphLibrary\GeometricTools.hlsl" />
+    <None Include="Packages\com.unity.shadergraph\ShaderGraphLibrary\ShaderConfig.cs.hlsl" />
+    <None Include="Packages\com.unity.shadergraph\ShaderGraphLibrary\ShaderVariables.hlsl" />
+    <None Include="Packages\com.unity.shadergraph\ShaderGraphLibrary\ShaderVariablesFunctions.hlsl" />
+    <None Include="Packages\com.unity.shadergraph\ShaderGraphLibrary\ShaderVariablesMatrixDefsLegacyUnity.hlsl" />
     <None Include="Packages\com.unity.standardevents\Editor\Editor.asmdef" />
     <None Include="Packages\com.unity.textmeshpro\Scripts\Editor\Unity.TextMeshPro.Editor.asmdef" />
     <None Include="Packages\com.unity.textmeshpro\Scripts\Runtime\Unity.TextMeshPro.asmdef" />
