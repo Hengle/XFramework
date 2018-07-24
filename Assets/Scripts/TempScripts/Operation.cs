@@ -2,6 +2,9 @@
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// 需要相应拖拽，点击等UI事件的类可以继承此基类
+/// </summary>
 public class Operation : MonoBehaviour, IPointerClickHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IDropHandler
 {
     public delegate void OnOperation(PointerEventData eventData);
