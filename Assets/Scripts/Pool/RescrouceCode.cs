@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class JMRescrouceCode : MonoBehaviour
+public class RescrouceCode : MonoBehaviour
 {
     private int m_Rrs_UGUID = 0;
     private bool m_Rrs_UseState = false;
