@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class EventArgs //: EventArgs //循环继承？
+public class EventArgs
 {
     public object[] data;
     public EventDispatchType eventType;
