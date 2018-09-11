@@ -9,6 +9,7 @@ namespace XDEDZL
     //数据类型枚举
     public enum DataType
     {
+
         /// <summary>
         /// 任务
         /// </summary>
@@ -28,9 +29,9 @@ namespace XDEDZL
         /// 通用RoleData散值
         /// </summary>
         COMMONROLEDATAHASHVALUE = 9,
+
+        BATTLE = 10,
     }
-
-
 
     public abstract class BaseData
     {
@@ -39,7 +40,7 @@ namespace XDEDZL
         protected BaseData()
         { }
 
-        //T应该是继承自BaseData，转话成T返回
+        //T应该是继承自BaseData，转化成T返回
         public static T DataConvert<T>(BaseData data) where T : class
         {
             T tDate = data as T;
@@ -60,7 +61,7 @@ namespace XDEDZL
             s_uiDataByInstanceTypeDic[data.GetType()] = data;
         }
 
-        //new()限定T必须有一个无参构造函数
+        //从字典中取出一个BaseData的派生类
         public static T GetData<T>() where T : BaseData, new()
         {
             T data = null;
