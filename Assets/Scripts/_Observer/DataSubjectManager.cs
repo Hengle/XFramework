@@ -8,7 +8,7 @@ namespace XDEDZL
     //using UI;
     using System.Collections.Generic;
 
-    public class DataSubjectManager : SingletonTemplate<DataSubjectManager> //改模板应改使用XDEDZL内的 方便以后移植,暂时这样写
+    public class DataSubjectManager : Singleton<DataSubjectManager> //改模板应改使用XDEDZL内的 方便以后移植,暂时这样写
     {
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         {

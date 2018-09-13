@@ -15,7 +15,7 @@ public struct HorseRace
         this.loopTime = loopTime;
     }
 }
-public class HorseRaceController : Singleton<HorseRaceController>
+public class HorseRaceController : MonoSingleton<HorseRaceController>
 {
     [SerializeField]
     Text m_TxtMsg;

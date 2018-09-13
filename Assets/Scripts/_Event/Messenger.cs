@@ -88,7 +88,7 @@ public class List : Exception
 /// 消息类 全局类消息
 /// </summary>
 //=====================================================================================.
-public class Messenger : SingletonTemplate<Messenger>
+public class Messenger : Singleton<Messenger>
 {
     public delegate void Callback();
 

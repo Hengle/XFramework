@@ -6,7 +6,7 @@ using OnEventDelegate = System.Action<object, EventArgs>;
 /// <summary>
 /// 计时器管理
 /// </summary>
-public class TimerManager : SingletonTemplate<TimerManager>
+public class TimerManager : Singleton<TimerManager>
 {
     private readonly List<Timer> _timers = new List<Timer>();
 

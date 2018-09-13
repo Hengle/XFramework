@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonoEvent : Singleton<MonoEvent>
+public class MonoEvent : MonoSingleton<MonoEvent>
 {
     public MonoEvent()
     {

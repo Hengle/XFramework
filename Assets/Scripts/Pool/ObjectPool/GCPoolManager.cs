@@ -3,7 +3,7 @@
 ///  游戏的缓存池管理
 /// </summary>
 //--------------------------------------------------------------------------------
-public class GCPoolManager : SingletonTemplate<GCPoolManager>
+public class GCPoolManager : Singleton<GCPoolManager>
 {
     #region 请使用属性
     private GCPublicPool publicsPool;
