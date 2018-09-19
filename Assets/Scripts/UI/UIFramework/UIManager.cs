@@ -49,6 +49,7 @@ public class UIManager : Singleton<UIManager>
             panelStack = new Stack<BasePanel>();
 
         BasePanel nextPanel = GetPanel(panelType);
+        BasePanel lastClosePanel = new BasePanel();
         //判断一下栈里面是否有页面
         if (panelStack.Count > 0)
         {
@@ -65,26 +66,30 @@ public class UIManager : Singleton<UIManager>
                     break;
                 }
                 // 如果栈顶页面的层级不小于要打开的页面层级，关闭它
-                PopPanel();
+                lastClosePanel = PopPanel();
                 topPanel = panelStack.Peek();
             }
         }
-
-        nextPanel.OnEnter();
-        panelStack.Push(nextPanel); // 将打开的面板入栈
+        // 如果要打开的面板和刚刚关闭的面板是同一个，就不打开
+        if(lastClosePanel != nextPanel)
+        {
+            nextPanel.OnEnter();
+            panelStack.Push(nextPanel); // 将打开的面板入栈
+        }
     }
     /// <summary>
     /// 出栈 ，把页面从界面上移除
     /// </summary>
-    public void PopPanel()
+    public BasePanel PopPanel()
     {
         if (panelStack == null)
             panelStack = new Stack<BasePanel>();
 
-        if (panelStack.Count <= 0) return;
+        if (panelStack.Count <= 0) return null;
 
         BasePanel topPanel = panelStack.Pop(); // 获取并移除栈顶面板
         topPanel.OnExit();                     // 关闭面板
+        return topPanel;
     }
 
     /// <summary>

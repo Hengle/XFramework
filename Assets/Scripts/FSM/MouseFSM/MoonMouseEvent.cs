@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using UnityEngine;
 
 /// <summary>
@@ -35,29 +36,32 @@ public class MoonMouseEvent : MonoSingleton<MoonMouseEvent>
 
     void Update()
     {
-        //处理鼠标事件
-        if (Input.GetMouseButtonDown(0))
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-            currentState.OnLeftButtonDown();
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            currentState.OnLeftButtonUp();
-        }
+            //处理鼠标事件
+            if (Input.GetMouseButtonDown(0))
+            {
+                currentState.OnLeftButtonDown();
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                currentState.OnLeftButtonUp();
+            }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            currentState.OnRightButtonDown();
-        }
+            if (Input.GetMouseButtonDown(1))
+            {
+                currentState.OnRightButtonDown();
+            }
 
-        if (Input.GetMouseButtonUp(1))
-        {
-            currentState.OnRightButtonUp();
-        }
+            if (Input.GetMouseButtonUp(1))
+            {
+                currentState.OnRightButtonUp();
+            }
 
-        if (Input.GetMouseButtonDown(2))
-        {
-            //OnMouseRollDown();
+            if (Input.GetMouseButtonDown(2))
+            {
+                //OnMouseRollDown();
+            }
         }
 
         currentState.Update();
