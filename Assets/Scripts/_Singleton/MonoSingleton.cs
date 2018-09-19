@@ -14,8 +14,8 @@ public enum SingletonType
 }
 
 /// <summary>
-/// 此单例继承于Mono，绝大多情况下，你都不需要使用此单例类型。请使用SingletonTemplate
-/// 唯独MonoEvent
+/// 此单例继承于Mono，绝大多情况下，你都不需要使用此单例类型。请使用Singleton
+/// 不需要手动挂载
 /// </summary>
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 
     private static readonly object _lock = new object();
 
-    private static bool dontDestroyFindObjOnLoad; // Instance from FindObjectOfType.
+    private static bool dontDestroyFindObjOnLoad;       // Instance from FindObjectOfType.
     private static bool dontDestroyNewObjOnLoad = true; // Instance from AddComponent.
 
     static MonoSingleton()
@@ -75,20 +75,21 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
             {
                 if (_instance == null)
                 {
+                    // 先在场景中找
                     _instance = (T)FindObjectOfType(typeof(T));
 
                     if (FindObjectsOfType(typeof(T)).Length > 1)
                     {
                         if (Debug.isDebugBuild)
                         {
-                            Debug.LogWarning("[Singleton] Something went really wrong " +
-                                                    " - there should never be more than 1 singleton!" +
-                                                    " Reopenning the scene might fix it.");
+                            Debug.LogWarning("[Singleton] Something went really wrong - " + typeof(T).Name +
+                                                    " should never be more than 1 in scene!");
                         }
 
                         return _instance;
                     }
 
+                    // 场景中找不到就创建新物体挂载
                     if (_instance == null)
                     {
                         var singleton = new GameObject();
@@ -100,25 +101,7 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
                             DontDestroyOnLoad(singleton);
                         }
 
-                        if (Debug.isDebugBuild)
-                        {
-                            Debug.LogWarning("[Singleton] An instance of " + typeof(T) +
-                                                    " is needed in the scene, so '" + singleton +
-                                                    "' was created with DontDestroyOnLoad.");
-                        }
-                    }
-                    else
-                    {
-                        if (Debug.isDebugBuild)
-                        {
-                            Debug.LogWarning("[Singleton] Using instance already created: " +
-                                                    _instance.gameObject.name);
-                        }
-
-                        if (dontDestroyFindObjOnLoad && Application.isPlaying)
-                        {
-                            DontDestroyOnLoad(_instance.transform.root);
-                        }
+                        return _instance;
                     }
                 }
 

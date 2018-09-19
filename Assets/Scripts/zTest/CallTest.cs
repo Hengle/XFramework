@@ -9,11 +9,15 @@ public class CallTest : MonoBehaviour {
     BattleData battleData = new BattleData();
 
 	void Start () {
-        DataSubjectManager.Instance.AddOnChangedCallback(DataType.BATTLE, bat);
-        DataSubjectManager.Instance.Notify(DataSubjectManager.GetData<BattleData>(), (int)BattleDataType.Win);
-	}
+        //DataSubjectManager.Instance.AddOnChangedCallback(DataType.BATTLE, bat);
+        //DataSubjectManager.Instance.Notify(DataSubjectManager.GetData<BattleData>(), (int)BattleDataType.Win);
+        
+    }
 	
 	void Update () {
-		
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            MoonMouseEvent.Instance.ChangeState(MouseStateType._A);
+        }
 	}
 }
