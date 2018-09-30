@@ -17,7 +17,7 @@ public class CallTest : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            MoonMouseEvent.Instance.ChangeState(MouseStateType._A);
+            //MoonMouseEvent.Instance.ChangeState(MouseStateType._A);
         }
 	}
 }
