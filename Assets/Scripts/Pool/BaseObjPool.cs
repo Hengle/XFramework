@@ -12,6 +12,10 @@ public class BaseObjPool {
     protected List<GameObject> objList;
     protected int currentIndex;
 
+    /// <summary>
+    /// 从对象池获取物体
+    /// </summary>
+    /// <returns></returns>
     public virtual GameObject GetObj()
     {
         for (int i = 0; i < objList.Count; ++i)       //把对象池遍历一遍

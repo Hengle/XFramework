@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameObjectPool : BaseObjPool {
 
-
+    private Dictionary<string, GameObject> prefabDic; 
 
     public void InitModel()
     {
