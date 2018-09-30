@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class RootButton : MonoBehaviour {
-    
-	// Use this for initialization
+
+    private Button startBtn;
+
 	void Start () {
+        startBtn = GetComponent<Button>();
+        startBtn.onClick.AddListener(OnClick);
         GetComponent<Image>().alphaHitTestMinimumThreshold = 0.1f;
 	}
 
