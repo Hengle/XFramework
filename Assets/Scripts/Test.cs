@@ -10,6 +10,7 @@ public class Test : MonoBehaviour {
     private BaseEventData data;
     private AxisEventData aixsData;
     private PointerEventData pointDat;
+    private Button aa;
 
 
     private void Start()
@@ -23,7 +24,7 @@ public class Test : MonoBehaviour {
         eventTrigger.AddOnEndDrag(() => { });
         eventTrigger.AddOnInitializePotentialDrag(() => { });
         eventTrigger.AddOnMove((data) => { Debug.Log((data as AxisEventData).moveDir) ; });
-        eventTrigger.AddOnPointerClick(() => { EventSystem.current.SetSelectedGameObject(this.gameObject); });
+        eventTrigger.AddOnPointerClick(() => { Debug.Log("Click"); });
         eventTrigger.AddOnPointerDown(() => { });
         eventTrigger.AddOnPointerEnter((data) => { Debug.Log(data.currentInputModule); });
         eventTrigger.AddOnPointerExit(() => { });

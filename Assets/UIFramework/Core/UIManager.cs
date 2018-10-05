@@ -5,6 +5,9 @@ using System;
 using UnityEngine.UI;
 using DG.Tweening;
 
+/// <summary>
+/// 对应面板的枚举
+/// </summary>
 public enum UIPanelType
 {
     Main,            // 主界面
@@ -52,6 +55,7 @@ public class UIManager {
 
     /// <summary>
     /// 把某个页面入栈，  把某个页面显示在界面上
+    /// 当目标页面的层级小于等于栈顶界面时，会先执行出栈
     /// </summary>
     public void PushPanel(UIPanelType panelType)
     {
@@ -60,7 +64,7 @@ public class UIManager {
 
         BasePanel nextPanel = GetPanel(panelType); // 计划打开的页面
         BasePanel currentPanel = null;             // 最近一次关闭的界面
-        //判断一下栈里面是否有页面
+        // 判断一下栈里面是否有页面
         if (panelStack.Count > 0)
         {
             BasePanel topPanel = panelStack.Peek(); // 获取栈顶页面
@@ -74,6 +78,7 @@ public class UIManager {
             // 当栈内有面板时，进行判断
             while(panelStack.Count > 0)
             {
+                // 栈顶页面层级小于目标界面时，跳出循环
                 if (topPanel.level < nextPanel.level)
                 {
                     break;
@@ -119,14 +124,12 @@ public class UIManager {
             panelDict = new Dictionary<UIPanelType, BasePanel>();
         }
 
-        BasePanel panel;
-        panelDict.TryGetValue(panelType, out panel);
+        panelDict.TryGetValue(panelType, out BasePanel panel);
 
         if (panel == null)
         {
             //如果找不到，那么就找这个面板的prefab的路径，然后去根据prefab去实例化面板
-            string path;
-            panelPathDict.TryGetValue(panelType, out path);
+            panelPathDict.TryGetValue(panelType, out string path);
 
             GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
             instPanel.transform.SetParent(CanvasTransform,false);
