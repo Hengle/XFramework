@@ -8,7 +8,11 @@ public class Test : MonoBehaviour {
 
     private void Start()
     {
-        Singleton<GameObjectFactory>.Instance.ConfigPool();
-        StartCoroutine(Singleton<GameObjectFactory>.Instance.GreatePool()); 
+
+    }
+
+    private void Update()
+    {
+
     }
 }

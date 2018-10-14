@@ -5,40 +5,19 @@ using UnityEngine;
 public class GameObjectFactory{
 
     /// <summary>
-    /// 利用GameObject的int型Hash值，索引对应的Pool对象
+    /// 利用GameObject的Name，索引对应的Pool对象,可以将字符串改成枚举
     /// </summary>
-    Dictionary<int, GameObjectPool> poolDictionary;
-    /// <summary>
-    /// 存储预制体及其名字的字典
-    /// </summary>
-    public Dictionary<string, GameObject> GameObjNameDict { get; private set; }
+    private Dictionary<string, GameObjectPool> poolDictionary;
 
     public GameObjectFactory()
     {
-        poolDictionary = new Dictionary<int, GameObjectPool>();
-
-        GameObjNameDict = new Dictionary<string, GameObject>();
-    }
-
-    /// <summary>
-    /// 为实体字典中的每一个对象创建一个Pool进行管理
-    /// </summary>
-    public IEnumerator GreatePool()
-    {
-        Debug.Log("creatPool");
-        foreach (var item in GameObjNameDict)
-        {
-            Debug.Log("CreatPool Foreach");
-            GameObjectPool _newPool = new GameObjectPool(item.Value);
-            poolDictionary.Add(item.Value.GetHashCode(), _newPool);
-            yield return new WaitForFixedUpdate();
-        }
+        poolDictionary = new Dictionary<string, GameObjectPool>();
     }
 
     /// <summary>
     /// 配置对象池
     /// </summary>
-    public void ConfigPool()
+    public IEnumerator CreatObjPool()
     {
         List<GameObject> objs = new List<GameObject>();
         // 根据需要add多个文件夹的预制体
@@ -47,39 +26,10 @@ public class GameObjectFactory{
 
         for (int i = 0, length = objs.Count; i < length; i++)
         {
-            GameObjNameDict.Add(objs[i].name, objs[i]);
+            GameObjectPool _newPool = new GameObjectPool(objs[i]);
+            poolDictionary.Add(objs[i].name, _newPool);
+            yield return new WaitForFixedUpdate();
         }
-    }
-
-    /// <summary>
-    /// 实例化GameObject方法，形式Unity原生方法一直，减小修改代价
-    /// </summary>
-    public GameObject Instantiate(GameObject _obj,Vector3 _pos,Quaternion _quaternion)
-    {
-        GameObject _objClone = Instantiate(_obj);
-
-        if(_obj != null)
-        {
-            _objClone.transform.position = _pos;
-            _objClone.transform.rotation = _quaternion;
-            return _objClone;
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// 实例化GameObject方法
-    /// </summary>
-    public GameObject Instantiate(GameObject _obj)
-    {
-        GameObjectPool _pool = poolDictionary[_obj.GetHashCode()];
-        if (null != _pool)
-        {
-            GameObject _objClone = _pool.GetPooledObject();
-            _objClone.SetActive(true);
-            return _objClone;
-        }
-        return null;
     }
     
     /// <summary>
@@ -93,9 +43,8 @@ public class GameObjectFactory{
         {
             _objClone.transform.position = _pos;
             _objClone.transform.rotation = _quaternion;
-            return _objClone;
         }
-        return null;
+        return _objClone;
     }
 
     /// <summary>
@@ -103,10 +52,9 @@ public class GameObjectFactory{
     /// </summary>
     public GameObject Instantiate(string _name)
     {
-        if (GameObjNameDict.TryGetValue(_name, out GameObject gameObjectTemplate))
-        {
-            return Instantiate(gameObjectTemplate);
-        }
-        return null;
+        poolDictionary.TryGetValue(_name, out GameObjectPool objPool);
+        GameObject retrunObj = objPool?.GetPooledObject();
+        retrunObj?.SetActive(true);
+        return retrunObj;
     }
 }
