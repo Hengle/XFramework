@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using RCXC;
 
-namespace XDEDZL.Mesh
+namespace RCXC
 {
     /// <summary>
     /// 封装所有画三角形的方法
@@ -13,7 +14,7 @@ namespace XDEDZL.Mesh
         /// <summary>
         /// 圆柱空域
         /// </summary>
-        public static void DrawCylinder(Vector3[] positions, float height, MeshFilter meshFilter,LineRenderer[] lineRenderers)
+        public static void DrawCylinder(Vector3[] positions, float height, MeshFilter meshFilter,LineRenderer[] lineRenderers,Color BoradColor)
         {
             List<Vector3> verticesDown = new List<Vector3>();
             List<Vector3> verticesUp = new List<Vector3>();
@@ -43,8 +44,8 @@ namespace XDEDZL.Mesh
             }
 
             //获取底面和顶面的三角形排序
-            List<int> trianglesDown = PhyscisMath.DrawPolygon(verticesDown, false);
-            List<int> trianglesUp = PhyscisMath.DrawPolygon(verticesUp, true);
+            List<int> trianglesDown = PhysicsMath.DrawPolygon(verticesDown, false);
+            List<int> trianglesUp = PhysicsMath.DrawPolygon(verticesUp, true);
 
             for (int i = 0; i < trianglesDown.Count; i++)
             {
@@ -106,6 +107,8 @@ namespace XDEDZL.Mesh
                 item.startWidth = 0.005f * height;
                 item.endWidth = 0.005f * height;
                 item.positionCount = positions.Length + 1;
+                item.startColor = BoradColor;
+                item.endColor = BoradColor;
             }
 
             //画上表面和下表面的连接线
@@ -189,7 +192,7 @@ namespace XDEDZL.Mesh
         /// <param name="positions"></param>
         /// <param name="height"></param>
         /// <param name="meshFilter"></param>
-        public static void DrawPolygon(Vector3[] positions, float height, MeshFilter meshFilter,LineRenderer[] lineRenderers)
+        public static void DrawPolygon(Vector3[] positions, float height, MeshFilter meshFilter,LineRenderer[] lineRenderers,Color BoradColor)
         {
             List<Vector3> verticesDown = new List<Vector3>();
             List<Vector3> verticesUp = new List<Vector3>();
@@ -221,8 +224,8 @@ namespace XDEDZL.Mesh
             }
 
             //获取底面和顶面的三角形排序
-            List<int> trianglesDown = PhyscisMath.DrawPolygon(verticesDown, false);
-            List<int> trianglesUp = PhyscisMath.DrawPolygon(verticesUp, true);
+            List<int> trianglesDown = PhysicsMath.DrawPolygon(verticesDown, false);
+            List<int> trianglesUp = PhysicsMath.DrawPolygon(verticesUp, true);
 
             for (int i = 0; i < trianglesDown.Count; i++)
             {
@@ -284,6 +287,8 @@ namespace XDEDZL.Mesh
                 item.startWidth = 0.005f * height;
                 item.endWidth = 0.005f * height;
                 item.positionCount = positions.Length + 1;
+                item.startColor = BoradColor;
+                item.endColor = BoradColor;
             }
             lineRenderers[2].positionCount = positions.Length * 3;
 
@@ -311,7 +316,7 @@ namespace XDEDZL.Mesh
         /// <param name="positions"></param>
         /// <param name="meshFilter"></param>
         /// <param name="lineRenderers"></param>
-        public static void DrawPolygon(Vector3[] positions, MeshFilter meshFilter,LineRenderer[] lineRenderers)
+        public static void DrawPolygon(Vector3[] positions, MeshFilter meshFilter,LineRenderer[] lineRenderers,Color BoradColor)
         {
             List<Vector3> verticesDown = new List<Vector3>();
             List<Vector3> verticesUp = new List<Vector3>();
@@ -341,8 +346,8 @@ namespace XDEDZL.Mesh
             }
 
             //获取底面和顶面的三角形排序
-            List<int> trianglesDown = PhyscisMath.DrawPolygon(verticesDown, false);
-            List<int> trianglesUp = PhyscisMath.DrawPolygon(verticesUp, true);
+            List<int> trianglesDown = PhysicsMath.DrawPolygon(verticesDown, false);
+            List<int> trianglesUp = PhysicsMath.DrawPolygon(verticesUp, true);
 
             for (int i = 0; i < trianglesDown.Count; i++)
             {
@@ -404,6 +409,8 @@ namespace XDEDZL.Mesh
                 item.startWidth = 5;
                 item.endWidth = 5;
                 item.positionCount = 2;
+                item.startColor = BoradColor;
+                item.endColor = BoradColor;
             }
             lineRenderers[0].positionCount = positions.Length + 1;
 
@@ -425,7 +432,7 @@ namespace XDEDZL.Mesh
         /// Resion 1.0 空中走廊
         /// </summary>
         /// <param name="positions">空中走廊所有顶点</param>
-        public static void DrawAirCorridorSpace(Vector3[] positions, MeshFilter meshFilter,LineRenderer[] lineRenderers)
+        public static void DrawAirCorridorSpace(Vector3[] positions, MeshFilter meshFilter,LineRenderer[] lineRenderers,Color BoradColor)
         {
             //meshFilter.mesh.vertices = positions;   // 赋值点集
 
@@ -495,6 +502,8 @@ namespace XDEDZL.Mesh
                 item.startWidth = 0.005f * tempHeight;
                 item.endWidth = 0.005f * tempHeight;
                 item.positionCount = positions.Length / 4;
+                item.startColor = BoradColor;
+                item.endColor = BoradColor;
             }
 
             //画三条顶面和底面线
@@ -690,8 +699,8 @@ namespace XDEDZL.Mesh
         /// <param name="meshFilter"></param>
         public static void DrawHemisphere(Vector3 pos, float radius, MeshFilter meshFilter, int angle = 90)
         {
-            meshFilter.mesh.vertices = PhyscisMath.GetVertices(pos, radius, angle);    // 圆球形
-            meshFilter.mesh.triangles = PhyscisMath.Sort3(angle);
+            meshFilter.mesh.vertices = PhysicsMath.GetVertices(pos, radius, angle);    // 圆球形
+            meshFilter.mesh.triangles = PhysicsMath.Sort3(angle);
 
             meshFilter.mesh.RecalculateBounds();     // 重置范围
             meshFilter.mesh.RecalculateNormals();    // 重置法线
@@ -703,13 +712,15 @@ namespace XDEDZL.Mesh
         /// </summary>
         /// <param name="positions">位置点</param>
         /// <param name="wide">宽度</param>
-        public static void DrawLine(Vector3[] positions, float wide, LineRenderer lineRenderer)
+        public static void DrawLine(Vector3[] positions, float wide, LineRenderer lineRenderer, Color Fillcolor)
         {
             // 设置属性
             lineRenderer.positionCount = positions.Length;
             lineRenderer.SetPositions(positions);
             lineRenderer.startWidth = wide;
             lineRenderer.endWidth = wide;
+            lineRenderer.startColor = Fillcolor;
+            lineRenderer.endColor = Fillcolor;
         }
 
         #region 暂时弃用的方法
@@ -978,8 +989,8 @@ namespace XDEDZL.Mesh
             }
 
             //获取底面和顶面的三角形排序
-            List<int> trianglesDown = PhyscisMath.DrawPolygon(verticesDown, false);
-            List<int> trianglesUp = PhyscisMath.DrawPolygon(verticesUp, true);
+            List<int> trianglesDown = PhysicsMath.DrawPolygon(verticesDown, false);
+            List<int> trianglesUp = PhysicsMath.DrawPolygon(verticesUp, true);
 
             for (int i = 0; i < trianglesDown.Count; i++)
             {
