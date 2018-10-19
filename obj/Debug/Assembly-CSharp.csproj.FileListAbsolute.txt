@@ -299,3 +299,4 @@ E:\github\xdedzl\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
 E:\github\xdedzl\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 E:\github\xdedzl\obj\Debug\Assembly-CSharp.dll
 E:\github\xdedzl\obj\Debug\Assembly-CSharp.pdb
+E:\github\xdedzl\Temp\bin\Debug\LitJson.dll

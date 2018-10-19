@@ -1,67 +1,70 @@
 ///<summary>
-///Êı¾İÀà»ùÀà,Ö»ÓĞÒ»·İ
+///æ•°æ®ç±»åŸºç±»,åªæœ‰ä¸€ä»½
 ///<summary>
 namespace XDEDZL
 {
     using System;
     using System.Collections.Generic;
 
-    //Êı¾İÀàĞÍÃ¶¾Ù
+    //æ•°æ®ç±»å‹æšä¸¾
     public enum DataType
     {
+        BATTLE = 0,
 
-        /// <summary>
-        /// ÈÎÎñ
-        /// </summary>
-        TASK_LIST = 1,
-        /// <summary>
-        /// ±³°üÁĞ±í
-        /// </summary>
-        ITEM = 2,
-
-        EVERYDAYTASK_LIST = 3,
-        RANKING_LIST = 5,
-        PUB = 6,
-        ROLE = 7,
-        ACTIVITY = 8,
-
-        /// <summary>
-        /// Í¨ÓÃRoleDataÉ¢Öµ
-        /// </summary>
-        COMMONROLEDATAHASHVALUE = 9,
-
-        BATTLE = 10,
+        Test = 1,
     }
 
+    /// <summary>
+    /// è§‚å¯Ÿè€…æ•°æ®ç§¯ç´¯ï¼Œé€šè¿‡ä¸€äº›é™æ€å˜é‡å’Œå‡½æ•°è¿›è¡Œç®¡ç†
+    /// </summary>
     public abstract class BaseData
     {
-        private static Dictionary<Type, BaseData> s_uiDataByInstanceTypeDic = new Dictionary<Type, BaseData>();//ÀàĞÍºÍÊı¾İÀà¶ÔÓ¦µÄ×Öµä
+        protected BaseData() { }
 
-        protected BaseData()
-        { }
 
-        //TÓ¦¸ÃÊÇ¼Ì³Ğ×ÔBaseData£¬×ª»¯³ÉT·µ»Ø
+        /// <summary>
+        /// è¿™ä¸ªåœ¨æ´¾ç”Ÿç±»ä¸­è¦é‡å†™ï¼Œè¿”å›å¯¹åº”çš„ç±»å‹
+        /// </summary>
+        public abstract DataType dataType
+        {
+            get;
+        }
+
+        /// <summary>
+        /// å­˜å‚¨æ•°æ®ç±»å’Œå…¶typeçš„å­—å…¸
+        /// </summary>
+        private static Dictionary<Type, BaseData> s_uiDataByInstanceTypeDic = new Dictionary<Type, BaseData>();//ç±»å‹å’Œæ•°æ®ç±»å¯¹åº”çš„å­—å…¸
+
+        /// <summary>
+        /// Tåº”è¯¥æ˜¯ç»§æ‰¿è‡ªBaseDataï¼Œè½¬åŒ–æˆTè¿”å›
+        /// </summary>
         public static T DataConvert<T>(BaseData data) where T : class
         {
             T tDate = data as T;
             if (tDate == null)
-                throw new ArgumentException(string.Format("ÀàĞÍ×ª»»Ê§°Ü:Ô´ÀàĞÍ: {0} Ä¿±êÀàĞÍ:{1}", data.GetType(), typeof(T)));
+                throw new ArgumentException(string.Format("ç±»å‹è½¬æ¢å¤±è´¥:æºç±»å‹: {0} ç›®æ ‡ç±»å‹:{1}", data.GetType(), typeof(T)));
             return tDate;
         }
 
-        //ÅĞ¶ÏÊÇ·ñ°üº¬typeÀàĞÍ
+        /// <summary>
+        /// åˆ¤æ–­æ˜¯å¦åŒ…å«typeç±»å‹
+        /// </summary>
         private static bool ContainsKey(Type type)
         {
             return s_uiDataByInstanceTypeDic.ContainsKey(type);
         }
 
-        //Îª×ÖµäÌí¼ÓÀà
+        /// <summary>
+        /// ä¸ºå­—å…¸æ·»åŠ ç±»
+        /// </summary>
         private static void AddData(BaseData data)
         {
             s_uiDataByInstanceTypeDic[data.GetType()] = data;
         }
 
-        //´Ó×ÖµäÖĞÈ¡³öÒ»¸öBaseDataµÄÅÉÉúÀà
+        /// <summary>
+        /// ä»å­—å…¸ä¸­å–å‡ºä¸€ä¸ªBaseDataçš„æ´¾ç”Ÿç±»
+        /// </summary>
         public static T GetData<T>() where T : BaseData, new()
         {
             T data = null;
@@ -76,11 +79,6 @@ namespace XDEDZL
                 s_uiDataByInstanceTypeDic[type] = data;
             }
             return data;
-        }
-
-        public abstract DataType dataType
-        {
-            get;
         }
     }
 }

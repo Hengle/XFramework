@@ -1,7 +1,7 @@
 using System;
 
 ///<summary>
-///¹Û²ìÖ÷ÌâÄ£°å ÈÎºÎÊı¾İÀà¶¼¿ÉÒÔ³ÉÎªÖ÷Ìâ
+///è§‚å¯Ÿä¸»é¢˜æ¨¡æ¿ ä»»ä½•æ•°æ®ç±»éƒ½å¯ä»¥æˆä¸ºä¸»é¢˜
 ///<summary>
 namespace XDEDZL
 {
@@ -10,17 +10,17 @@ namespace XDEDZL
         protected event Action<T1, T2, T3> m_delegate;
 
         /// <summary>
-        /// Ìí¼Ó
+        /// æ·»åŠ 
         /// </summary>
         public void Attach(Action<T1, T2, T3> call)
         {
-            // Delegate = (YGDelegateAction<T>)System.Delegate.Combine(Delegate, call); ²»ÒªÓÃÕâ¸ö, Õâ¸ö¿ÉÒÔÌí¼ÓÖØ¸´µÄ
+            // Delegate = (YGDelegateAction<T>)System.Delegate.Combine(Delegate, call); ä¸è¦ç”¨è¿™ä¸ª, è¿™ä¸ªå¯ä»¥æ·»åŠ é‡å¤çš„
             m_delegate -= call;
             m_delegate += call;
         }
 
         /// <summary>
-        /// ÒÆ³ı
+        /// ç§»é™¤
         /// </summary>
         /// <param name="observer"></param>
         public void Detach(Action<T1, T2, T3> call)
@@ -29,7 +29,7 @@ namespace XDEDZL
         }
 
         /// <summary>
-        /// Í¨Öª
+        /// é€šçŸ¥
         /// </summary>
         public void Notify(T1 arg1, T2 arg2, T3 arg3)
         {

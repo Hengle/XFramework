@@ -1,6 +1,6 @@
 //=====================================================================================/
 ///<summary>
-///Ö÷Ìâ ÓĞ¶àÉÙ¸öbasedataÀàĞÍ ¾Í»áÓĞ¶àÉÙÖ÷Ìâ
+///ä¸»é¢˜ æœ‰å¤šå°‘ä¸ªbasedataç±»å‹ å°±ä¼šæœ‰å¤šå°‘ä¸»é¢˜
 ///<summary>
 //=====================================================================================/
 namespace XDEDZL
@@ -8,68 +8,79 @@ namespace XDEDZL
     //using UI;
     using System.Collections.Generic;
 
-    public class DataSubjectManager : Singleton<DataSubjectManager> //¸ÄÄ£°åÓ¦¸ÄÊ¹ÓÃXDEDZLÄÚµÄ ·½±ãÒÔºóÒÆÖ²,ÔİÊ±ÕâÑùĞ´
+    public class DataSubjectManager : Singleton<DataSubjectManager> //æ”¹æ¨¡æ¿åº”æ”¹ä½¿ç”¨XDEDZLå†…çš„ æ–¹ä¾¿ä»¥åç§»æ¤,æš‚æ—¶è¿™æ ·å†™
     {
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         {
-            //Ö÷Ìâ£¬ÕâÃ´Ğ´Ó¦¸ÃÖ»ÊÇÎªÁË·½±ã¿´°É£¬·ñÔò°ÑObservableSubjectTemplateÖ±½ÓĞ´³ÉÇ¶Ì×Àà»áºÜÂÒ
+            //ä¸»é¢˜ï¼Œè¿™ä¹ˆå†™åº”è¯¥åªæ˜¯ä¸ºäº†æ–¹ä¾¿çœ‹å§ï¼Œå¦åˆ™æŠŠObservableSubjectTemplateç›´æ¥å†™æˆåµŒå¥—ç±»ä¼šå¾ˆä¹±
         }
 
-        private Dictionary<DataType, Entry> m_subjectDic = new Dictionary<DataType, Entry>();
+        /// <summary>
+        /// å­˜å‚¨æ•°æ®ç±»å‹å’Œå¯¹åº”ä¸»é¢˜çš„å­—å…¸
+        /// </summary>
+        private Dictionary<DataType, Subject> m_subjectDic = new Dictionary<DataType, Subject>();
 
-        private class Entry
+        /// <summary>
+        /// æŠŠsubjectåšä¸€å±‚å°è£…ï¼ŒåŠ å…¥dataTypeå‚æ•°ä»¥ä¾¿è¯†åˆ«,ä½†å¥½åƒåˆæ²¡ä»€ä¹ˆå¿…è¦,ä½†æœ¬èŸ‘è‚è§‰å¾—æš‚æ—¶æ²¡ä»€ä¹ˆå¿…è¦ï¼Œæ‰€æœ‰å»æ‰äº†
+        /// </summary>
+        //private class Entry
+        //{
+        //    public DataType dataType;
+        //    public Subject subject = new Subject();
+
+        //    public Entry(DataType type)
+        //    {
+        //        dataType = type;
+        //    }
+        //}
+
+        /// <summary>
+        /// å¢åŠ æ•°æ®ç›‘å¬
+        /// </summary>
+        /// <param name="dataType">æ•°æ®ç±»å‹</param>
+        /// <param name="observer">ç›‘å¬è¿™ä¸ªæ•°æ®çš„è§‚å¯Ÿè€…</param>
+        public void AddOnChangedCallback(DataType dataType, Observer observer)
         {
-            public DataType dataType;
-            public Subject subject = new Subject();
-
-            public Entry(DataType type)
+            Subject en = null;
+            if (!m_subjectDic.ContainsKey(dataType))
             {
-                dataType = type;
+                en = new Subject();
+                m_subjectDic[dataType] = en;
+            }
+            m_subjectDic[dataType].Attach(observer.OnDataChange);
+        }
+
+        /// <summary>
+        /// åˆ é™¤æ•°æ®ç›‘å¬
+        /// </summary>
+        /// <param name="dataType">æ•°æ®ç±»å‹</param>
+        /// <param name="observer">ç›‘å¬è¿™ä¸ªæ•°æ®çš„è§‚å¯Ÿè€…</param>
+        public void RemoveOnChangedCallback(DataType dataType, Observer observer)
+        {
+            if (m_subjectDic.ContainsKey(dataType))
+            {
+                m_subjectDic[dataType].Detach(observer.OnDataChange);
             }
         }
 
         /// <summary>
-        /// Ôö¼ÓÊı¾İ¼àÌı
+        /// è¿”å›ä¸€ä¸ªBaseDataçš„æ´¾ç”Ÿç±»
         /// </summary>
-        /// <param name="dataType"></param>
-        /// <param name="observer"></param>
-        public void AddOnChangedCallback(DataType dataType, UIObserver observer)
-        {
-            Entry en = null;
-            if (!m_subjectDic.ContainsKey(dataType))
-            {
-                en = new Entry(dataType);
-                m_subjectDic[dataType] = en;
-            }
-            m_subjectDic[dataType].subject.Attach(observer.OnDataChange);
-        }
-
-        public void RemoveOnChangedCallback(DataType dataType, UIObserver observer)
-        {
-            if (m_subjectDic.ContainsKey(dataType))
-            {
-                m_subjectDic[dataType].subject.Detach(observer.OnDataChange);
-            }
-        }
-
-        //ÕâÀï»á·µ»ØÒ»¸öBaseDataµÄÅÉÉúÀà
         public static T GetData<T>() where T : BaseData, new()
         {
             return BaseData.GetData<T>();
         }
 
         /// <summary>
-        /// Í¨ÖªÊÂ¼ş
+        /// é€šçŸ¥äº‹ä»¶
         /// </summary>
-        /// <param name="data">dataÖ÷Ìâ</param>
-        /// <param name="type">ÊÂ¼şÀàĞÍ</param>
-        /// <param name="obj">Ó³Éä²ÎÊı</param>
+        /// <param name="data">dataä¸»é¢˜</param>
+        /// <param name="type">äº‹ä»¶ç±»å‹</param>
+        /// <param name="obj">æ˜ å°„å‚æ•°</param>
         public void Notify(BaseData data, int type = 0, object obj = null)
         {
-            if (m_subjectDic.ContainsKey(data.dataType))
-                m_subjectDic[data.dataType].subject.Notify(data, type, obj);
-            //else
-                //GameDebugLog.Log(data.dataType.ToString());
+            //if (m_subjectDic.ContainsKey(data.dataType))
+                m_subjectDic[data.dataType]?.Notify(data, type, obj);
         }
     }
 }

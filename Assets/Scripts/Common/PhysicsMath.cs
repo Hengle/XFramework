@@ -49,7 +49,7 @@ namespace RCXC
             return b * b - 4 * a * c;
         }
 
-        //获取平面向量向右旋转theta后的目标向量
+        //获取平面向量向左旋转theta后的目标向量
         private static Vector2 GetTargetVector(Vector2 startVector, float theta = 90)
         {
             float x = startVector.x * Mathf.Cos(theta * Mathf.Deg2Rad) - startVector.y * Mathf.Sin(theta * Mathf.Deg2Rad);
@@ -59,6 +59,7 @@ namespace RCXC
 
         /// <summary>
         /// 获取三维空间向量绕已知轴旋转θ角后的得到的向量
+        /// 计算矩阵时好像错了，重算
         /// </summary>
         /// <param name="startVector">待旋转向量</param>
         /// <param name="n">旋转轴</param>
