@@ -2,6 +2,7 @@
 
 /// <summary>
 /// 事件分发处理类
+/// 这是个基类
 /// </summary>
 public class EventDispatcher
 {    
@@ -14,10 +15,7 @@ public class EventDispatcher
     /// <param name="data"></param>
     public void DispatchEvent(EventDispatchType eventType, object data = null)
     {
-        if (null != EventListener)
-        {
-            EventListener(this, new EventArgs(eventType, data));
-        }
+        EventListener?.Invoke(this, new EventArgs(eventType, data));
     }
 
     /// <summary>
@@ -36,4 +34,16 @@ public class EventDispatcher
     {
         EventListener -= fuc;
     }
+}
+
+/// <summary>
+/// 事件分发类型
+/// </summary>
+public enum EventDispatchType
+{
+    CreatXXX,             // 创建某某某 
+    UpGrade,              // 升级
+    Dead,                 // 死亡
+    TIMER,                // 计时器运行帧
+    TIME_RUNCHANGE,       // 计时器运行状态改变
 }

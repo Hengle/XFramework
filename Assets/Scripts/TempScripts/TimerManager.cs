@@ -4,46 +4,6 @@ using UnityEngine;
 using OnEventDelegate = System.Action<object, EventArgs>;
 
 /// <summary>
-/// 计时器管理
-/// </summary>
-public class TimerManager : Singleton<TimerManager>
-{
-    private readonly List<Timer> _timers = new List<Timer>();
-
-    public TimerManager()
-    {
-        MonoEvent.Instance.LATEUPDATE += LateUpdate;
-    }
-
-    private void LateUpdate()
-    {
-        for (var i = 0; i < _timers.Count; i++)
-        {
-            if (_timers[i].IsRunning)
-            {
-                _timers[i].Update(Time.unscaledDeltaTime);
-            }
-        }
-    }
-
-    public void AddTimer(Timer timer)
-    {
-        if (_timers.Contains(timer) == false)
-        {
-            _timers.Add(timer);
-        }
-    }
-
-    public void RemoveTimer(Timer timer)
-    {
-        if (_timers.Contains(timer))
-        {
-            _timers.Remove(timer);
-        }
-    }
-}
-
-/// <summary>
 /// 计时器
 /// 最小处理间隔1毫秒
 /// </summary>
@@ -51,19 +11,41 @@ public class Timer : EventDispatcher
 {
     private readonly Dictionary<EventDispatchType, List<OnEventDelegate>> events = new Dictionary<EventDispatchType, List<OnEventDelegate>>();
 
+    /// <summary>
+    /// 是否执行
+    /// </summary>
     private bool _isRunning;
-    private float _useTime; //已执行时间（每次满足运行间隔就会加这个）
+    /// <summary>
+    /// 已执行时间（每次满足运行间隔就会加这个）
+    /// </summary>
+    private float _useTime;
+    /// <summary>
+    /// 运行时间
+    /// </summary>
+    public float RunTime { get; private set; }
+    /// <summary>
+    /// 已运行次数
+    /// </summary>
+    public int UseCount { get; private set; }
+    /// <summary>
+    /// 运行间隔
+    /// </summary>
+    public float TimeInterval { get; set; }
+    /// <summary>
+    /// 设置的运行次数
+    /// </summary>
+    public int RepeatCount { get; set; }
 
     /// <summary>
-    /// <param name="delay">时间间隔</param>
-    /// <param name="repeatCount">运行次数</param>
+    /// <param name="interval">时间间隔，单位是毫秒</param>
+    /// <param name="repeatCount">运行次数，一秒一次的话MaxValue可以执行68年</param>
     /// </summary>
-    public Timer(float delay, int repeatCount = int.MaxValue)
+    public Timer(float interval, int repeatCount = int.MaxValue)
     {
         RunTime = 0f;
-        Delay = Mathf.Max(delay, 1);
+        TimeInterval = Mathf.Max(interval, 1);  // 最小间隔为1毫秒
         RepeatCount = repeatCount;
-        RegistEvent(eventAction);
+        RegistEvent(EventAction);
     }
 
     /// <summary>
@@ -85,30 +67,90 @@ public class Timer : EventDispatcher
                 {
                     TimerManager.Instance.RemoveTimer(this);
                 }
-                DispatchEvent(EventDispatchType.EVENT_TIME_RUNCHANGE, _isRunning);
+                DispatchEvent(EventDispatchType.TIME_RUNCHANGE, _isRunning);
             }
         }
     }
 
     /// <summary>
-    /// 运行时间
+    /// 每帧执行
     /// </summary>
-    public float RunTime { get; private set; }
+    /// <param name="deltaTime"></param>
+    public void Update(float deltaTime)
+    {
+        if (IsRunning && UseCount < RepeatCount)
+        {
+            RunTime += deltaTime;
+            var f = TimeInterval/1000;
+            while (RunTime - _useTime > f && UseCount < RepeatCount)
+            {
+                UseCount++;
+                _useTime += f;
+                DispatchEvent(EventDispatchType.TIMER);
+            }
+        }
+        if (UseCount >= RepeatCount)
+        {
+            IsRunning = false;
+        }
+    }
 
     /// <summary>
-    /// 已运行次数
+    /// 添加事件
     /// </summary>
-    public int UseCount { get; private set; }
+    /// <param name="type"></param>
+    /// <param name="fun"></param>
+    public void AddEventListener(EventDispatchType type, OnEventDelegate fun)
+    {
+        if (!events.ContainsKey(type))
+        {
+            events[type] = new List<OnEventDelegate>();
+        }
+        events[type].Add(fun);
+    }
 
     /// <summary>
-    /// 运行间隔
+    /// 移除事件
     /// </summary>
-    public float Delay { get; set; }
+    /// <param name="type"></param>
+    /// <param name="fun"></param>
+    public void RemoveEventListener(EventDispatchType type, OnEventDelegate fun)
+    {
+        if (!events.ContainsKey(type))
+        {
+            return;
+            //events[type] = new List<OnEventDelegate>();
+        }
+        events[type].Remove(fun);
+    }
 
-    /// <summary>
-    /// 设置的运行次数
-    /// </summary>
-    public int RepeatCount { get; set; }
+    private void EventAction(object sender, EventArgs data)
+    {
+        Array arr = Enum.GetValues(typeof(EventDispatchType));
+        
+        for (var i = 0; i < arr.Length; i++)
+        {
+            EventDispatchType e = (EventDispatchType)arr.GetValue(i);
+            if (data.eventType == e)
+            {
+                if (events.ContainsKey(e) && events[e].Count > 0)
+                {
+                    // 遍历列表挨个传入sender和data并执行
+                    events[e].ForEach(fun =>
+                    {
+                        try
+                        {
+                            fun(sender, data);
+                        }
+                        catch
+                        {
+                            Debug.LogWarning(fun.Target.ToString());
+                        }
+                    });
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// 开始
@@ -116,25 +158,6 @@ public class Timer : EventDispatcher
     public void Start()
     {
         IsRunning = true;
-    }
-
-    public void Update(float deltaTime)
-    {
-        if (IsRunning && UseCount < RepeatCount)
-        {
-            RunTime += deltaTime;
-            var f = Delay/1000;
-            while (RunTime - _useTime > f && UseCount < RepeatCount)
-            {
-                UseCount++;
-                _useTime += f;
-                DispatchEvent(EventDispatchType.EVENT_TIMER);
-            }
-        }
-        if (UseCount >= RepeatCount)
-        {
-            IsRunning = false;
-        }
     }
 
     /// <summary>
@@ -157,61 +180,6 @@ public class Timer : EventDispatcher
     }
 
     /// <summary>
-    /// 添加事件
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="fun"></param>
-    public void addEventListener(EventDispatchType type, OnEventDelegate fun)
-    {
-        if (!events.ContainsKey(type))
-        {
-            events[type] = new List<OnEventDelegate>();
-        }
-        events[type].Add(fun);
-    }
-
-    /// <summary>
-    /// 移除事件
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="fun"></param>
-    public void removeEventListener(EventDispatchType type, OnEventDelegate fun)
-    {
-        if (!events.ContainsKey(type))
-        {
-            return;
-            //events[type] = new List<OnEventDelegate>();
-        }
-        events[type].Remove(fun);
-    }
-
-    private void eventAction(object sender, EventArgs data)
-    {
-        var arr = Enum.GetValues(typeof (EventDispatchType));
-        for (var i = 0; i < arr.Length; i++)
-        {
-            var e = (EventDispatchType) arr.GetValue(i);
-            if (data.eventType == e)
-            {
-                if (events.ContainsKey(e) && events[e].Count > 0)
-                {
-                    events[e].ForEach(fun =>
-                    {
-                        try
-                        {
-                            fun(sender, data);
-                        }
-                        catch
-                        {
-                            Debug.LogWarning(fun.Target.ToString());
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// 释放对象
     /// </summary>
     public void Dispose()
@@ -219,5 +187,51 @@ public class Timer : EventDispatcher
         Stop();
         ReSet();
         events.Clear();
+    }
+
+
+
+
+    /// <summary>
+    /// 计时器管理
+    /// 除了计时器以外其他类暂时不需要调用，以后需要再放到外面去
+    /// </summary>
+    public class TimerManager : Singleton<TimerManager>
+    {
+
+        private readonly List<Timer> _timers = new List<Timer>();
+
+        public TimerManager()
+        {
+            MonoEvent.Instance.LATEUPDATE += LateUpdate;
+        }
+
+        private void LateUpdate()
+        {
+            for (var i = 0; i < _timers.Count; i++)
+            {
+                if (_timers[i].IsRunning)
+                {
+                    // unscaledDeltaTime和deltaTime一样，但是不受TimeScale影响
+                    _timers[i].Update(Time.unscaledDeltaTime);
+                }
+            }
+        }
+
+        public void AddTimer(Timer timer)
+        {
+            if (_timers.Contains(timer) == false)
+            {
+                _timers.Add(timer);
+            }
+        }
+
+        public void RemoveTimer(Timer timer)
+        {
+            if (_timers.Contains(timer))
+            {
+                _timers.Remove(timer);
+            }
+        }
     }
 }

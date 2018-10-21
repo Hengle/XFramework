@@ -81,19 +81,19 @@ public class ShieldButtonManager
             case ShieldBtnType.INTERACTABLE:
                 {
                     m_Btn.interactable = false;
-                    timer.addEventListener(EventDispatchType.EVENT_TIMER, ShieldInteractable);
+                    timer.AddEventListener(EventDispatchType.TIMER, ShieldInteractable);
                 }
                 break;
             case ShieldBtnType.ENABLE:
                 {
                     m_Btn.enabled = false;
-                    timer.addEventListener(EventDispatchType.EVENT_TIMER, ShieldEnable);
+                    timer.AddEventListener(EventDispatchType.TIMER, ShieldEnable);
                 }
                 break;
             case ShieldBtnType.RAYCASTTARGET:
                 {
                     m_Btn.image.raycastTarget = false;
-                    timer.addEventListener(EventDispatchType.EVENT_TIMER, ShieldRaycastTarget);
+                    timer.AddEventListener(EventDispatchType.TIMER, ShieldRaycastTarget);
                 }
                 break;
             default:

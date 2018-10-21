@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 事件分发类型
+/// </summary>
 public enum CEventType
 {
-
+    TypeA,
+    TypeB,
 }
 
+/// <summary>
+/// 事件分发参数基类
+/// </summary>
 public class CBaseEvent {
 
     protected Hashtable arguments;

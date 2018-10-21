@@ -3,8 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 事件分发委托
+/// </summary>
+/// <param name="evt"></param>
 public delegate void CEventListenerDelegate(CBaseEvent evt);
 
+/// <summary>
+/// 事件分发管理类
+/// </summary>
 public class CEventDispatcher {
 
     static CEventDispatcher instance;
@@ -17,35 +24,34 @@ public class CEventDispatcher {
         return instance;
     }
 
-    private Hashtable listeners = new Hashtable();
+    private Dictionary<CEventType, CEventListenerDelegate> listeners = new Dictionary<CEventType, CEventListenerDelegate>();
 
     public void AddEventListener(CEventType eventType, CEventListenerDelegate listener)
     {
-        CEventListenerDelegate cEventListenerDelegate = this.listeners[eventType] as CEventListenerDelegate;
-        cEventListenerDelegate = (CEventListenerDelegate)Delegate.Combine(cEventListenerDelegate, listener);
-        this.listeners[eventType] = cEventListenerDelegate;
+        if (!listeners.ContainsKey(eventType))
+        {
+            listeners.Add(eventType, listener);
+        }
+        else
+        {
+            listeners[eventType] += listener;
+        }
     }
 
     public void RemoveEventListener(CEventType eventType, CEventListenerDelegate listener)
     {
-        CEventListenerDelegate cEventListenerDelegate = this.listeners[eventType] as CEventListenerDelegate;
-        if(cEventListenerDelegate != null)
+        if (!listeners.ContainsKey(eventType))
         {
-            cEventListenerDelegate = (CEventListenerDelegate)Delegate.Remove(cEventListenerDelegate, listener);
+            Debug.Log("xhz,没有这个事件类型");
         }
-        this.listeners[eventType] = cEventListenerDelegate;
+        else
+        {
+            listeners[eventType] -= listener;
+        }
     }
 
     public void DispatchEvent(CBaseEvent evt)
     {
-        CEventListenerDelegate cEventListenerDelegate = this.listeners[evt] as CEventListenerDelegate;
-        if(cEventListenerDelegate != null)
-        {
-            cEventListenerDelegate(evt);
-        }
-        else
-        {
-            Debug.Log(evt.Sender + "没有事件");
-        }
+        this.listeners[evt.Type]?.Invoke(evt);
     }
 }

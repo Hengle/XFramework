@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
+/// <summary>
+/// Mono生命周期事件
+/// 一些不继承Mono的类如果想在Mono生命周期做一些事，可以往这里添加
+/// </summary>
 public class MonoEvent : MonoSingleton<MonoEvent>
 {
     public MonoEvent()
@@ -10,40 +11,36 @@ public class MonoEvent : MonoSingleton<MonoEvent>
         singletonType = SingletonType.GlobalInstance;
     }
 
+    public event Action AWAKE;
+    public event Action START;
     public event Action UPDATE;
     public event Action FIXEDUPDATE;
     public event Action ONGUI;
     public event Action LATEUPDATE;
 
+    private void Awake()
+    {
+        AWAKE?.Invoke();
+    }
+
+
     private void Update()
     {
-        if (UPDATE != null)
-        {
-            UPDATE();
-        }
+        UPDATE?.Invoke();
     }
 
     private void FixedUpdate()
     {
-        if (FIXEDUPDATE != null)
-        {
-            FIXEDUPDATE();
-        }
+        FIXEDUPDATE?.Invoke();
     }
 
     private void OnGUI()
     {
-        if (ONGUI != null)
-        {
-            ONGUI();
-        }
+        ONGUI?.Invoke();
     }
 
     private void LateUpdate()
     {
-        if (LATEUPDATE != null)
-        {
-            LATEUPDATE();
-        }
+        LATEUPDATE?.Invoke();
     }
 }

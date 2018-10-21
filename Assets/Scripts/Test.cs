@@ -1,40 +1,47 @@
-﻿using LitJson;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class Test : MonoBehaviour {
 
-    Transform cube;
-    public float f;
-    public Vector3 v;
-    private List<GameObject> objs = new List<GameObject>();
-    private bool isShow = true;
+    private Timer time;
 
     private void Start()
     {
-        StartCoroutine( Singleton<GameObjectFactory>.Instance.CreatObjPool());
-        for (int i = 0; i < 1000; i++)
+        time = new Timer(1000, 3);
+        time.AddEventListener(EventDispatchType.TIME_RUNCHANGE, AAA);
+        //time.Start();
+
+        StartCoroutine(BBB());
+
+
+        var arr = Enum.GetValues(typeof(EventDispatchType));
+        foreach (var item in arr)
         {
-            GameObject obj = Singleton<GameObjectFactory>.Instance.Instantiate("Cube");
-            obj.transform.position = Vector3.zero + new Vector3(Random.Range(-100, 100), Random.Range(-100, 100), Random.Range(-100, 100));
-            objs.Add(obj);
+            Debug.Log((EventDispatchType)item);
         }
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            isShow = !isShow;
-            for (int i = 0,length = objs.Count; i < length; i++)
-            {
-                objs[i].SetActive(isShow);
-            }
-        }
-
-
+        
     }
+
+    IEnumerator BBB()
+    {
+        yield return new WaitForSeconds(2);
+        time.Start();
+        time.Stop();
+    }
+
+    public void AAA(object a, EventArgs b)
+    {
+        Debug.Log(b.data[0]);
+    }
+}
+
+public class TestClass
+{
+
 }

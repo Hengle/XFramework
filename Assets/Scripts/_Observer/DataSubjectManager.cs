@@ -1,11 +1,8 @@
-//=====================================================================================/
 ///<summary>
 ///主题 有多少个basedata类型 就会有多少主题
 ///<summary>
-//=====================================================================================/
 namespace XDEDZL
 {
-    //using UI;
     using System.Collections.Generic;
 
     public class DataSubjectManager : Singleton<DataSubjectManager> //改模板应改使用XDEDZL内的 方便以后移植,暂时这样写
