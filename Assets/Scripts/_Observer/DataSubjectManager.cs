@@ -36,7 +36,7 @@ namespace XDEDZL
         /// </summary>
         /// <param name="dataType">数据类型</param>
         /// <param name="observer">监听这个数据的观察者</param>
-        public void AddOnChangedCallback(DataType dataType, Observer observer)
+        public void AddOnChangedCallback(DataType dataType, IObserver observer)
         {
             Subject en = null;
             if (!m_subjectDic.ContainsKey(dataType))
@@ -52,7 +52,7 @@ namespace XDEDZL
         /// </summary>
         /// <param name="dataType">数据类型</param>
         /// <param name="observer">监听这个数据的观察者</param>
-        public void RemoveOnChangedCallback(DataType dataType, Observer observer)
+        public void RemoveOnChangedCallback(DataType dataType, IObserver observer)
         {
             if (m_subjectDic.ContainsKey(dataType))
             {

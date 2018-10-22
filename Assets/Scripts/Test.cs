@@ -9,18 +9,9 @@ public class Test : MonoBehaviour {
 
     private void Start()
     {
-        time = new Timer(1000, 3);
-        time.AddEventListener(EventDispatchType.TIME_RUNCHANGE, AAA);
-        //time.Start();
-
-        StartCoroutine(BBB());
-
-
-        var arr = Enum.GetValues(typeof(EventDispatchType));
-        foreach (var item in arr)
-        {
-            Debug.Log((EventDispatchType)item);
-        }
+        Messenger.Instance.AddEventListener(MessageEventType.A, CallBack);
+        Messenger.Instance.AddEventListener<int>(MessageEventType.A, CallBack);
+        Messenger.Instance.BroadCastEventMsg(MessageEventType.A);
     }
 
     private void Update()
@@ -28,16 +19,14 @@ public class Test : MonoBehaviour {
         
     }
 
-    IEnumerator BBB()
+    public void CallBack()
     {
-        yield return new WaitForSeconds(2);
-        time.Start();
-        time.Stop();
+        Debug.Log("CallBack");
     }
 
-    public void AAA(object a, EventArgs b)
+    public void CallBack(int a)
     {
-        Debug.Log(b.data[0]);
+        Debug.Log("CallBack T");
     }
 }
 

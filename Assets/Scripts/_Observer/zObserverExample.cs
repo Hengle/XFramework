@@ -27,7 +27,7 @@ public class zObserverExample : MonoBehaviour
 }
 
 
-public class BattleOb : Observer
+public class BattleOb : IObserver
 {
     // 此类可能是要继承Mono的，如果是，则在start中注册
     public BattleOb()
@@ -85,7 +85,7 @@ public enum BattleDataType
 }
 
 
-public class TestOb : Observer
+public class TestOb : IObserver
 {
     public TestOb()
     {

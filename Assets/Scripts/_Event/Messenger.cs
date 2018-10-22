@@ -4,69 +4,14 @@ using System.Collections.Generic;
 /// <summary>
 /// 消息类型
 /// </summary>
-public class MessageEventType
+public enum MessageEventType
 {    
-    /// <summary>
-    /// 读表完成
-    /// </summary>
-    public const string EVENT_GAMEDB_OK = "EVENT_GAMEDB_OK";
+    HIDE_UI_ON_CHANGE_SCENE, // 隐藏UI
 
-    /// <summary>
-    /// 隐藏UI
-    /// </summary>
-    public const string HIDE_UI_ON_CHANGE_SCENE = "HIDE_UI_ON_CHANGE_SCENE";
+    ON_CHANGESOUND_TOGGLE,   // 音乐开关
 
-    /// <summary>
-    /// 正在切换场景
-    /// </summary>
-    public const string ON_CHANGESTAGE_START = "ON_CHANGESTAGE_START";
-
-    /// <summary>
-    /// 当场景切换完成
-    /// </summary>
-    public const string ON_CHANGESTAGE_ALLREADY = "ON_CHANGESTAGE_ALLREADY";
-    
-    /// <summary>
-    /// 音乐开关
-    /// </summary>
-    public const string ON_CHANGESOUND_TOGGLE = "ON_CHANGESOUND_TOGGLE";
-
-    #region 战斗相关
-    /// <summary>
-    /// 移除战斗单元
-    /// </summary>
-    public const string REMOVE_UNIT = "REMOVE_UNIT";
-
-    /// <summary>
-    /// 战斗场景长按
-    /// </summary>
-    public const string EVENT_BATTLESCENE_ONPRESSDOWN = "EVENT_BATTLESCENE_ONPRESSDOWN";
-
-    /// <summary>
-    /// 战斗场景松开长按
-    /// </summary>
-    public const string EVENT_BATTLESCENE_ONPRESSUP = "EVENT_BATTLESCENE_ONPRESSUP";
-
-    /// <summary>
-    /// 战斗场景离开长按
-    /// </summary>
-    public const string EVENT_BATTLESCENE_ONPRESSEXIT = "EVENT_BATTLESCENE_ONPRESSEXIT";
-
-    /// <summary>
-    /// 战斗场景单元技能释放完毕
-    /// </summary>
-    public const string EVENT_BATTLESCENE_UNITSKILLCOMPLETERELEASE = "EVENT_BATTLESCENE_UNITSKILLCOMPLETERELEASE";
-
-    /// <summary>
-    /// 战场单元全部就位
-    /// </summary>
-    public const string EVENT_BATTLESCENE_UNIT_INPLACE = "EVENT_BATTLESCENE_UNIT_INPLACE";
-
-    /// <summary>
-    /// 技能特写动画结束
-    /// </summary>
-    public const string EVENT_TASK_BATTLESKILL_ANIMATION_END = "EVENT_TASK_BATTLESKILLBEGIN";
-    #endregion
+    A,
+    B,
 }
 
 public class BroadcastException : Exception
@@ -86,6 +31,7 @@ public class List : Exception
 //=====================================================================================/
 /// <summary>
 /// 消息类 全局类消息
+/// 这个类暂时感觉没什么鸟用
 /// </summary>
 //=====================================================================================.
 public class Messenger : Singleton<Messenger>
@@ -98,7 +44,7 @@ public class Messenger : Singleton<Messenger>
 
     public delegate void Callback<T, U, V>(T arg1, U arg2, V arg3);
 
-    public Dictionary<string, Delegate> m_eventDictionary = new Dictionary<string, Delegate>();
+    public Dictionary<MessageEventType, Delegate> m_eventDictionary = new Dictionary<MessageEventType, Delegate>();
 
     ~Messenger()
     {
@@ -107,28 +53,28 @@ public class Messenger : Singleton<Messenger>
 
     #region AddEventListener
 
-    public void AddEventListener(string eventType, Callback handler)
+    public void AddEventListener(MessageEventType eventType, Callback handler)
     {
         OnListenerAdding(eventType, handler);
         m_eventDictionary[eventType] = (Callback)m_eventDictionary[eventType] + handler;
     }
 
     //一个参数 parameter
-    public void AddEventListener<T>(string eventType, Callback<T> handler)
+    public void AddEventListener<T>(MessageEventType eventType, Callback<T> handler)
     {
         OnListenerAdding(eventType, handler);
         m_eventDictionary[eventType] = (Callback<T>)m_eventDictionary[eventType] + handler;
     }
 
     //两个参数 parameter
-    public void AddEventListener<T, U>(string eventType, Callback<T, U> handler)
+    public void AddEventListener<T, U>(MessageEventType eventType, Callback<T, U> handler)
     {
         OnListenerAdding(eventType, handler);
         m_eventDictionary[eventType] = (Callback<T, U>)m_eventDictionary[eventType] + handler;
     }
 
     //三个参数 parameter
-    public void AddEventListener<T, U, V>(string eventType, Callback<T, U, V> handler)
+    public void AddEventListener<T, U, V>(MessageEventType eventType, Callback<T, U, V> handler)
     {
         OnListenerAdding(eventType, handler);
         m_eventDictionary[eventType] = (Callback<T, U, V>)m_eventDictionary[eventType] + handler;
@@ -138,28 +84,28 @@ public class Messenger : Singleton<Messenger>
 
     #region RemoveEventListener
 
-    public void RemoveEventListener(string eventType, Callback handler)
+    public void RemoveEventListener(MessageEventType eventType, Callback handler)
     {
         OnListenerRemoving(eventType, handler);
         m_eventDictionary[eventType] = (Callback)m_eventDictionary[eventType] - handler;
         OnListenerRemoved(eventType);
     }
 
-    public void RemoveEventListener<T>(string eventType, Callback<T> handler)
+    public void RemoveEventListener<T>(MessageEventType eventType, Callback<T> handler)
     {
         OnListenerRemoving(eventType, handler);
         m_eventDictionary[eventType] = (Callback<T>)m_eventDictionary[eventType] - handler;
         OnListenerRemoved(eventType);
     }
 
-    public void RemoveEventListener<T, U>(string eventType, Callback<T, U> handler)
+    public void RemoveEventListener<T, U>(MessageEventType eventType, Callback<T, U> handler)
     {
         OnListenerRemoving(eventType, handler);
         m_eventDictionary[eventType] = (Callback<T, U>)m_eventDictionary[eventType] - handler;
         OnListenerRemoved(eventType);
     }
 
-    public void RemoveEventListener<T, U, V>(string eventType, Callback<T, U, V> handler)
+    public void RemoveEventListener<T, U, V>(MessageEventType eventType, Callback<T, U, V> handler)
     {
         OnListenerRemoving(eventType, handler);
         m_eventDictionary[eventType] = (Callback<T, U, V>)m_eventDictionary[eventType] - handler;
@@ -170,7 +116,7 @@ public class Messenger : Singleton<Messenger>
 
     #region OnListenerAdding OnListenerRemoving
 
-    private void OnListenerAdding(string eventType, Delegate listenerBeingAdded)
+    private void OnListenerAdding(MessageEventType eventType, Delegate listenerBeingAdded)
     {
         if (!m_eventDictionary.ContainsKey(eventType))
         {
@@ -185,7 +131,7 @@ public class Messenger : Singleton<Messenger>
         }
     }
 
-    private void OnListenerRemoving(string eventType, Delegate listenerBeingRemoved)
+    private void OnListenerRemoving(MessageEventType eventType, Delegate listenerBeingRemoved)
     {
         if (m_eventDictionary.ContainsKey(eventType))
         {
@@ -206,7 +152,7 @@ public class Messenger : Singleton<Messenger>
         }
     }
 
-    private void OnListenerRemoved(string eventType)
+    private void OnListenerRemoved(MessageEventType eventType)
     {
         if (m_eventDictionary[eventType] == null)
         {
@@ -218,7 +164,7 @@ public class Messenger : Singleton<Messenger>
 
     #region BroadCastEventMsg
 
-    public void BroadCastEventMsg(string eventType)
+    public void BroadCastEventMsg(MessageEventType eventType)
     {
         Delegate d;
         if (m_eventDictionary.TryGetValue(eventType, out d))
@@ -236,7 +182,7 @@ public class Messenger : Singleton<Messenger>
         }
     }
 
-    public void BroadCastEventMsg<T>(string eventType, T arg1)
+    public void BroadCastEventMsg<T>(MessageEventType eventType, T arg1)
     {
         Delegate d;
         if (m_eventDictionary.TryGetValue(eventType, out d))
@@ -254,7 +200,7 @@ public class Messenger : Singleton<Messenger>
         }
     }
 
-    public void BroadCastEventMsg<T, U>(string eventType, T arg1, U arg2)
+    public void BroadCastEventMsg<T, U>(MessageEventType eventType, T arg1, U arg2)
     {
         Delegate d;
         if (m_eventDictionary.TryGetValue(eventType, out d))
@@ -272,7 +218,7 @@ public class Messenger : Singleton<Messenger>
         }
     }
 
-    public void BroadCastEventMsg<T, U, V>(string eventType, T arg1, U arg2, V arg3)
+    public void BroadCastEventMsg<T, U, V>(MessageEventType eventType, T arg1, U arg2, V arg3)
     {
         Delegate d;
         if (m_eventDictionary.TryGetValue(eventType, out d))
@@ -294,7 +240,7 @@ public class Messenger : Singleton<Messenger>
 
     #region CheckEventListener
 
-    public bool CheckEventListener(string eventType, Callback handler)
+    public bool CheckEventListener(MessageEventType eventType, Callback handler)
     {
         if (m_eventDictionary.ContainsKey(eventType))
         {
@@ -316,7 +262,7 @@ public class Messenger : Singleton<Messenger>
     }
 
     //Single parameter
-    public bool CheckEventListener<T>(string eventType, Callback<T> handler)
+    public bool CheckEventListener<T>(MessageEventType eventType, Callback<T> handler)
     {
         if (m_eventDictionary.ContainsKey(eventType))
         {
@@ -338,7 +284,7 @@ public class Messenger : Singleton<Messenger>
     }
 
     //Two parameters
-    public bool CheckEventListener<T, U>(string eventType, Callback<T, U> handler)
+    public bool CheckEventListener<T, U>(MessageEventType eventType, Callback<T, U> handler)
     {
         if (m_eventDictionary.ContainsKey(eventType))
         {
@@ -360,7 +306,7 @@ public class Messenger : Singleton<Messenger>
     }
 
     //Three parameters
-    public bool CheckEventListener<T, U, V>(string eventType, Callback<T, U, V> handler)
+    public bool CheckEventListener<T, U, V>(MessageEventType eventType, Callback<T, U, V> handler)
     {
         if (m_eventDictionary.ContainsKey(eventType))
         {
@@ -381,7 +327,7 @@ public class Messenger : Singleton<Messenger>
         return false;
     }
 
-    public BroadcastException CreateBroadcastSignatureException(string eventType)
+    public BroadcastException CreateBroadcastSignatureException(MessageEventType eventType)
     {
         return new BroadcastException(string.Format("Broadcasting message \"{0}\" but listeners have a different signature than the broadcaster.", eventType));
     }

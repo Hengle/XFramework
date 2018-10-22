@@ -3,7 +3,7 @@
 ///<summary>
 namespace XDEDZL
 {
-    public interface Observer
+    public interface IObserver
     {
         void OnDataChange(BaseData eventData, int type, object obj);
     }

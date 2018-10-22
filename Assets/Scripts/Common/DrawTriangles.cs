@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using RCXC;
 
-namespace RCXC
+namespace XDEDZL
 {
     /// <summary>
     /// 封装所有画三角形的方法
