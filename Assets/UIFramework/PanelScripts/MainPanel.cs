@@ -28,9 +28,5 @@ public class MainPanel : BasePanel {
     private void OnClick(UIPanelType _type)
     {
         Singleton<UIManager>.Instance.PushPanel(_type);
-        if (MouseEvent.Instance.CurrentStateType != MouseStateType.DefaultState)
-        {
-            MouseEvent.Instance.ChangeState(MouseStateType.DefaultState);
-        }
     }
 }

@@ -8,6 +8,10 @@ public class FSM : MonoBehaviour
     /// </summary>
     public Transform enemy;
     /// <summary>
+    /// 攻击目标点
+    /// </summary>
+    public Vector3 attackPos;
+    /// <summary>
     /// 移动目标点
     /// </summary>
     protected Vector3 targetPos;

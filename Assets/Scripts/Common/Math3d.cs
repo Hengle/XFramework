@@ -5,6 +5,7 @@ namespace XDEDZL.Mathematics
 {
     /// <summary>
     /// 有关3D数学的计算
+    /// 有关法向量的计算要求法向量为单位向量
     /// </summary>
     public static class Math3d
     {
@@ -33,23 +34,21 @@ namespace XDEDZL.Mathematics
         /// </summary>
         /// <param name="linePoint">交线上一点</param>
         /// <param name="lineVec">交线的方向</param>
-        /// <param name="plane1Normal">平面1法线</param>
-        /// <param name="plane1Position">平面1上一点</param>
-        /// <param name="plane2Normal">平面2法线</param>
-        /// <param name="plane2Position">平面2上一点</param>
+        /// <param name="face_1">平面1法线</param>
+        /// <param name="face_2">平面1上一点</param>
         /// <returns>是否相交</returns>
-        public static bool PlanePlaneIntersection(out Vector3 linePoint, out Vector3 lineVec, Vector3 plane1Normal, Vector3 plane1Position, Vector3 plane2Normal, Vector3 plane2Position)
+        public static bool PlanePlaneIntersection(out Vector3 linePoint, out Vector3 lineVec, Face face_1, Face face_2)
         {
             linePoint = Vector3.zero;
             lineVec = Vector3.zero;
-            lineVec = Vector3.Cross(plane1Normal, plane2Normal);
-            Vector3 vector = Vector3.Cross(plane2Normal, lineVec);
-            float num = Vector3.Dot(plane1Normal, vector);
+            lineVec = Vector3.Cross(face_1.normal, face_2.normal);
+            Vector3 vector = Vector3.Cross(face_2.normal, lineVec);
+            float num = Vector3.Dot(face_1.normal, vector);
             if (Mathf.Abs(num) > 0.006f)
             {
-                Vector3 rhs = plane1Position - plane2Position;
-                float d = Vector3.Dot(plane1Normal, rhs) / num;
-                linePoint = plane2Position + d * vector;
+                Vector3 rhs = face_1.point - face_2.point;
+                float d = Vector3.Dot(face_1.normal, rhs) / num;
+                linePoint = face_2.point + d * vector;
                 return true;
             }
             return false;
@@ -158,7 +157,16 @@ namespace XDEDZL.Mathematics
             return false;
         }
 
-        // Token: 0x060019F3 RID: 6643 RVA: 0x000BA23C File Offset: 0x000B843C
+        /// <summary>
+        /// 三维空间中两条直线两个最近的点
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="t"></param>
+        /// <param name="linePoint1"></param>
+        /// <param name="lineVec1"></param>
+        /// <param name="linePoint2"></param>
+        /// <param name="lineVec2"></param>
+        /// <returns></returns>
         public static bool ClosestPointsOnTwoLines(out float s, out float t, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
         {
             t = (s = 0f);
@@ -178,7 +186,18 @@ namespace XDEDZL.Mathematics
             return false;
         }
 
-        // Token: 0x060019F4 RID: 6644 RVA: 0x000BA2C4 File Offset: 0x000B84C4
+        /// <summary>
+        /// 两个线段最近的两个点
+        /// </summary>
+        /// <param name="closestPointLine"></param>
+        /// <param name="closestPointSegment"></param>
+        /// <param name="lineT"></param>
+        /// <param name="segmentT"></param>
+        /// <param name="linePoint"></param>
+        /// <param name="lineVec"></param>
+        /// <param name="segmentPoint1"></param>
+        /// <param name="segmentPoint2"></param>
+        /// <returns></returns>
         public static bool ClosestPointsOnLineSegment(out Vector3 closestPointLine, out Vector3 closestPointSegment, out float lineT, out float segmentT, Vector3 linePoint, Vector3 lineVec, Vector3 segmentPoint1, Vector3 segmentPoint2)
         {
             Vector3 vector = segmentPoint2 - segmentPoint1;
@@ -220,15 +239,13 @@ namespace XDEDZL.Mathematics
             return linePoint + lineVec * d;
         }
 
-        // Token: 0x060019F6 RID: 6646 RVA: 0x000BA3D4 File Offset: 0x000B85D4
-        public static Vector3 ProjectPointOnLine(out float t, Vector3 linePoint, Vector3 lineVec, Vector3 point)
-        {
-            Vector3 lhs = point - linePoint;
-            t = Vector3.Dot(lhs, lineVec);
-            return linePoint + lineVec * t;
-        }
-
-        // Token: 0x060019F7 RID: 6647 RVA: 0x000BA400 File Offset: 0x000B8600
+        /// <summary>
+        ///  一个点在一条线段上的投影点
+        /// </summary>
+        /// <param name="linePoint1"></param>
+        /// <param name="linePoint2"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
         public static Vector3 ProjectPointOnLineSegment(Vector3 linePoint1, Vector3 linePoint2, Vector3 point)
         {
             Vector3 vector = Math3d.ProjectPointOnLine(linePoint1, (linePoint2 - linePoint1).normalized, point);
@@ -256,7 +273,7 @@ namespace XDEDZL.Mathematics
         /// <returns></returns>
         public static Vector3 ProjectPointOnPlane(Face face, Vector3 point)
         {
-            float num = Math3d.SignedDistancePlanePoint(face.normal, face.point, point);
+            float num = Math3d.SignedDistancePlanePoint(face, point);
             num *= -1f;
             Vector3 b = Math3d.SetVectorLength(face.normal, num);
             return point + b;
@@ -273,10 +290,15 @@ namespace XDEDZL.Mathematics
             return vector - Vector3.Dot(vector, planeNormal) * planeNormal;
         }
 
-        // Token: 0x060019FA RID: 6650 RVA: 0x000BA494 File Offset: 0x000B8694
-        public static float SignedDistancePlanePoint(Vector3 planeNormal, Vector3 planePoint, Vector3 point)
+        /// <summary>
+        /// 点到面的距离
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static float SignedDistancePlanePoint(Face face, Vector3 point)
         {
-            return Vector3.Dot(planeNormal, point - planePoint);
+            return Vector3.Dot(face.normal, point - face.point);
         }
 
         // Token: 0x060019FB RID: 6651 RVA: 0x000BA4A4 File Offset: 0x000B86A4
@@ -294,12 +316,22 @@ namespace XDEDZL.Mathematics
             return num * Mathf.Sign(Vector3.Dot(lhs, otherVector));
         }
 
-        // Token: 0x060019FD RID: 6653 RVA: 0x000BA4F4 File Offset: 0x000B86F4
+        /// <summary>
+        /// 一个向量和平面的夹角
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <param name="normal"></param>
+        /// <returns></returns>
         public static float AngleVectorPlane(Vector3 vector, Vector3 normal)
         {
             float num = Vector3.Dot(vector, normal);
             float num2 = (float)Math.Acos((double)num);
             return 1.57079637f - num2;
+
+
+            // mine
+            float ComplementaryAngle = (float)Math.Acos(Vector3.Dot(vector, normal) / vector.magnitude);
+            return (float)(Math.PI / 2 - ComplementaryAngle);
         }
 
         // Token: 0x060019FE RID: 6654 RVA: 0x000BA51C File Offset: 0x000B871C

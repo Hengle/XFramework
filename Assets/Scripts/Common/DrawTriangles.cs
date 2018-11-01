@@ -1,9 +1,16 @@
-﻿using System.Collections;
+// ==========================================
+// 描述： 
+// 作者： HAK
+// 时间： 2018-10-31 12:01:34
+// 版本： V 1.0
+// ==========================================
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using RCXC;
 
-namespace XDEDZL
+namespace RCXC
 {
     /// <summary>
     /// 封装所有画三角形的方法

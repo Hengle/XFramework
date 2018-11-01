@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XDEDZL.Mathematics;
 
 public class Test : MonoBehaviour {
 
@@ -9,9 +10,10 @@ public class Test : MonoBehaviour {
 
     private void Start()
     {
-        Messenger.Instance.AddEventListener(MessageEventType.A, CallBack);
-        Messenger.Instance.AddEventListener<int>(MessageEventType.A, CallBack);
-        Messenger.Instance.BroadCastEventMsg(MessageEventType.A);
+
+
+
+        Debug.Log(Math3d.ProjectVectorOnPlane(Vector3.up, new Vector3(2, 2, 0)));
     }
 
     private void Update()

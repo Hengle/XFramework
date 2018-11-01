@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using RCXC;
 
 public class CommandPostPanel : BasePanel {
 
@@ -46,7 +47,6 @@ public class CommandPostPanel : BasePanel {
         if (MouseEvent.Instance.CurrentStateType == MouseStateType.CreateArmyState)
         {
             // 当前有选中单位时，将其取消
-            (MouseEvent.Instance.CurrentState as MouseCreateArmyState)?.gameObj?.SetActive(false);    // 取消需要创建的单位
 
             // 重新实例化一个单位
             //GameObject obj = Singleton<GameObjectFactory>.Instance.Instantiate(modelName);
@@ -83,8 +83,5 @@ public class CommandPostPanel : BasePanel {
     {
         rect.DOSizeDelta(new Vector2(rectSize.x, 1.5f), 0.3f); // 退出动画
         canvasGroup.interactable = false;
-
-        (MouseEvent.Instance.CurrentState as MouseCreateArmyState)?.gameObj?.SetActive(false);    // 取消需要创建的单位
-
     }
 }

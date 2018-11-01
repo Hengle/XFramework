@@ -60,10 +60,7 @@ public class CreatePanel : BasePanel {
     private void OnClick(UIPanelType panelType)
     {
         Singleton<UIManager>.Instance.PushPanel(panelType);
-        if (MouseEvent.Instance.CurrentStateType != MouseStateType.DefaultState)
-        {
-            MouseEvent.Instance.ChangeState(MouseStateType.DefaultState);
-        }
+        
 
         Vector2 rectSize = rect.sizeDelta;
         switch (panelType)

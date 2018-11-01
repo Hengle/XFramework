@@ -25,21 +25,10 @@ public class AdjustPanel : BasePanel {
         // 注册鼠标事件
         attackBtn.onClick.AddListener(() => { OnClick(MouseStateType.AttackState); });
         moveBtn.onClick.AddListener(() => { OnClick(MouseStateType.MoveState); });
-
-#if false
-        // 注册按钮高亮状态事件
-        attackBtn.AddHightLighted(() => { ChangeSize(attackRect, 209, 93); });
-        moveBtn.AddHightLighted(() => { ChangeSize(moveRect, 209, 93); });
-
-        // 注册按钮常态事件
-        attackBtn.AddNormal(() => { ChangeSize(attackRect, 169.31f, 53.41333f); });
-        moveBtn.AddNormal(() => { ChangeSize(moveRect, 169.31f, 53.41333f); });
-#endif
     }
 
     //点击事件
     private void OnClick(MouseStateType _type)
     {
-        MouseEvent.Instance.ChangeState(_type);
     }
 }

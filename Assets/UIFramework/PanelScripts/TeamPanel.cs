@@ -88,22 +88,7 @@ public class TeamPanel : BasePanel {
     /// <param name="modelName"> 名字 </param>
     private void OnClick(string modelName)
     {
-        // 在创建单位状态创建对应单位
-        if (MouseEvent.Instance.CurrentStateType == MouseStateType.CreateArmyState)
-        {
-            // 当前有选中单位时，将其取消
-            (MouseEvent.Instance.CurrentState as MouseCreateArmyState)?.gameObj?.SetActive(false);    // 取消需要创建的单位
-
-            // 重新实例化一个单位
-            //GameObject obj = Singleton<GameObjectFactory>.Instance.Instantiate(modelName);
-            //MouseEvent.Instance.CurrentState.OnActive(obj);
-        }
-        else
-        {
-            // 非创建单位状态
-            //GameObject obj = Singleton<GameObjectFactory>.Instance.Instantiate(modelName);
-            //MouseEvent.Instance.ChangeState(MouseStateType.CreateArmyState, obj);
-        }
+        
     }
 
     public override void Init()
@@ -130,7 +115,6 @@ public class TeamPanel : BasePanel {
         rect.DOSizeDelta(new Vector2(rectSize.x, 1.5f), 0.3f); // 退出动画
         canvasGroup.interactable = false;
 
-        (MouseEvent.Instance.CurrentState as MouseCreateArmyState)?.gameObj?.SetActive(false);    // 取消需要创建的单位
 
     }
 }
