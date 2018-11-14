@@ -192,7 +192,7 @@ public class ArmoredCar : MonoBehaviour {
     /// </summary>
     private void OnCompletePath(Pathfinding.Path path)
     {
-        List<Vector3> p = new List<Vector3>();
+        List<Vector3> p = new List<Vector3>(); 
 
         // 路径计算成功
         if (!path.error)
