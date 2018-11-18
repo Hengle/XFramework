@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using XDEDZL.Mathematics;
+using UniRx;
 
 public class Test : MonoBehaviour {
 
@@ -11,7 +12,7 @@ public class Test : MonoBehaviour {
     private void Start()
     {
 
-
+        Observable.Timer(TimeSpan.FromSeconds(5)).Subscribe(a => { }).AddTo(this);
 
         Debug.Log(Math3d.ProjectVectorOnPlane(Vector3.up, new Vector3(2, 2, 0)));
     }
