@@ -18,7 +18,7 @@ public class GCSkillPool : GCPoolBase
         if(trs)
             callback(trs.gameObject);
         else
-            SpawnPoolByName(objName, spawnPool, callback);
+            SpawnPoolByName(objName, spawnPool, callback); 
     }
 
     /// <summary>

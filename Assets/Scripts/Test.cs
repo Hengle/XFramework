@@ -11,10 +11,12 @@ public class Test : MonoBehaviour {
 
     private void Start()
     {
-
-        Observable.Timer(TimeSpan.FromSeconds(5)).Subscribe(a => { }).AddTo(this);
-
-        Debug.Log(Math3d.ProjectVectorOnPlane(Vector3.up, new Vector3(2, 2, 0)));
+        Observable.Range(1, 10).Where((x) => 
+        x % 2 == 0).
+        Subscribe((arg)=>
+        {
+            Debug.Log(arg);
+        });
     }
 
     private void Update()
