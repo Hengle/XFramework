@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.UI;
 
 /// <summary>
 /// 这个类管理一系列的拓展函数
-/// 自己再开发过程中想到的或者看到的积累
+/// 以后把System和UnityEngine的扩展分开
 /// </summary>
 public static class ExtenFun
 {
@@ -22,6 +24,16 @@ public static class ExtenFun
     public static Vector3 WithZ(this Vector3 v, float z)
     {
         return new Vector3(v.x, v.y, z);
+    }
+
+    public static Vector2 WithX(this Vector2 v, float x)
+    {
+        return new Vector2(x, v.y);
+    }
+
+    public static Vector2 WithY(this Vector2 v, float y)
+    {
+        return new Vector2(v.x, y);
     }
     #endregion
 
@@ -86,6 +98,32 @@ public static class ExtenFun
     public static Quaternion SubtractRotation(this Quaternion q, Vector3 angle)
     {
         return q * Quaternion.Inverse(Quaternion.Euler(angle));
+    }
+
+    #endregion
+
+    #region Array
+
+    public static void ForEach<T>(this IEnumerable<T> value, Action<T> action)
+    {
+        foreach (T obj in value)
+        {
+            action(obj);
+        }
+    }
+
+    #endregion
+
+    #region UI
+
+    /// <summary>
+    /// 给Toggle添加受控制的物体
+    /// </summary>
+    /// <param name="toggle"></param>
+    /// <param name="panel"></param>
+    public static void AddCotroledPanel(this Toggle toggle, GameObject panel)
+    {
+        toggle.onValueChanged.AddListener((a) => panel.SetActive(a));
     }
 
     #endregion
