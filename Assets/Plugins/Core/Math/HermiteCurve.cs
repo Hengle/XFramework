@@ -9,6 +9,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
+/// 样条类型
+/// </summary>
+public enum SplineMode
+{
+    Hermite,               // 埃尔米特样条
+    Catmull_Rom,           // 
+    CentripetalCatmull_Rom,// 向心Catmull_Rom
+}
+
+/// <summary>
 /// 埃尔米特曲线
 /// </summary>
 public class HermiteCurve

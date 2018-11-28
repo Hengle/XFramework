@@ -48,7 +48,7 @@ public class Test : MonoBehaviour
                 }
             }
 
-            CreateRoads(meshFilter, path, 6);
+            //CreateRoads(meshFilter, path, 6);
         }
 
         if (Input.GetKeyDown(KeyCode.C))
@@ -70,7 +70,7 @@ public class Test : MonoBehaviour
             {
                 Vector3 worldHitPos = hit.point + Vector3.up * 5;
                 positions.Add(worldHitPos);
-                GameObject gameObject = Utility.CreatPrimitiveType(PrimitiveType.Cube, worldHitPos, 1f);
+                GameObject gameObject = Utility.CreatPrimitiveType(PrimitiveType.Cube, worldHitPos, 1f,Color.red);
                 objs.Add(gameObject);
             }
         }
