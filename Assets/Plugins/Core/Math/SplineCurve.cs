@@ -14,27 +14,27 @@ using UnityEngine;
 public enum SplineMode
 {
     Hermite,               // 埃尔米特样条
-    Catmull_Rom,           // 
+    Catmull_Rom,           // Catmull_Rom
     CentripetalCatmull_Rom,// 向心Catmull_Rom
 }
 
 /// <summary>
-/// 埃尔米特曲线
+/// 样条曲线
 /// </summary>
-public class HermiteCurve
+public class SplineCurve
 {
     /// <summary>
     /// 曲线起始节点
     /// </summary>
-    private Vector3 startNode;
+    private Node startNode;
     /// <summary>
     /// 曲线终结点
     /// </summary>
-    private Vector3 endNode;
+    private Node endNode;
     /// <summary>
     /// 节点集合
     /// </summary>
-    private List<Vector3> nodeList;
+    private List<Node> nodeList;
     /// <summary>
     /// 节点法线集合
     /// </summary>
@@ -48,15 +48,18 @@ public class HermiteCurve
     /// </summary>
     public SplineMode mode { get; private set; }
 
-    public HermiteCurve(SplineMode _mode = SplineMode.Hermite)
+    public SplineCurve(SplineMode _mode = SplineMode.Hermite)
     {
-        nodeList = new List<Vector3>();
+        nodeList = new List<Node>();
         tangentsList = new List<Vector3>();
         segmentList = new List<HermiteSegement>();
         mode = _mode;
     }
 
-    private void AddCatmull_RomControl()
+    /// <summary>
+    /// 
+    /// </summary>
+    public void AddCatmull_RomControl()
     {
         if(mode != SplineMode.Catmull_Rom)
         {
@@ -68,30 +71,42 @@ public class HermiteCurve
             Debug.Log("Catmull_Rom样条取点要大于等于2");
             return;
         }
-        nodeList.Insert(0, startNode + (nodeList[0] - nodeList[1]));
-        nodeList.Add(endNode + (endNode - nodeList[nodeList.Count - 2]));
+        Node node = new Node(startNode.pos + (nodeList[0].pos - nodeList[1].pos), null, nodeList[0]);
+        nodeList.Insert(0, node);
+        node = new Node(endNode.pos + (endNode.pos - nodeList[nodeList.Count - 2].pos), nodeList[nodeList.Count - 1]);
+        nodeList.Add(node);
     }
 
     /// <summary>
     /// 添加节点
     /// </summary>
     /// <param name="newNode"></param>
-    public void AddNode(Vector3 newNode, float c)
+    public void AddNode(Vector3 pos, float c)
     {
-        nodeList.Add(newNode);
+        Node node;
+        if(nodeList.Count < 1)
+        {
+            node = new Node(pos);
+        }
+        else
+        {
+            node = new Node(pos, nodeList[nodeList.Count - 1]);
+        }
+        nodeList.Add(node);
+
         
         if(nodeList.Count > 1)
         {
-            HermiteSegement a = new HermiteSegement(endNode, newNode,this);
+            HermiteSegement a = new HermiteSegement(endNode, node,this);
             a.c = c;
             segmentList.Add(a);
             CaculateTangents(segmentList.Count - 1);               // 计算新加入的曲线段起始切线
         }
         else // 加入第一个节点
         {
-            startNode = newNode;
+            startNode = node;
         }
-        endNode = newNode;
+        endNode = node;
     }
 
     /// <summary>
@@ -124,15 +139,15 @@ public class HermiteCurve
 
         if(index == 0)
         {
-            segement.startTangents = segement.endPos - segement.startPos;
-            segement.endTangents = segement.endPos - segement.startPos;
+            segement.startTangents = segement.endNode.pos - segement.endNode.pos;
+            segement.endTangents = segement.endNode.pos - segement.startNode.pos;
             return;
         }
 
         HermiteSegement preSegement = segmentList[index - 1];
 
-        segement.startTangents = 0.5f * (1 - segement.c) * (segement.endPos - preSegement.endPos);
-        segement.endTangents = segement.endPos - segement.startPos;
+        segement.startTangents = 0.5f * (1 - segement.c) * (segement.endNode.pos - preSegement.endNode.pos);
+        segement.endTangents = segement.endNode.pos - segement.startNode.pos;
         preSegement.endTangents = segement.startTangents;
 
     }
@@ -146,24 +161,16 @@ public class HermiteSegement
     /// <summary>
     /// 所属曲线
     /// </summary>
-    public HermiteCurve rootCurve;
+    public SplineCurve rootCurve;
 
     /// <summary>
     /// 曲线段起始位置
     /// </summary>
-    public Vector3 startPos { get; private set; }
+    public Node startNode { get; private set; }
     /// <summary>
     /// 曲线段末尾位置
     /// </summary>
-    public Vector3 endPos { get; private set; }
-    /// <summary>
-    /// 前一个线段的末尾位置
-    /// </summary>
-    public Vector3 prePos { get; private set; }
-    /// <summary>
-    /// 后一个线段的起始位置
-    /// </summary>
-    public Vector3 nextPos { get; private set; }
+    public Node endNode { get; private set; }
 
     public Vector3 startTangents;
     public Vector3 endTangents;
@@ -173,10 +180,10 @@ public class HermiteSegement
     /// </summary>
     public float c { get;  set; }
 
-    public HermiteSegement(Vector3 _startPos,Vector3 _endPos,HermiteCurve _rootCurve)
+    public HermiteSegement(Node _startNode,Node _endNode,SplineCurve _rootCurve)
     {
-        startPos = _startPos;
-        endPos = _endPos;
+        startNode = _startNode;
+        endNode = _endNode;
         rootCurve = _rootCurve;
         c = -5f;
     }
@@ -192,8 +199,8 @@ public class HermiteSegement
         switch (rootCurve.mode)
         {
             case SplineMode.Hermite:
-                x = (2 * t * t * t - 3 * t * t + 1) * startPos;
-                x += (-2 * t * t * t + 3 * t * t) * endPos;
+                x = (2 * t * t * t - 3 * t * t + 1) * startNode.pos;
+                x += (-2 * t * t * t + 3 * t * t) * endNode.pos;
                 x += (t * t * t - 2 * t * t + t) * startTangents;
                 x += (t * t * t - t * t) * endTangents;
                 //float y = (2 * t * t * t - 3 * t * t + 1) * startPos.y;
@@ -207,15 +214,16 @@ public class HermiteSegement
                 //z += (t * t * t - t * t) * endTangents.z;
                 break;
             case SplineMode.Catmull_Rom:
+                x += startNode.preNode.pos * (-0.5f * t * t * t + t * t - 0.5f * t);
+                x += startNode.pos * (1.5f * t * t * t - 2.5f * t * t + 1.0f);
+                x += endNode.pos * (-1.5f * t * t * t + 2.0f * t * t + 0.5f * t);
+                x += endNode.nextNode.pos * (0.5f * t * t * t - 0.5f * t * t);
                 break;
             case SplineMode.CentripetalCatmull_Rom:
                 break;
             default:
                 break;
         }
-        
-
-        
 
         return x;
 
@@ -228,17 +236,49 @@ public class HermiteSegement
     /// <returns></returns>
     public Vector3 GetTangents(float t)
     {
-        Vector3 a = (6 * t * t - 6 * t) * startPos;
-        a += (-6 * t * t + 6 * t) * endPos;
+        Vector3 a = (6 * t * t - 6 * t) * startNode.pos;
+        a += (-6 * t * t + 6 * t) * endNode.pos;
         a += (3 * t * t - 4 * t + 1) * startTangents;
         a += (3 * t * t - 2 * t) * endTangents;
         return a;
     }
 }
 
+/// <summary>
+/// 曲线节点
+/// </summary>
 public class Node
 {
-    public Vector3 node;
+    /// <summary>
+    /// 节点位置
+    /// </summary>
+    public Vector3 pos;
+    /// <summary>
+    /// 前连接节点
+    /// </summary>
     public Node preNode;
+    /// <summary>
+    /// 后连接节点
+    /// </summary>
     public Node nextNode;
+
+    public Node(Vector3 _pos)
+    {
+        pos = _pos;
+    }
+
+    public Node(Vector3 _pos, Node _preNode, Node _nextNode = null)
+    {
+        pos = _pos;
+        if(_preNode != null)
+        {
+            preNode = _preNode;
+            _preNode.nextNode = this;
+        }
+        if(_nextNode != null)
+        {
+            nextNode = _nextNode;
+            _nextNode.preNode = this;
+        }
+    }
 }

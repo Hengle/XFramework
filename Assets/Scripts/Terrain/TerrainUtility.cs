@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// Terrain工具
@@ -12,6 +14,8 @@ public class TerrainUtility
      *   ↑
      *   0 → x
      */
+
+    private static Dictionary<Terrain, float[,]> terrainDic = new Dictionary<Terrain, float[,]>();
 
     /// <summary>
     /// 返回Terrain上某一点的HeightMap索引。
@@ -27,9 +31,26 @@ public class TerrainUtility
 
         // 根据相对位置计算索引
         int x = (int)((point.x - terrain.GetPosition().x) / width * tData.heightmapWidth);
-        int y = (int)((point.z - terrain.GetPosition().z) / length * tData.heightmapHeight);
+        int z = (int)((point.z - terrain.GetPosition().z) / length * tData.heightmapHeight);
 
-        return new int[2] { x, y };
+        return new int[2] { x, z };
+    }
+
+    /// <summary>
+    /// 返回地图Index对应的世界坐标系位置
+    /// </summary>
+    /// <param name="terrain"></param>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
+    public static Vector3 GetIndexWorldPoint(Terrain terrain, int x, int z)
+    {
+        TerrainData data = terrain.terrainData;
+        float _x = data.size.x / (data.heightmapWidth - 1) * x;
+        float _z = data.size.z / (data.heightmapHeight - 1) * z;
+
+        float _y = GetPointHeight(terrain, new Vector3(_x, 0, _z));
+        return new Vector3(_x, _y, _z) + terrain.GetPosition();
     }
 
     /// <summary>
@@ -122,10 +143,10 @@ public class TerrainUtility
 
         float[,] heights = tData.GetHeights(xBase, yBase, width, height);
         float initHeight = tData.GetHeight(index[0], index[1]) / tData.size.y;
-        float deltaHeight = opacity / tData.size.y;
+        float deltaHeight = opacity / tData.size.y;  // 计算得到要改变的高度比列
 
         // 得到的heights数组维度是[height,width]，索引为[y,x]
-        ExpandBrush(heights, deltaHeight, initHeight, height, width, amass);
+        ExpandBrush(heights, deltaHeight, initHeight, height, width, bound, amass);
         tData.SetHeights(xBase, yBase, heights);
     }
 
@@ -166,7 +187,7 @@ public class TerrainUtility
         float deltaHeight = -opacity / tData.size.y;  // 注意负号
 
         // 得到的heights数组维度是[height,width]，索引为[y,x]
-        ExpandBrush(heights, deltaHeight, initHeight, height, width, amass);
+        ExpandBrush(heights, deltaHeight, initHeight, height, width, bound, amass);
         tData.SetHeights(xBase, yBase, heights);
     }
 
@@ -214,6 +235,7 @@ public class TerrainUtility
         {
             for (int j = 0; j < width; j++)
             {
+#if false
                 // 点到矩阵中心点的距离
                 float toCenter = Vector2.Distance(center, new Vector2(i, j));
                 float diff = avgHeight - heights[i, j];
@@ -247,10 +269,41 @@ public class TerrainUtility
                 // 进行平滑时对点进行升降的比例
                 float ratio = d / (d + toCenter);
                 heights[i, j] += diff * ratio * opacity;
+#endif
+                // 圆外的点不做处理
+                if ((i - bound) * (i - bound) + (j - bound) * (j - bound) >= bound * bound)
+                    continue;
+
+                float h = Smooth(terrain.terrainData, xBase + i, yBase + j);
+                heights[i, j] = h;
             }
         }
 
         tData.SetHeights(xBase, yBase, heights);
+    }
+
+    /// <summary>
+    /// 通过给定index周围区域的高度得到平均高度
+    /// </summary>
+    /// <param name="terrainData"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public static float Smooth(TerrainData terrainData, int x, int y)
+    {
+        float h = 0.0F;
+        float normalizeScale = 1.0F / terrainData.size.y;
+        h += terrainData.GetHeight(x, y) * normalizeScale;
+        h += terrainData.GetHeight(x + 1, y) * normalizeScale;
+        h += terrainData.GetHeight(x - 1, y) * normalizeScale;
+        h += terrainData.GetHeight(x + 1, y + 1) * normalizeScale * 0.75F;
+        h += terrainData.GetHeight(x - 1, y + 1) * normalizeScale * 0.75F;
+        h += terrainData.GetHeight(x + 1, y - 1) * normalizeScale * 0.75F;
+        h += terrainData.GetHeight(x - 1, y - 1) * normalizeScale * 0.75F;
+        h += terrainData.GetHeight(x, y + 1) * normalizeScale;
+        h += terrainData.GetHeight(x, y - 1) * normalizeScale;
+        h /= 8.0F;
+        return h;
     }
 
     /// <summary>
@@ -287,8 +340,15 @@ public class TerrainUtility
         terrain.terrainData.SetHeights(xBase, yBase, heights);
     }
 
-    // TODO 
-    // public static void SaveHeightmapData(Terrain terrain, string path) {}
+    /// <summary>
+    /// 保存修改后的Terrain数据
+    /// </summary>
+    /// <param name="terrain"></param>
+    /// <param name="path">保存路径</param>
+    public static void SaveHeightmapData(Terrain terrain/*, string path*/)
+    {
+
+    }
 
     /// <summary>
     /// 扩大笔刷作用范围。
@@ -299,7 +359,7 @@ public class TerrainUtility
     /// <param name="row">HeightMap行数</param>
     /// <param name="column">HeightMap列数</param>
     /// <param name="amass">当笔刷范围内其他点的高度已经高于笔刷中心点时是否同时提高其他点的高度</param>
-    private static void ExpandBrush(float[,] heights, float deltaHeight, float initHeight, int row, int column, bool amass)
+    private static void ExpandBrush(float[,] heights, float deltaHeight, float initHeight, int row, int column, int radius, bool amass)
     {
         // 高度限制
         float limit = initHeight + deltaHeight;
@@ -308,19 +368,173 @@ public class TerrainUtility
         {
             for (int j = 0; j < column; j++)
             {
-                if (amass) { heights[i, j] += deltaHeight; }
+                // 圆外的点不做处理
+                float rPow = (i - radius) * (i - radius) + (j - radius) * (j - radius);
+                if (rPow >= radius * radius)
+                    continue;
+
+                float differ = 1 - rPow / (radius * radius);
+
+                if (amass) { heights[i, j] += differ * deltaHeight; }
                 else  // 不累加高度时
                 {
                     if (deltaHeight > 0)  // 升高地形
                     {
-                        heights[i, j] = heights[i, j] >= limit ? heights[i, j] : heights[i, j] + deltaHeight;
+                        heights[i, j] = heights[i, j] >= limit ? heights[i, j] : heights[i, j] + differ * deltaHeight;
                     }
                     else  // 降低地形
                     {
-                        heights[i, j] = heights[i, j] <= limit ? heights[i, j] : heights[i, j] + deltaHeight;
+                        heights[i, j] = heights[i, j] <= limit ? heights[i, j] : heights[i, j] + differ * deltaHeight;
                     }
                 }
             }
         }
+    }
+
+
+    /// <summary>
+    /// 改变指定位置周围四个顶点的高度
+    /// </summary>
+    /// <param name="terrain">目标地形块</param>
+    /// <param name="pos">目标位置</param>
+    /// <param name="heights">目标高度</param>
+    [Obsolete("已弃用，请使用ChangeHeight和Refresh搭配")]
+    public static void ChangeHeights(Terrain terrain, Vector3[] poses, float[] heights)
+    {
+        TerrainData terrainData = terrain.terrainData;
+        float[,] totalHeightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight); // 获取整块地图的高度数据
+
+        // 循环处理每个点
+        for (int p = 0; p < poses.Length; p++)
+        {
+            Vector3 pos = poses[p];
+
+            int[] index = GetHeightmapIndex(terrain, pos);
+            heights[p] = heights[p] / terrainData.size.y;    // 获取目标高度的相对比
+
+            // 改变一个方形块的高度
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
+                    int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                    totalHeightMap[zIndex, xIndex] = heights[p];
+                }
+            }
+        }
+
+        terrainData.SetHeights(0, 0, totalHeightMap);
+    }
+    public static void ChangeHeight(Terrain terrain, Vector3 pos, float height)
+    {
+        if (!terrainDic.ContainsKey(terrain))
+        {
+            terrainDic.Add(terrain, GetHeightMap(terrain));
+        }
+        TerrainData terrainData = terrain.terrainData;
+        float[,] totalHeightMap = terrainDic[terrain];  // 获取整块地图的高度数据
+
+        int[] index = GetHeightmapIndex(terrain, pos);
+        height = height / terrainData.size.y;    // 获取目标高度的相对比
+
+        // 改变一个方形块的高度
+        for (int i = 0; i < 2; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
+                int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                totalHeightMap[zIndex, xIndex] = height;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 改变点周围一圈点的高度
+    /// </summary>
+    /// <param name="terrain">目标地图块</param>
+    /// <param name="poses">目标位置</param>
+    /// <param name="heights">目标高度</param>
+    /// <param name="radius">圆半径</param>
+    [Obsolete("已弃用，ChangeCircleHeight和Refresh搭配")]
+    public static void ChangeCircleHeights(Terrain terrain, Vector3[] poses, float[] heights, float radius)
+    {
+        TerrainData terrainData = terrain.terrainData;
+        float[,] totalHeightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight); // 获取整块地图的高度数据
+
+        // 半径为radius的圆在x,z上的所占的索引
+        int radiusX = (int)(radius / (terrainData.size.x / terrainData.heightmapWidth)) + 1;
+        int radiusZ = (int)(radius / (terrainData.size.z / terrainData.heightmapHeight)) + 1;
+
+        // 循环处理每个点
+        for (int p = 0; p < poses.Length; p++)
+        {
+            Vector3 pos = poses[p];
+
+            int[] index = GetHeightmapIndex(terrain, pos);
+            heights[p] = heights[p] / terrainData.size.y;     // 获取目标高度的相对比
+
+            // 改变一个圆心区域的高度
+            for (int i = -radiusX; i < radiusX; i++)
+            {
+                for (int j = -radiusZ; j < radiusZ; j++)
+                {
+                    // 圆外的点不做处理
+                    float rPow = i * i + j * j;
+                    if (rPow >= Mathf.Pow((radiusX + radiusZ) / 2, 2))
+                        continue;
+
+                    int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
+                    int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                    totalHeightMap[zIndex, xIndex] = heights[p];
+                }
+            }
+        }
+        terrainData.SetHeights(0, 0, totalHeightMap);
+    }
+    public static void ChangeCircleHeight(Terrain terrain, Vector3 pos, float height, float radius)
+    {
+        if (!terrainDic.ContainsKey(terrain))
+        {
+            terrainDic.Add(terrain, GetHeightMap(terrain));
+        }
+        TerrainData terrainData = terrain.terrainData;
+        float[,] totalHeightMap = terrainDic[terrain];  // 获取整块地图的高度数据
+
+        // 半径为radius的圆在x,z上的所占的索引
+        int radiusX = (int)(radius / (terrainData.size.x / terrainData.heightmapWidth)) + 1;
+        int radiusZ = (int)(radius / (terrainData.size.z / terrainData.heightmapHeight)) + 1;
+
+        int[] index = GetHeightmapIndex(terrain, pos);
+        height = height / terrainData.size.y;     // 获取目标高度的相对比
+
+        // 改变一个圆心区域的高度
+        for (int i = -radiusX; i < radiusX; i++)
+        {
+            for (int j = -radiusZ; j < radiusZ; j++)
+            {
+                // 圆外的点不做处理
+                float rPow = i * i + j * j;
+                if (rPow >= Mathf.Pow((radiusX + radiusZ) / 2, 2))
+                    continue;
+
+                int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
+                int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                totalHeightMap[zIndex, xIndex] = height;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 刷新地图
+    /// </summary>
+    public static void Refresh()
+    {
+        foreach (var item in terrainDic)
+        {
+            item.Key.terrainData.SetHeights(0, 0, item.Value);
+        }
+        terrainDic.Clear();
     }
 }

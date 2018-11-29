@@ -9,7 +9,7 @@ public class Test : MonoBehaviour
 {
     private List<Vector3> positions;
     RaycastHit hit;
-    HermiteCurve curve;
+    SplineCurve curve;
     public float c;
 
     public MeshFilter meshFilter;
@@ -18,11 +18,29 @@ public class Test : MonoBehaviour
 
     private List<GameObject> objs = new List<GameObject>();
 
+    public SplineMode mode;
+
 
     private void Start()
     {
-        curve = new HermiteCurve();
+        curve = new SplineCurve(SplineMode.Catmull_Rom);
         positions = new List<Vector3>();
+
+
+        float[,] aaa = new float[2,3]
+        {
+            {1,2,3 },
+            {4,5,6 },
+        };
+        Debug.Log(aaa[1, 2]);
+        Debug.Log("");
+        AAA(aaa);
+        Debug.Log(aaa[1, 2]);
+    }
+
+    private void AAA(float[,] aaa)
+    {
+        aaa[1, 2] = 555;
     }
 
 
@@ -36,6 +54,7 @@ public class Test : MonoBehaviour
             {
                 curve.AddNode(positions[i], c);
             }
+            curve.AddCatmull_RomControl();
 
             for (int i = 0; i < curve.segmentList.Count; i++)
             {
@@ -55,7 +74,7 @@ public class Test : MonoBehaviour
         {
             objs.ForEach((a) => { Destroy(a); });
             objs.Clear();
-            curve = new HermiteCurve();
+            curve = new SplineCurve(mode);
             positions.Clear();
             path.Clear();
         }
