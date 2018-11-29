@@ -14,7 +14,7 @@ using UnityEngine;
 public enum SplineMode
 {
     Hermite,               // 埃尔米特样条
-    Catmull_Rom,           // Catmull_Rom
+    Catmull_Rom,           // Catmull_Rom 建议选择
     CentripetalCatmull_Rom,// 向心Catmull_Rom
 }
 
@@ -42,17 +42,17 @@ public class SplineCurve
     /// <summary>
     /// 曲线段集合
     /// </summary>
-    public List<HermiteSegement> segmentList { get; private set; }
+    public List<CurveSegement> segmentList { get; private set; }
     /// <summary>
     /// 曲线构造类型
     /// </summary>
     public SplineMode mode { get; private set; }
 
-    public SplineCurve(SplineMode _mode = SplineMode.Hermite)
+    public SplineCurve(SplineMode _mode = SplineMode.Catmull_Rom)
     {
         nodeList = new List<Node>();
         tangentsList = new List<Vector3>();
-        segmentList = new List<HermiteSegement>();
+        segmentList = new List<CurveSegement>();
         mode = _mode;
     }
 
@@ -97,7 +97,7 @@ public class SplineCurve
         
         if(nodeList.Count > 1)
         {
-            HermiteSegement a = new HermiteSegement(endNode, node,this);
+            CurveSegement a = new CurveSegement(endNode, node,this);
             a.c = c;
             segmentList.Add(a);
             CaculateTangents(segmentList.Count - 1);               // 计算新加入的曲线段起始切线
@@ -135,7 +135,7 @@ public class SplineCurve
     /// <param name="index"></param>
     private void CaculateTangents(int index)
     {
-        HermiteSegement segement = segmentList[index];
+        CurveSegement segement = segmentList[index];
 
         if(index == 0)
         {
@@ -144,7 +144,7 @@ public class SplineCurve
             return;
         }
 
-        HermiteSegement preSegement = segmentList[index - 1];
+        CurveSegement preSegement = segmentList[index - 1];
 
         segement.startTangents = 0.5f * (1 - segement.c) * (segement.endNode.pos - preSegement.endNode.pos);
         segement.endTangents = segement.endNode.pos - segement.startNode.pos;
@@ -156,7 +156,7 @@ public class SplineCurve
 /// <summary>
 /// 曲线段
 /// </summary>
-public class HermiteSegement
+public class CurveSegement
 {
     /// <summary>
     /// 所属曲线
@@ -180,7 +180,7 @@ public class HermiteSegement
     /// </summary>
     public float c { get;  set; }
 
-    public HermiteSegement(Node _startNode,Node _endNode,SplineCurve _rootCurve)
+    public CurveSegement(Node _startNode,Node _endNode,SplineCurve _rootCurve)
     {
         startNode = _startNode;
         endNode = _endNode;
