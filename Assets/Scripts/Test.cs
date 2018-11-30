@@ -1,15 +1,15 @@
-﻿using System;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using XDEDZL.Mathematics;
-using UniRx;
+using System;
 
 public class Test : MonoBehaviour
 {
     private List<Vector3> positions;
     RaycastHit hit;
-    SplineCurve curve;
+    SplineCurve outCurve;
+    SplineCurve inCurve;
+    SplineCurve centerCurve;
     public float c;
 
     public MeshFilter meshFilter;
@@ -18,65 +18,95 @@ public class Test : MonoBehaviour
 
     private List<GameObject> objs = new List<GameObject>();
 
-    public SplineMode mode;
-
 
     private void Start()
     {
-        curve = new SplineCurve(SplineMode.Catmull_Rom);
+        outCurve = new SplineCurve();
+        inCurve = new SplineCurve();
+        centerCurve = new SplineCurve();
         positions = new List<Vector3>();
-
-
-        float[,] aaa = new float[2,3]
-        {
-            {1,2,3 },
-            {4,5,6 },
-        };
-        Debug.Log(aaa[1, 2]);
-        Debug.Log("");
-        AAA(aaa);
-        Debug.Log(aaa[1, 2]);
     }
-
-    private void AAA(float[,] aaa)
-    {
-        aaa[1, 2] = 555;
-    }
-
 
     private void Update()
     {
         MouseLeft();
 
+        // 路面创建测试
         if (Input.GetKeyDown(KeyCode.K))
         {
+            List<Vector3> points_out = new List<Vector3>();
+            List<Vector3> points_in = new List<Vector3>();
+            Vector3 dirr;
+
+            dirr = PhysicsMath.GetHorizontalDir(positions[1] - positions[0]);
+            points_in.Add(positions[0] + dirr * 4);
+            points_out.Add(positions[0] - dirr * 4);
+
+            for (int i = 1; i < positions.Count - 1; i++)
+            {
+                dirr = PhysicsMath.GetHorizontalDir(positions[i + 1] - positions[i - 1]);
+                points_in.Add(positions[i] + dirr * 4);
+                points_out.Add(positions[i] - dirr * 4);
+            }
+
+            dirr = PhysicsMath.GetHorizontalDir(positions[positions.Count - 1] - positions[positions.Count - 2]);
+            points_in.Add(positions[positions.Count - 1] + dirr * 4);
+            points_out.Add(positions[positions.Count - 1] - dirr * 4);
+
             for (int i = 0; i < positions.Count; i++)
             {
-                curve.AddNode(positions[i], c);
+                outCurve.AddNode(points_out[i], c);
+                inCurve.AddNode(points_in[i], c);
+                centerCurve.AddNode(positions[i], c);
             }
-            curve.AddCatmull_RomControl();
+            outCurve.AddCatmull_RomControl();
+            inCurve.AddCatmull_RomControl();
+            centerCurve.AddCatmull_RomControl();
 
-            for (int i = 0; i < curve.segmentList.Count; i++)
+
+            for (int i = 0; i < outCurve.segmentList.Count; i++)
             {
                 float add = 1f / 20;
                 for (float j = 0; j < 1; j += add)
                 {
-                    Vector3 point = curve.segmentList[i].GetPoint(j);
+                    Vector3 point = centerCurve.segmentList[i].GetPoint(j);
                     path.Add(point);
                     objs.Add(Utility.CreatPrimitiveType(PrimitiveType.Sphere, point, 1, Color.red));
+
+                    //point = outCurve.segmentList[i].GetPoint(j);
+                    //path.Add(point);
+                    //objs.Add(Utility.CreatPrimitiveType(PrimitiveType.Sphere, point, 1, Color.red));
+
+                    //point = inCurve.segmentList[i].GetPoint(j);
+                    //path.Add(point);
+                    //objs.Add(Utility.CreatPrimitiveType(PrimitiveType.Sphere, point, 1, Color.red));
                 }
             }
 
-            //CreateRoads(meshFilter, path, 6);
+            CreateRoads(Terrain.activeTerrain, meshFilter, path, 6);
         }
-
         if (Input.GetKeyDown(KeyCode.C))
         {
+            meshFilter.mesh.Clear();
             objs.ForEach((a) => { Destroy(a); });
             objs.Clear();
-            curve = new SplineCurve(mode);
+            outCurve = new SplineCurve();
+            inCurve = new SplineCurve();
+            centerCurve = new SplineCurve();
             positions.Clear();
             path.Clear();
+        }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            hit = Utility.SendRay(LayerMask.GetMask("Terrain"));
+        }
+
+
+        // 刷新地图
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            TerrainUtility.Refresh();
         }
     }
 
@@ -89,63 +119,42 @@ public class Test : MonoBehaviour
             {
                 Vector3 worldHitPos = hit.point + Vector3.up * 5;
                 positions.Add(worldHitPos);
-                GameObject gameObject = Utility.CreatPrimitiveType(PrimitiveType.Cube, worldHitPos, 1f,Color.red);
+                GameObject gameObject = Utility.CreatPrimitiveType(PrimitiveType.Cube, worldHitPos, 1f, Color.white);
                 objs.Add(gameObject);
             }
         }
     }
 
-
-
     /// <summary>
-    /// 根据传参 路点信息 创建路面
+    /// 根据传参 路径点信息 创建路面：
+    /// 0 --- 2
+    /// |     |
+    /// 1 --- 3
     /// </summary>
     /// <param name="meshFilter">路面网格</param>
     /// <param name="_roadPoints">路点</param>
     /// <param name="_width">路面宽度</param>
-    private void CreateRoads(MeshFilter meshFilter, List<Vector3> _roadPoints, float _width)
+    public static void CreateRoads(Terrain terrain, MeshFilter meshFilter, List<Vector3> wayPoints, float _width = 5)
     {
-        if (_roadPoints.Count < 2) return;
+        if (wayPoints.Count < 2) return;    // 路点数量不能低于2个
 
-        Mesh mesh = meshFilter.mesh;
+        List<Vector3> _roadPoints = wayPoints;   // 取出路径点
+
         List<Vector3> vertice = new List<Vector3>();    // 顶点
         List<int> triangles = new List<int>();          // 三角形排序
         List<Vector2> uv = new List<Vector2>();         // uv排序
 
         Vector3 dir = PhysicsMath.GetHorizontalDir(_roadPoints[1], _roadPoints[0]);   // 获取两点间的垂直向量
-        vertice.Add(_roadPoints[0] + dir * _width);
+        vertice.Add(_roadPoints[0] + dir * _width);     // 添加初始顶点
         vertice.Add(_roadPoints[0] - dir * _width);
 
-        uv.Add(Vector2.zero);
+        uv.Add(Vector2.zero);                           // 添加初始顶点对应uv
         uv.Add(Vector2.right);
 
-        for (int i = 1, count = _roadPoints.Count - 1; i < count; i++)
+        for (int i = 1, count = _roadPoints.Count; i < count; i++)
         {
-            // 添加由路点生成的点集
-
-            //Vector3 center = CircleCenter(_roadPoints[i - 1], _roadPoints[i], _roadPoints[i + 1]);
-            //if (center == _roadPoints[i])
-            //{
-            //    // 如果三点成直线则无法形成一个圆
-            //    dir = PhysicsMath.GetHorizontalDir(_roadPoints[i], _roadPoints[i - 1]);
-            //}
-            //else
-            //{
-            //    List<Vector3> temp = new List<Vector3>(_roadPoints);
-            //    temp.RemoveAt(i);
-
-            //    if (PhysicsMath.IsPointInsidePolygon(_roadPoints[i], temp))
-            //    {
-            //        dir = (center - _roadPoints[i]).normalized;
-            //    }
-            //    else
-            //    {
-            //        dir = (_roadPoints[i] - center).normalized; ;
-            //    }
-            //}
-
+            // 添加由 路径点 生成的路面点集
             dir = PhysicsMath.GetHorizontalDir(_roadPoints[i], _roadPoints[i - 1]);
-
             vertice.Add(_roadPoints[i] + dir * _width);
             vertice.Add(_roadPoints[i] - dir * _width);
 
@@ -171,6 +180,10 @@ public class Test : MonoBehaviour
             }
         }
 
+        List<float> roadHeights = PointsFitToTerrain(terrain, ref vertice);                     // 路面高度适配地形
+
+        TerrainUtility.ChangeHeights(terrain, _roadPoints.ToArray(), roadHeights.ToArray());    // 将道路整平
+
         meshFilter.mesh.Clear();
         meshFilter.mesh.vertices = vertice.ToArray();
         meshFilter.mesh.triangles = triangles.ToArray();
@@ -182,30 +195,27 @@ public class Test : MonoBehaviour
     }
 
     /// <summary>
-    /// 获取三个点确定一个圆的圆心
+    /// 使得路面点集适配(贴合)地形
     /// </summary>
-    /// <param name="v1"></param>
-    /// <param name="v2"></param>
-    /// <param name="v3"></param>
-    private Vector3 CircleCenter(Vector3 v1, Vector3 v2, Vector3 v3)
+    /// <param name="terrain">给定地形</param>
+    /// <param name="points">路面点集</param>
+    public static List<float> PointsFitToTerrain(Terrain terrain, ref List<Vector3> points)
     {
-        // 三点可连成一条直线时无法确定一个圆
-        if (Mathf.Abs((v1.x - v2.x) * (v1.y - v3.y) - (v1.x - v3.x) * (v1.y - v2.y)) < 0.2f)
+        List<Vector3> roadPointDoub = new List<Vector3>();     // 两侧路面高度
+        List<float> roadHeightSing = new List<float>();     // 两侧路面高度min
+        RaycastHit hit;
+        for (int i = 0, length = points.Count; i < length; i++)
         {
-            return v2;
+            if (Physics.Raycast(points[i] + Vector3.up * 111, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
+            {
+                points[i] = hit.point + Vector3.up * 0.2f;
+            }
+            roadPointDoub.Add(points[i]);
         }
-
-        float a = v1.x - v2.x;
-        float b = v1.y - v2.y;
-        float c = v1.x - v3.x;
-        float d = v1.y - v3.y;
-
-        float e = ((v1.x * v1.x - v2.x * v2.x) - (v2.y * v2.y - v1.y * v1.y)) * 0.5f;
-        float f = ((v1.x * v1.x - v3.x * v3.x) - (v3.y * v3.y - v1.y * v1.y)) * 0.5f;
-
-        float x = -(d * e - b * f) / (b * c - a * d);
-        float z = -(a * f - c * e) / (b * c - a * d);
-
-        return new Vector3(-x, v2.y, -z);
+        for (int i = 0, length = roadPointDoub.Count / 2; i < length; i++)
+        {
+            roadHeightSing.Add(Mathf.Min(roadPointDoub[2 * i].y, roadPointDoub[2 * i + 1].y));
+        }
+        return roadHeightSing;
     }
 }

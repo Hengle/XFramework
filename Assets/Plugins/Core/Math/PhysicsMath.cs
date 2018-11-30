@@ -1,12 +1,13 @@
 // ==========================================
 // 描述： 
-// 作者： YIZhe
+// 作者： HAK
 // 时间： 2018-10-18 15:30:33
 // 版本： V 1.0
 // ==========================================
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 /// <summary>
 /// 所有物理数学相关计算方法
@@ -311,9 +312,13 @@ public class PhysicsMath
     /// <returns></returns>
     public static Vector3 GetHorizontalDir(Vector3 _start, Vector3 _end)
     {
-        Vector3 _dirValue = (_end - _start).normalized;
+        Vector3 _dirValue = (_end - _start);
+        return GetHorizontalDir(_dirValue);
+    }
+    public static Vector3 GetHorizontalDir(Vector3 _dirValue)
+    {
         Vector3 returnVec = new Vector3(_dirValue.z, 0, -_dirValue.x);
-        return returnVec;
+        return returnVec.normalized;
     }
 
     /// <summary>
@@ -325,6 +330,10 @@ public class PhysicsMath
     public static Vector3 GetVerticalDir(Vector3 _start, Vector3 _end)
     {
         Vector3 vector = _end - _start;             // 两点之间的向量
+        return GetVerticalDir(vector);
+    }
+    public static Vector3 GetVerticalDir(Vector3 vector)
+    {
         Vector3 dirUp;                              // 两点间向量的垂直向量
         if (vector.y == 0)
         {
@@ -342,6 +351,11 @@ public class PhysicsMath
         }
         return dirUp;
     }
+
+
+    #endregion
+
+    #region 曲线相关
 
     /// <summary>
     /// 获取三点形成的贝塞尔曲线点集（返回点集比分割段数多1）
@@ -363,8 +377,13 @@ public class PhysicsMath
 
         return _pos;
     }
-
-    // 根据当前时间t 返回路径  其中startPos为起点 endPos为终点 midPos为中间点   
+    /// <summary>
+    ///  根据当前时间t 返回路径
+    /// </summary>
+    /// <param name="startPos">起点</param>
+    /// <param name="endPos">终点</param>
+    /// <param name="midPos">中间点</param>
+    /// <returns></returns>
     private static Vector3 GetVector(float t, Vector3 startPos, Vector3 endPos, Vector3 midPos)
     {
         Vector3 outPoint;
@@ -374,6 +393,89 @@ public class PhysicsMath
         outPoint.z = t * t * (endPos.z - 2 * midPos.z + startPos.z) + startPos.z + 2 * t * (midPos.z - startPos.z);
         return outPoint;
     }
+
+    /// <summary>         
+    /// 获取曲线上面的所有路径点
+    /// </summary> 
+    /// <returns>The list.</returns> 
+    /// <param name="wayPoints">路点列表</param> 
+    /// <param name="pointSize">两个点之间的节点数量</param> 
+    public static List<Vector3> GetPoints(List<Vector3> wayPoints)
+    {
+        Vector3[] controlPointList = PathControlPointGenerator(wayPoints.ToArray());
+        int smoothAmount = 0;       // wayPoints.Length * pointSize;     
+
+        // 根据 路点 间的距离计算所需 路径点 的数量
+        for (int i = 0, length = wayPoints.Count - 1; i < length; i++)
+        {
+            smoothAmount += (int)Vector3.Distance(wayPoints[i + 1], wayPoints[i]) / 4;
+        }
+
+        Vector3[] pointArr = new Vector3[smoothAmount];
+        for (int index = 1; index <= smoothAmount; index++)
+        {
+            pointArr[index - 1] = Interp(controlPointList, (float)index / smoothAmount);
+        }
+        return pointArr.ToList();
+    }
+    /// <summary> 
+    /// 获取控制点 
+    /// </summary> 
+    /// <returns>The control point generator.</returns> 
+    /// <param name="path">Path.</param> 
+    private static Vector3[] PathControlPointGenerator(Vector3[] path)
+    {
+        int offset = 2;
+        Vector3[] suppliedPath = path;
+        Vector3[] controlPoint = new Vector3[suppliedPath.Length + offset];
+
+        Array.Copy(suppliedPath, 0, controlPoint, 1, suppliedPath.Length);
+
+        controlPoint[0] = controlPoint[1] + (controlPoint[1] - controlPoint[2]);
+        controlPoint[controlPoint.Length - 1] = controlPoint[controlPoint.Length - 2] +
+            (controlPoint[controlPoint.Length - 2] - controlPoint[controlPoint.Length - 3]);
+
+        if (controlPoint[1] == controlPoint[controlPoint.Length - 2])
+        {
+            Vector3[] tmpLoopSpline = new Vector3[controlPoint.Length];
+
+            Array.Copy(controlPoint, tmpLoopSpline, controlPoint.Length);
+
+            tmpLoopSpline[0] = tmpLoopSpline[tmpLoopSpline.Length - 3];
+
+            tmpLoopSpline[tmpLoopSpline.Length - 1] = tmpLoopSpline[2];
+
+            controlPoint = new Vector3[tmpLoopSpline.Length];
+
+            Array.Copy(tmpLoopSpline, controlPoint, tmpLoopSpline.Length);
+        }
+        return (controlPoint);
+    }
+    /// <summary> 
+    /// 根据 T 获取曲线上面的点位置 ，
+    /// 插值函数，
+    /// Hermit曲线方程
+    /// </summary> 
+    /// <param name="pts">控制点点集</param> 
+    /// <param name="t">分割进度</param> 
+    private static Vector3 Interp(Vector3[] pts, float t)
+    {
+        int numSections = pts.Length - 3;       // 控制点总数减3
+        int currPt = Mathf.Min(Mathf.FloorToInt(t * (float)numSections), numSections - 1);
+
+        float u = t * (float)numSections - (float)currPt;
+
+        Vector3 a = pts[currPt];
+        Vector3 b = pts[currPt + 1];
+        Vector3 c = pts[currPt + 2];
+        Vector3 d = pts[currPt + 3];
+
+        //Debug.DrawLine(b, b + (-a + c).normalized * 10, Color.red,50);
+
+        return .5f * ((-a + 3f * b - 3f * c + d) * (u * u * u) +
+            (2f * a - 5f * b + 4f * c - d) * (u * u) + (-a + c) * u + 2f * b);
+    }
+
     #endregion
 
     #region 半球形与圆形
@@ -1012,8 +1114,10 @@ public class PhysicsMath
     /// <param name="centerPos">中心点位置</param>
     /// <param name="totalNum">总数</param>
     /// <param name="dir">偏移方向(朝向)</param>
+    /// <param name="rowInter">行间距</param>
+    /// <param name="columnInter">列间距</param>
     /// <returns></returns>
-    public static Vector3[] CalculatePositions(Vector3 centerPos, int totalNum, Vector3 dir = default(Vector3))
+    public static Vector3[] CalculatePositions(Vector3 centerPos, int totalNum, Vector3 dir = default(Vector3), int rowInter = 50, int columnInter = 20)
     {
         Vector2 vertDirV2 = PhysicsMath.GetTargetVector(new Vector2(dir.x, dir.z));        // 获取垂直向量
         Vector3 vertDir = new Vector3(vertDirV2.x, 0, vertDirV2.y);
@@ -1022,12 +1126,10 @@ public class PhysicsMath
         int row = totalNum / column;                                // 行数
         int remain = totalNum % column;                             // 余下的
 
-        int rowInter = 50;       // 行间距
-        int columnInter = 20;    // 列间距
         List<Vector3> unitsPos = new List<Vector3>();       // 临时保存单位位置
 
         // 一行行添加创建单位的位置
-        Vector3 startPos = centerPos + dir * (rowInter * row / 2) + vertDir * (columnInter * column / 2);
+        Vector3 startPos = centerPos + dir * (rowInter * (row / 2)) + vertDir * (columnInter * (column / 2));
 
         int rowInterval = 0;     // 临时行间距
         for (int i = 0; i < row; i++, rowInterval += rowInter)
@@ -1051,12 +1153,49 @@ public class PhysicsMath
     /// <returns>平方米</returns>
     public static float ComputePolygonArea(List<Vector3> points)
     {
-        int point_num = points.Count;
-        if (point_num < 3)
-            return 0.0f;
-        float s = points[0].z * (points[point_num - 1].x - points[1].x);
-        for (int i = 1; i < point_num; ++i)
-            s += points[i].z * (points[i - 1].x - points[(i + 1) % point_num].x);
-        return Mathf.Abs((float)(s / 2.0));
+        float iArea = 0;
+
+        for (int iCycle = 0, iCount = points.Count; iCycle < iCount; iCycle++)
+        {
+            iArea += (points[iCycle].x * points[(iCycle + 1) % iCount].z - points[(iCycle + 1) % iCount].x * points[iCycle].z);
+        }
+
+        return (float)Math.Abs(0.5 * iArea);
+    }
+
+    /// <summary>
+    /// 计算线段是否相交
+    /// 端点相交不算相交
+    /// </summary>
+    public static bool LineLineIntersection(Vector3 line0Start, Vector3 line0End, Vector3 line1Start, Vector3 line1End)
+    {
+        Vector3 p = line0Start;
+        Vector3 r = line0End - line0Start;
+        Vector3 q = line1Start;
+        Vector3 s = line1End - line1Start;
+        Vector3 pq = q - p;
+        float rxs = r.x * s.z - r.z * s.x;
+        float pqxr = pq.x * r.z - pq.z * r.x;
+        if (IsApproximately(rxs, 0f))
+        {
+            if (IsApproximately(pqxr, 0f))
+            {
+                return true;
+            }
+            return false;
+        }
+        float pqxs = pq.x * s.z - pq.z * s.x;
+        float t = pqxs / rxs;
+        float u = pqxr / rxs;
+        return t > 0 && t < 1 && u > 0 && u < 1;
+    }
+
+    /// <summary>
+    /// 计算两个数字是否接近相等,阈值是dvalue
+    /// </summary>
+    public static bool IsApproximately(double a, double b, double dvalue = 0)
+    {
+        double delta = a - b;
+        return delta >= -dvalue && delta <= dvalue;
     }
 }

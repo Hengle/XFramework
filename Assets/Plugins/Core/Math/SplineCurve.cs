@@ -203,15 +203,6 @@ public class CurveSegement
                 x += (-2 * t * t * t + 3 * t * t) * endNode.pos;
                 x += (t * t * t - 2 * t * t + t) * startTangents;
                 x += (t * t * t - t * t) * endTangents;
-                //float y = (2 * t * t * t - 3 * t * t + 1) * startPos.y;
-                //y += (-2 * t * t * t + 3 * t * t) * endPos.y;
-                //y += (t * t * t - 2 * t * t + t) * startTangents.y;
-                //y += (t * t * t - t * t) * endTangents.z;
-
-                //float z = (2 * t * t * t - 3 * t * t + 1) * startPos.z;
-                //z += (t * t * t - 2 * t * t + t) * startTangents.z;
-                //z += (-2 * t * t * t + 3 * t * t) * endPos.z;
-                //z += (t * t * t - t * t) * endTangents.z;
                 break;
             case SplineMode.Catmull_Rom:
                 x += startNode.preNode.pos * (-0.5f * t * t * t + t * t - 0.5f * t);
@@ -236,11 +227,28 @@ public class CurveSegement
     /// <returns></returns>
     public Vector3 GetTangents(float t)
     {
-        Vector3 a = (6 * t * t - 6 * t) * startNode.pos;
-        a += (-6 * t * t + 6 * t) * endNode.pos;
-        a += (3 * t * t - 4 * t + 1) * startTangents;
-        a += (3 * t * t - 2 * t) * endTangents;
-        return a;
+        Vector3 tangents = Vector3.zero;
+        switch (rootCurve.mode)
+        {
+            case SplineMode.Hermite:
+                tangents = (6 * t * t - 6 * t) * startNode.pos;
+                tangents += (-6 * t * t + 6 * t) * endNode.pos;
+                tangents += (3 * t * t - 4 * t + 1) * startTangents;
+                tangents += (3 * t * t - 2 * t) * endTangents;
+                break;
+            case SplineMode.Catmull_Rom:
+                tangents = startNode.preNode.pos * (-1.5f * t * t + 2 * t - 0.5f);
+                tangents += startNode.pos * (3.0f * t * t - 5.0f * t);
+                tangents += endNode.pos * (-3.0f * t * t + 4.0f * t + 0.5f);
+                tangents += endNode.nextNode.pos * (1.5f * t * t - 1.0f * t);
+                break;
+            case SplineMode.CentripetalCatmull_Rom:
+                break;
+            default:
+                break;
+        }
+        
+        return tangents;
     }
 }
 

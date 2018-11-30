@@ -17,6 +17,8 @@ public class TerrainUtility
 
     private static Dictionary<Terrain, float[,]> terrainDic = new Dictionary<Terrain, float[,]>();
 
+
+    #region 高度图相关
     /// <summary>
     /// 返回Terrain上某一点的HeightMap索引。
     /// </summary>
@@ -525,6 +527,16 @@ public class TerrainUtility
             }
         }
     }
+
+    #endregion
+
+    #region 树木
+
+    #endregion
+
+    #region 细节纹理 草
+
+    #endregion
 
     /// <summary>
     /// 刷新地图

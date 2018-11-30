@@ -307,3 +307,6 @@ F:\GitHub\xdedzl\obj\Debug\UniRx.csproj.CoreCompileInputs.cache
 F:\GitHub\xdedzl\obj\Debug\UniRx.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\UniRx.dll
 F:\GitHub\xdedzl\obj\Debug\UniRx.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\Boo.Lang.Parser.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\Boo.Lang.Compiler.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\Boo.Lang.dll
