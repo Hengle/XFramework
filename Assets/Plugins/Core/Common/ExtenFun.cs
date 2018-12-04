@@ -35,6 +35,7 @@ public static class ExtenFun
     {
         return new Vector2(v.x, y);
     }
+
     #endregion
 
     #region Transform
@@ -102,7 +103,7 @@ public static class ExtenFun
 
     #endregion
 
-    #region Array
+    #region Collection
 
     public static void ForEach<T>(this IEnumerable<T> value, Action<T> action)
     {
@@ -110,6 +111,13 @@ public static class ExtenFun
         {
             action(obj);
         }
+    }
+
+    public static Value GetValue<Key, Value>(this Dictionary<Key, Value> dic, Key key)
+    {
+        Value value;
+        dic.TryGetValue(key, out value);
+        return value;
     }
 
     #endregion

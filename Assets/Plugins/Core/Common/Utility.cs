@@ -46,7 +46,7 @@ public static class Utility
         GameObject obj = GameObject.CreatePrimitive(type);
         obj.transform.position = pos;
         obj.transform.localScale = Vector3.one * size;
-        obj.GetComponent<MeshRenderer>().sharedMaterial.color = color;
+        obj.GetComponent<MeshRenderer>().material.color = color;
         return obj;
     }
 
