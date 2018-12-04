@@ -63,6 +63,7 @@ public static class TerrainUtility
             brushDic.Add(textures[i].name, alphas);
         }
     }
+
     /// <summary>
     /// 返回Terrain上某一点的HeightMap索引。
     /// </summary>
@@ -335,7 +336,7 @@ public static class TerrainUtility
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public static float Smooth(TerrainData terrainData, int x,int y)
+    public static float Smooth(TerrainData terrainData, int x, int y)
     {
         float h = 0.0F;
         float normalizeScale = 1.0F / terrainData.size.y;
@@ -405,7 +406,7 @@ public static class TerrainUtility
     /// <param name="row">HeightMap行数</param>
     /// <param name="column">HeightMap列数</param>
     /// <param name="amass">当笔刷范围内其他点的高度已经高于笔刷中心点时是否同时提高其他点的高度</param>
-    private static void ExpandBrush(float[,] heights, float deltaHeight, float initHeight, int row, int column,int radius, bool amass)
+    private static void ExpandBrush(float[,] heights, float deltaHeight, float initHeight, int row, int column, int radius, bool amass)
     {
         // 高度限制
         float limit = initHeight + deltaHeight;
@@ -416,7 +417,7 @@ public static class TerrainUtility
             {
                 // 圆外的点不做处理
                 float rPow = (i - radius) * (i - radius) + (j - radius) * (j - radius);
-                if ( rPow >= radius * radius)
+                if (rPow >= radius * radius)
                     continue;
 
                 float differ = 1 - rPow / (radius * radius);
@@ -503,7 +504,7 @@ public static class TerrainUtility
     /// <param name="heights">目标高度</param>
     /// <param name="radius">圆半径</param>
     [Obsolete("已弃用，ChangeCircleHeight和Refresh搭配")]
-    public static void ChangeCircleHeights(Terrain terrain,Vector3[] poses, float[] heights, float radius)
+    public static void ChangeCircleHeights(Terrain terrain, Vector3[] poses, float[] heights, float radius)
     {
         TerrainData terrainData = terrain.terrainData;
         float[,] totalHeightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, terrainData.heightmapHeight); // 获取整块地图的高度数据
@@ -571,6 +572,11 @@ public static class TerrainUtility
         }
     }
 
+    public static void ChangeHeightWithBrush(Terrain terrain)
+    {
+
+    }
+
     #endregion
 
     #region 树木
@@ -588,7 +594,7 @@ public static class TerrainUtility
             trees[i].prefab = objs[i];
         }
         Terrain[] terrains = Terrain.activeTerrains;
-        for (int i = 0,length = terrains.Length; i < length; i++)
+        for (int i = 0, length = terrains.Length; i < length; i++)
         {
             terrains[i].terrainData.treePrototypes = trees;
         }
@@ -598,46 +604,55 @@ public static class TerrainUtility
     /// 创建树木
     /// </summary>
     /// <param name="terrain"></param>
-    /// <param name="poss"></param>
-    public static void CreatTree(Terrain terrain, Vector3 poss, int count, int radius)
+    /// <param name="pos"></param>
+    public static void CreatTree(Terrain terrain, Vector3 pos, int count, int radius)
     {
-        RaycastHit hitInfo;
         TerrainData terrainData = terrain.terrainData;
+        Vector3 relativePosition;
+        Vector3 position;
 
         for (int i = 0; i < count; i++)
         {
-            Vector3 position = poss + new Vector3(UnityEngine.Random.Range(-radius, radius), 0, UnityEngine.Random.Range(-radius, radius)) 
-                - terrain.GetPosition();
+            // 获取世界坐标系的位置和相对位置
+            position = pos + new Vector3(UnityEngine.Random.Range(-radius, radius), 0, UnityEngine.Random.Range(-radius, radius));
+            relativePosition = position - terrain.GetPosition();
+
+            if (Mathf.Pow(pos.x - position.x, 2) + Mathf.Pow(pos.z - position.z, 2) > radius * radius)
+            {
+                i--; // 没有创建的数不计入
+                continue;
+            }
+
+            // 设置新添加的树的参数
             TreeInstance instance = new TreeInstance();
-            instance.prototypeIndex = 2;
+            instance.prototypeIndex = 0;
             instance.color = Color.white;
             instance.lightmapColor = Color.white;
             instance.widthScale = 1;
             instance.heightScale = 1;
-            Vector3 pos = new Vector3(position.x / terrainData.size.x, position.y / terrainData.size.y, position.z / terrainData.size.z);
-            if (pos.x > 1 || pos.z > 1)
+
+            Vector3 p = new Vector3(relativePosition.x / terrainData.size.x, 0, relativePosition.z / terrainData.size.z);
+            if (p.x > 1 || p.z > 1)
             {
-                if (pos.x > 1)
-                    pos.x = pos.x - 1;
-                if (pos.z > 1)
-                    pos.z = pos.z - 1;
-                instance.position = pos;
-                Physics.Raycast(position + terrain.GetPosition() + Vector3.up * 100, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
-                hitInfo.collider?.GetComponent<Terrain>().AddTreeInstance(instance);
+                if (p.x > 1)
+                    p.x = p.x - 1;
+                if (p.z > 1)
+                    p.z = p.z - 1;
+                instance.position = p;
+                GetTerrain(position)?.AddTreeInstance(instance);
             }
-            else if (pos.x < 0 || pos.z < 0)
+            else if (p.x < 0 || p.z < 0)
             {
-                if (pos.x < 0)
-                    pos.x = pos.x + 1;
-                if (pos.z < 0)
-                    pos.z = pos.z + 1;
-                instance.position = pos;
-                Physics.Raycast(position + terrain.GetPosition() + Vector3.up * 100, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
-                hitInfo.collider?.GetComponent<Terrain>().AddTreeInstance(instance);
+                if (p.x < 0)
+                    p.x = p.x + 1;
+                if (p.z < 0)
+                    p.z = p.z + 1;
+                instance.position = p;
+                GetTerrain(position)?.AddTreeInstance(instance);
             }
             else
             {
-                instance.position = pos;
+                instance.position = p;
                 terrain.AddTreeInstance(instance);
             }
         }
@@ -674,7 +689,7 @@ public static class TerrainUtility
         if (heightsStack != null && heightsStack.Count > 0)
         {
             terrain.terrainData.SetHeights(0, 0, heightsStack.Pop().heights);
-            if(heightsStack.Count == 0)
+            if (heightsStack.Count == 0)
             {
                 oldTerrainData.Remove(terrain);
             }
@@ -682,6 +697,8 @@ public static class TerrainUtility
     }
 
     #endregion
+
+    #region  工具
 
     /// <summary>
     /// 刷新地图
@@ -694,6 +711,19 @@ public static class TerrainUtility
         }
         terrainDic.Clear();
     }
+
+    /// <summary>
+    /// 获取当前位置所对应的地图块
+    /// </summary>
+    public static Terrain GetTerrain(Vector3 pos)
+    {
+        RaycastHit hitInfo;
+        Physics.Raycast(pos + Vector3.up * 1000, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
+        return hitInfo.collider?.GetComponent<Terrain>();
+    }
+
+    #endregion
+
 
     struct TerrainCmdData
     {
