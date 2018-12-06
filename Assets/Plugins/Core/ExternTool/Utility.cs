@@ -13,8 +13,7 @@ using UnityEngine;
 /// <summary>
 /// 使用工具类
 /// </summary>
-public static class Utility
-{
+public static class Utility {
 
     public delegate T Del<T>(T a);
 
@@ -22,10 +21,23 @@ public static class Utility
     /// <summary>
     /// 发射射线并范围RaycastInfo
     /// </summary>
-    public static RaycastHit SendRay(int layer = 0)
+    public static RaycastHit SendRay(int layer = -1)
     {
         RaycastHit hitInfo;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, float.MaxValue, layer))
+        {
+            return hitInfo;
+        }
+        else
+        {
+            return default(RaycastHit);
+        }
+    }
+    public static RaycastHit SendRayDown(Vector3 start,int layer = -1)
+    {
+        RaycastHit hitInfo;
+        start.y += 10000;
+        if (Physics.Raycast(start,Vector3.down, out hitInfo, float.MaxValue, layer))
         {
             return hitInfo;
         }
@@ -41,11 +53,16 @@ public static class Utility
     /// <param name="pos"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    public static GameObject CreatPrimitiveType(PrimitiveType type, Vector3 pos = default(Vector3), float size = 1, Color color = default(Color))
+    public static GameObject CreatPrimitiveType(PrimitiveType type, Vector3 pos = default(Vector3), float size = 1)
     {
         GameObject obj = GameObject.CreatePrimitive(type);
         obj.transform.position = pos;
         obj.transform.localScale = Vector3.one * size;
+        return obj;
+    }
+    public static GameObject CreatPrimitiveType(PrimitiveType type, Color color, Vector3 pos = default(Vector3), float size = 1)
+    {
+        GameObject obj = CreatPrimitiveType(type,pos,size);
         obj.GetComponent<MeshRenderer>().material.color = color;
         return obj;
     }
@@ -82,7 +99,7 @@ public static class Utility
     public static Vector3[] GetPositions(Transform[] trans)
     {
         Vector3[] poses = new Vector3[trans.Length];
-        for (int i = 0, length = trans.Length; i < length; i++)
+        for (int i = 0,length = trans.Length; i < length; i++)
         {
             poses[i] = trans[i].position;
         }

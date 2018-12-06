@@ -10,7 +10,7 @@ public class RoadTest : MonoBehaviour
     SplineCurve outCurve;
     SplineCurve inCurve;
     SplineCurve centerCurve;
-    public float c; 
+    public float c;
 
     public MeshFilter meshFilter;
 
@@ -71,7 +71,7 @@ public class RoadTest : MonoBehaviour
                 {
                     Vector3 point = centerCurve.segmentList[i].GetPoint(j);
                     path.Add(point);
-                    objs.Add(Utility.CreatPrimitiveType(PrimitiveType.Sphere, point, 1, Color.red));
+                    objs.Add(Utility.CreatPrimitiveType(PrimitiveType.Sphere, Color.red, point, 1));
 
                     //point = outCurve.segmentList[i].GetPoint(j);
                     //path.Add(point);
@@ -119,7 +119,7 @@ public class RoadTest : MonoBehaviour
             {
                 Vector3 worldHitPos = hit.point + Vector3.up * 5;
                 positions.Add(worldHitPos);
-                GameObject gameObject = Utility.CreatPrimitiveType(PrimitiveType.Cube, worldHitPos, 1f, Color.white);
+                GameObject gameObject = Utility.CreatPrimitiveType(PrimitiveType.Cube, Color.white, worldHitPos, 1f);
                 objs.Add(gameObject);
             }
         }
