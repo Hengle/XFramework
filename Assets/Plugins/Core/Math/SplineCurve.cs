@@ -16,6 +16,7 @@ public enum SplineMode
     Hermite,               // 埃尔米特样条
     Catmull_Rom,           // Catmull_Rom 建议选择
     CentripetalCatmull_Rom,// 向心Catmull_Rom
+    B_Spline,              // 均匀B样条
 }
 
 /// <summary>

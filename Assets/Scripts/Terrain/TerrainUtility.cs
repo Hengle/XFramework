@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System;
 using System.Reflection;
 using System.Linq;
+using System.Threading.Tasks;
 /** 
- * Terrain的HeightMap坐标原点在左下角
- *   y
- *   ↑
- *   0 → x
- */
+* Terrain的HeightMap坐标原点在左下角
+*   y
+*   ↑
+*   0 → x
+*/
 /// <summary>
 /// Terrain工具
 /// terrainData.GetHeights和SetHeights的参数都是 值域为[0,1]的比例值
@@ -16,13 +17,15 @@ using System.Linq;
 public static class TerrainUtility
 {
     /// <summary>
-    /// 用于修改高度的单位地面
+    /// 用于修改高度的单位高度
     /// </summary>
     private static float deltaHeight;
+    private static Vector3 terrainSize;
+    private static int heightMapRes;
     /// <summary>
     /// 用于记录要修改的Terrain目标数据，修改后统一刷新
     /// </summary>
-    private static Dictionary<string, float[,]> brushDic = new Dictionary<string, float[,]>();
+    private static Dictionary<int, float[,]> brushDic = new Dictionary<int, float[,]>();
     /// <summary>
     /// 用于记录要修改的Terrain目标数据，修改后统一刷新
     /// </summary>
@@ -38,9 +41,12 @@ public static class TerrainUtility
     static TerrainUtility()
     {
         deltaHeight = 1 / Terrain.activeTerrain.terrainData.size.y;
+        terrainSize = Terrain.activeTerrain.terrainData.size;
+        heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
         InitBrushs();
         InitTreePrototype();
         InitDetailPrototype();
+        InitTextures();
     }
 
     #region 高度图相关
@@ -67,7 +73,7 @@ public static class TerrainUtility
                     index++;
                 }
             }
-            brushDic.Add(textures[i].name, alphas);
+            brushDic.Add(i, alphas);
         }
     }
 
@@ -202,236 +208,136 @@ public static class TerrainUtility
     }
 
     /// <summary>
-    /// 升高Terrain上某点的高度。
+    /// 初始化地形高度图编辑所需要的参数
+    /// 后四个参数需要在调用前定义
     /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="point">Terrain上的点</param>
-    /// <param name="opacity">升高的高度</param>
-    /// <param name="size">笔刷大小</param>
-    /// <param name="amass">当笔刷范围内其他点的高度已经高于笔刷中心点时是否同时提高其他点的高度</param>
-    public static void Rise(Terrain terrain, Vector3 point, float opacity, int size, bool amass = true)
+    /// <param name="center">目标中心</param>
+    /// <param name="radius">半径</param>
+    /// <param name="mapIndex">起始修改点在高度图上的索引</param>
+    /// <param name="heightMap">要修改的高度二维数组</param>
+    /// <param name="mapRadius">修改半径对应的索引半径</param>
+    /// <param name="limit">限制高度</param>
+    /// <returns></returns>
+    public static Terrain InitHMArg(Vector3 center, float radius, ref int[] mapIndex, ref float[,] heightMap, ref int mapRadius, ref float limit)
     {
-        int[] index = GetHeightmapIndex(terrain, point);
-        Rise(terrain, index, opacity, size, amass);
+        Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
+        // 左下方Terrain
+        Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+        // 左下至少有一个方向没有Terrain
+        if (terrain != null)
+        {
+            // 获取相关参数
+            mapRadius = (int)(terrain.terrainData.heightmapResolution / terrain.terrainData.size.x * radius);
+            mapIndex = GetHeightmapIndex(terrain, leftDown);
+            heightMap = GetHeightMap(terrain, mapIndex[0], mapIndex[1], 2 * mapRadius, 2 * mapRadius);
+            limit = heightMap[mapRadius, mapRadius];
+        }
+        return terrain;
     }
 
     /// <summary>
-    /// 升高Terrain上的某点。
+    /// 改变地形高度
     /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="index">HeightMap索引</param>
-    /// <param name="opacity">升高的高度</param>
-    /// <param name="size">笔刷大小</param>
-    /// <param name="amass">当笔刷范围内其他点的高度已经高于笔刷中心点时是否同时提高其他点的高度</param>
-    public static void Rise(Terrain terrain, int[] index, float opacity, int size, bool amass = true)
+    /// <param name="center"></param>
+    /// <param name="radius"></param>
+    /// <param name="opacity"></param>
+    /// <param name="amass"></param>
+    public static void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool amass = true)
     {
-        TerrainData tData = terrain.terrainData;
-
-        int bound = size / 2;  // 修改半径
-
-        // 获取起始Index以及在x，z轴上分别要修改的大小
-        int xBase = index[0] - bound >= 0 ? index[0] - bound : 0;
-        int yBase = index[1] - bound >= 0 ? index[1] - bound : 0;
-        int width = xBase + size <= tData.heightmapWidth ? size : tData.heightmapWidth - xBase;
-        int height = yBase + size <= tData.heightmapHeight ? size : tData.heightmapHeight - yBase;
-
-        float[,] heights = tData.GetHeights(xBase, yBase, width, height);
-        float initHeight = tData.GetHeight(index[0], index[1]) / tData.size.y;
-        float deltaHeight = opacity / tData.size.y;  // 计算得到要改变的高度比列
-
-        // 得到的heights数组维度是[height,width]，索引为[y,x]
-        ExpandBrush(heights, deltaHeight, initHeight, height, width, bound, amass);
-        tData.SetHeights(xBase, yBase, heights);
-    }
-
-    public static void Rise(Vector3 center, float radius, float opacity, bool amass = true)
-    {
-        Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
-        Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+        int mapRadius = 0;
+        int[] mapIndex = null;
+        float[,] heightMap = null;
+        float limit = 0;
+        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref limit);
         if (terrain == null) return;
 
-        int mapRadius = (int)(terrain.terrainData.heightmapResolution / terrain.terrainData.size.x * radius);
-        int[] index = GetHeightmapIndex(terrain, leftDown);
-        float[,] heightMap = GetHeightMap(terrain, index[0], index[1], 2 * mapRadius, 2 * mapRadius);
-        float limit = heightMap[mapRadius, mapRadius];
+        if (!isRise) opacity = -opacity;
 
+        // 修改高度图
         for (int i = 0, length_0 = heightMap.GetLength(0); i < length_0; i++)
         {
             for (int j = 0, length_1 = heightMap.GetLength(1); j < length_1; j++)
             {
-                float rPow = (i - radius) * (i - radius) + (j - radius) * (j - radius);
-                if (rPow > radius * radius)
+                // 限制范围为一个圆
+                float rPow = (i - mapRadius) * (i - mapRadius) + (j - mapRadius) * (j - mapRadius);
+                if (rPow > mapRadius * mapRadius)
                     continue;
 
-                float differ = 1 - rPow / (radius * radius);
+                float differ = 1 - rPow / (mapRadius * mapRadius);
                 if (amass)
                 {
                     heightMap[i, j] += differ * deltaHeight * opacity;
                 }
-                else  // 不累加高度时
+                else if (isRise)
                 {
-                    heightMap[i, j] = heightMap[i, j] >= limit ? heightMap[i, j] : heightMap[i, j] + differ * deltaHeight;
+                    heightMap[i, j] = heightMap[i, j] >= limit ? heightMap[i, j] : heightMap[i, j] + differ * deltaHeight * opacity;
+                }
+                else
+                {
+                    heightMap[i, j] = heightMap[i, j] <= limit ? heightMap[i, j] : heightMap[i, j] + differ * deltaHeight * opacity;
                 }
             }
         }
-
-        SetHeightMap(terrain, heightMap, index[0], index[1]);
+        // 重新设置高度图
+        SetHeightMap(terrain, heightMap, mapIndex[0], mapIndex[1]);
     }
 
     /// <summary>
-    /// 降低Terrain上某点的高度。
+    /// 通过自定义笔刷编辑地形
     /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="point">Terrain上的点</param>
-    /// <param name="opacity">降低的高度</param>
-    /// <param name="size">笔刷大小</param>
-    /// <param name="amass">当笔刷范围内其他点的高度已经低于笔刷中心点时是否同时降低其他点的高度</param>
-    public static void Sink(Terrain terrain, Vector3 point, float opacity, int size, bool amass = true)
+    /// <param name="terrain"></param>
+    public static async void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true)
     {
-        int[] index = GetHeightmapIndex(terrain, point);
-        Sink(terrain, index, opacity, size, amass);
-    }
+        int mapRadius = 0;
+        int[] mapIndex = null;
+        float[,] heightMap = null;
+        float limit = 0;
+        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref limit);
+        if (terrain == null) return;
 
-    /// <summary>
-    /// 降低Terrain上某点的高度。
-    /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="index">HeightMap索引</param>
-    /// <param name="opacity">降低的高度</param>
-    /// <param name="size">笔刷大小</param>
-    /// <param name="amass">当笔刷范围内其他点的高度已经低于笔刷中心点时是否同时降低其他点的高度</param>
-    public static void Sink(Terrain terrain, int[] index, float opacity, int size, bool amass = true)
-    {
-        TerrainData tData = terrain.terrainData;
+        // 是否反转透明度
+        if (!isRise) opacity = -opacity;
 
-        int bound = size / 2;
-        int xBase = index[0] - bound >= 0 ? index[0] - bound : 0;
-        int yBase = index[1] - bound >= 0 ? index[1] - bound : 0;
-        int width = xBase + size <= tData.heightmapWidth ? size : tData.heightmapWidth - xBase;
-        int height = yBase + size <= tData.heightmapHeight ? size : tData.heightmapHeight - yBase;
-
-        float[,] heights = tData.GetHeights(xBase, yBase, width, height);
-        float initHeight = tData.GetHeight(index[0], index[1]) / tData.size.y;
-        float deltaHeight = -opacity / tData.size.y;  // 注意负号
-
-        // 得到的heights数组维度是[height,width]，索引为[y,x]
-        ExpandBrush(heights, deltaHeight, initHeight, height, width, bound, amass);
-        tData.SetHeights(xBase, yBase, heights);
-    }
-
-    /// <summary>
-    /// 根据笔刷四角的高度来平滑Terrain，该方法不会改变笔刷边界处的Terrain高度。
-    /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="point">Terrain上的点</param>
-    /// <param name="opacity">平滑灵敏度，值介于 [0.05,1] 之间</param>
-    /// <param name="size">笔刷大小</param>
-    public static void Smooth(Terrain terrain, Vector3 point, float opacity, int size)
-    {
-        int[] index = GetHeightmapIndex(terrain, point);
-        Smooth(terrain, index, opacity, size);
-    }
-
-    /// <summary>
-    /// 根据笔刷四角的高度来平滑Terrain，该方法不会改变笔刷边界处的Terrain高度。
-    /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="index">HeightMap索引</param>
-    /// <param name="opacity">平滑灵敏度，值介于 [0.05,1] 之间</param>
-    /// <param name="size">笔刷大小</param>
-    public static void Smooth(Terrain terrain, int[] index, float opacity, int size)
-    {
-        TerrainData tData = terrain.terrainData;
-        if (opacity > 1 || opacity <= 0)
+        //修改高度图
+        await Task.Run(async () =>
         {
-            opacity = Mathf.Clamp(opacity, 0.05f, 1);
-            Debug.LogError("Smooth方法中的opacity参数的值应该介于 [0.05,1] 之间，强制将其设为：" + opacity);
-        }
+            //float[,] deltaMap = await Utility.BilinearInterp(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
+            float[,] deltaMap = await Utility.ZoomBilinearInterpAsync(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
 
-        // 取出笔刷范围内的HeightMap数据数组
-        int bound = size / 2;
-        int xBase = index[0] - bound >= 0 ? index[0] - bound : 0;
-        int yBase = index[1] - bound >= 0 ? index[1] - bound : 0;
-        int width = xBase + size <= tData.heightmapWidth ? size : tData.heightmapWidth - xBase;
-        int height = yBase + size <= tData.heightmapHeight ? size : tData.heightmapHeight - yBase;
-        float[,] heights = tData.GetHeights(xBase, yBase, width, height);
-
-        // 利用笔刷4角的高度来计算平均高度
-        float avgHeight = (heights[0, 0] + heights[0, width - 1] + heights[height - 1, 0] + heights[height - 1, width - 1]) / 4;
-        Vector2 center = new Vector2((float)(height - 1) / 2, (float)(width - 1) / 2);
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
+            for (int i = 0; i < 2 * mapRadius; i++)
             {
-#if false
-                // 点到矩阵中心点的距离
-                float toCenter = Vector2.Distance(center, new Vector2(i, j));
-                float diff = avgHeight - heights[i, j];
-
-                // 判断点在4个三角形区块上的位置
-                // 利用相似三角形求出点到矩阵中心点与该点连线的延长线与边界交点的距离
-                float d = 0;
-                if (i == height / 2 && j == width / 2)  // 中心点
+                for (int j = 0; j < 2 * mapRadius; j++)
                 {
-                    d = 1;
-                    toCenter = 0;
+                    heightMap[i, j] += deltaMap[i, j] * deltaHeight * opacity;
                 }
-                else if (i >= j && i <= size - j)  // 左三角区
-                {
-                    // j/((float)width / 2) = d/(d+toCenter)，求出距离d，其他同理
-                    d = toCenter * j / ((float)width / 2 - j);
-                }
-                else if (i <= j && i <= size - j)  // 上三角区
-                {
-                    d = toCenter * i / ((float)height / 2 - i);
-                }
-                else if (i <= j && i >= size - j)  // 右三角区
-                {
-                    d = toCenter * (size - j) / ((float)width / 2 - (size - j));
-                }
-                else if (i >= j && i >= size - j)  // 下三角区
-                {
-                    d = toCenter * (size - i) / ((float)height / 2 - (size - i));
-                }
-
-                // 进行平滑时对点进行升降的比例
-                float ratio = d / (d + toCenter);
-                heights[i, j] += diff * ratio * opacity;
-#endif
-                // 圆外的点不做处理
-                if ((i - bound) * (i - bound) + (j - bound) * (j - bound) >= bound * bound)
-                    continue;
-
-                float h = Smooth(terrain.terrainData, xBase + i, yBase + j);
-                heights[i, j] = h;
             }
-        }
+        });
 
-        tData.SetHeights(xBase, yBase, heights);
+        // 重新设置高度图
+        SetHeightMap(terrain, heightMap, mapIndex[0], mapIndex[1]);
     }
 
     /// <summary>
-    /// 通过给定index周围区域的高度得到平均高度
+    /// 
     /// </summary>
-    /// <param name="terrainData"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    public static float Smooth(TerrainData terrainData, int x, int y)
+    /// <param name="center"></param>
+    /// <param name="radius"></param>
+    /// <param name="dev"></param>
+    /// <param name="level"></param>
+    public static void Smooth(Vector3 center, float radius, float dev, int level = 1)
     {
-        float h = 0.0F;
-        float normalizeScale = 1.0F / terrainData.size.y;
-        h += terrainData.GetHeight(x, y) * normalizeScale;
-        h += terrainData.GetHeight(x + 1, y) * normalizeScale;
-        h += terrainData.GetHeight(x - 1, y) * normalizeScale;
-        h += terrainData.GetHeight(x + 1, y + 1) * normalizeScale * 0.75F;
-        h += terrainData.GetHeight(x - 1, y + 1) * normalizeScale * 0.75F;
-        h += terrainData.GetHeight(x + 1, y - 1) * normalizeScale * 0.75F;
-        h += terrainData.GetHeight(x - 1, y - 1) * normalizeScale * 0.75F;
-        h += terrainData.GetHeight(x, y + 1) * normalizeScale;
-        h += terrainData.GetHeight(x, y - 1) * normalizeScale;
-        h /= 8.0F;
-        return h;
+        center.x -= terrainSize.x / (heightMapRes - 1) * level;
+        center.z -= terrainSize.z / (heightMapRes - 1) * level;
+        radius += terrainSize.x / (heightMapRes - 1) * level;
+        int mapRadius = 0;
+        int[] mapIndex = null;
+        float[,] heightMap = null;
+        float limit = 0;
+        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref limit);
+        if (terrain == null) return;
+
+        Utility.GaussianBlur(heightMap, dev, level);
+        SetHeightMap(terrain, heightMap, mapIndex[0], mapIndex[1]);
     }
 
     /// <summary>
@@ -682,33 +588,6 @@ public static class TerrainUtility
         }
     }
 
-    /// <summary>
-    /// 通过自定义笔刷编辑地形
-    /// </summary>
-    /// <param name="terrain"></param>
-    public static void ChangeHeightWithBrush(Terrain terrain, Vector3 point)
-    {
-        float[,] data = brushDic["brush_1"];
-        float[,] heights = new float[data.GetLength(0), data.GetLength(1)];
-        for (int i = 0, length_0 = data.GetLength(0); i < length_0; i++)
-        {
-            for (int j = 0, length_1 = data.GetLength(1); j < length_1; j++)
-            {
-                heights[i, j] = data[i, j] / 50;
-            }
-        }
-
-
-        int[] index = GetHeightmapIndex(terrain, point);
-        index[0] -= data.GetLength(1);
-        index[1] -= data.GetLength(0);
-
-        index[0] = index[0] < 0 ? 0 : index[0];
-        index[1] = index[1] < 0 ? 0 : index[1];
-
-        terrain.terrainData.SetHeights(index[0], index[1], heights);
-    }
-
     #endregion
 
     #region 树木
@@ -911,6 +790,79 @@ public static class TerrainUtility
         terrainData.SetDetailLayer(index[0] - mapRadius, index[1] - mapRadius, layer, map);
     }
 
+
+    #endregion
+
+    #region 贴图
+
+    /// <summary>
+    /// 初始化贴图原型
+    /// </summary>
+    private static void InitTextures()
+    {
+        Texture2D[] textures = Resources.LoadAll<Texture2D>("Terrain/Textures");
+        SplatPrototype[] splats = new SplatPrototype[textures.Length / 2];
+
+        for (int i = 0, length = splats.Length; i < length; i++)
+        {
+            SplatPrototype splat = new SplatPrototype
+            {
+                texture = textures[2 * i],
+                normalMap = textures[2 * i + 1]
+            };
+            splats[i] = splat;
+        }
+
+        Terrain[] terrains = Terrain.activeTerrains;
+        for (int i = 0, length = terrains.Length; i < length; i++)
+        {
+            terrains[i].terrainData.splatPrototypes = terrains[i].terrainData.splatPrototypes.Concat(splats).ToArray();
+        }
+    }
+
+    /// <summary>
+    /// 返回Terrain上某一点的AlphalMap索引。
+    /// </summary>
+    /// <param name="terrain">Terrain</param>
+    /// <param name="point">Terrain上的某点</param>
+    /// <returns>该点在DetialMap中的位置索引</returns>
+    private static int[] GetAlphaMapIndex(Terrain terrain, Vector3 point)
+    {
+        TerrainData tData = terrain.terrainData;
+        float width = tData.size.x;
+        float length = tData.size.z;
+
+        // 根据相对位置计算索引
+        int x = (int)((point.x - terrain.GetPosition().x) / width * tData.alphamapWidth);
+        int z = (int)((point.z - terrain.GetPosition().z) / length * tData.alphamapHeight);
+
+        return new int[2] { x, z };
+    }
+
+    /// <summary>
+    /// 设置贴图
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="index"></param>
+    public static void SetTexture(Vector3 point, int index)
+    {
+        Terrain terrain = Utility.SendRayDown(point, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+
+        if (terrain != null)
+        {
+            int[] mapIndex = GetAlphaMapIndex(terrain, point);
+            float[,,] map = terrain.terrainData.GetAlphamaps(mapIndex[0], mapIndex[1], 1, 1);
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    map[i, j, index] = 0.5f;
+                    map[i, j, 0] = 0.5f;
+                }
+            }
+            terrain.terrainData.SetAlphamaps(mapIndex[0], mapIndex[1], map);
+        }
+    }
 
     #endregion
 
