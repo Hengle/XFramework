@@ -800,6 +800,27 @@ public static class TerrainUtility
     /// </summary>
     private static void InitTextures()
     {
+#if UNITY_2018
+        Texture2D[] textures = Resources.LoadAll<Texture2D>("Terrain/Textures");
+        TerrainLayer[] splats = new TerrainLayer[textures.Length / 2];
+
+        for (int i = 0, length = splats.Length; i < length; i++)
+        {
+            TerrainLayer splat = new TerrainLayer
+            {
+                diffuseTexture = textures[2 * i],
+                normalMapTexture = textures[2 * i + 1]
+            };
+            splats[i] = splat;
+        }
+
+        Terrain[] terrains = Terrain.activeTerrains;
+        for (int i = 0, length = terrains.Length; i < length; i++)
+        {
+            terrains[i].terrainData.terrainLayers = terrains[i].terrainData.terrainLayers.Concat(splats).ToArray();
+        }
+#else
+
         Texture2D[] textures = Resources.LoadAll<Texture2D>("Terrain/Textures");
         SplatPrototype[] splats = new SplatPrototype[textures.Length / 2];
 
@@ -818,6 +839,7 @@ public static class TerrainUtility
         {
             terrains[i].terrainData.splatPrototypes = terrains[i].terrainData.splatPrototypes.Concat(splats).ToArray();
         }
+#endif
     }
 
     /// <summary>
@@ -864,9 +886,9 @@ public static class TerrainUtility
         }
     }
 
-    #endregion
+#endregion
 
-    #region 修改与恢复
+#region 修改与恢复
 
     /// <summary>
     /// 添加一个记录点
@@ -898,9 +920,9 @@ public static class TerrainUtility
         }
     }
 
-    #endregion
+#endregion
 
-    #region  工具
+#region  工具
 
     /// <summary>
     /// 刷新地图
@@ -924,7 +946,7 @@ public static class TerrainUtility
         return hitInfo.collider?.GetComponent<Terrain>();
     }
 
-    #endregion
+#endregion
 
 
     struct TerrainCmdData

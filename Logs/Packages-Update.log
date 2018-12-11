@@ -70,3 +70,14 @@ Update Mode: updateDependencies
 The following packages were updated:
   com.unity.analytics from version 3.0.9 to 3.2.0
   com.unity.package-manager-ui from version 2.0.1 to 2.0.3
+
+=== Tue Dec 11 21:32:12 2018
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ads from version 2.0.8 to 2.3.1
+  com.unity.analytics from version 3.2.0 to 3.2.2
+  com.unity.render-pipelines.lightweight from version 3.3.0-preview to 4.1.0-preview
+  com.unity.shadergraph from version 3.3.0-preview to 4.1.0-preview
