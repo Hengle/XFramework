@@ -13,10 +13,12 @@ public class JobTest : MonoBehaviour
         NativeArray<float> result = new NativeArray<float>(1, Allocator.TempJob);
 
         // 设置作业数据
-        MyJob jobData = new MyJob();
-        jobData.a = 1;
-        jobData.b = 1;
-        jobData.result = result;
+        MyJob jobData = new MyJob()
+        {
+            a = 10,
+            b = 1,
+            result = result,
+        };
 
         // 调度作业
         JobHandle handle = jobData.Schedule();
@@ -26,7 +28,7 @@ public class JobTest : MonoBehaviour
 
         //NativeArray的所有副本都指向相同内存，你可以在NativeArray的副本中访问结果。
         float aPlusB = result[0];
-        Debug.Log(jobData.res);
+        Debug.Log(aPlusB);
 
         // 释放结果数组分配的内存
         result.Dispose();
@@ -51,7 +53,6 @@ public struct MyJob : IJob
     {
         /*该函数会保存行为。要执行的变量必须在该struct开头定义。*/
         //waypoints[i] = waypoints[i] * offsetToAdd;
-        result = new NativeArray<float>();
         result[0] = a + b;
     }
 }

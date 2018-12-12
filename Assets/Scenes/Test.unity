@@ -163,7 +163,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 100000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -487,15 +487,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061629220}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67f7ae944f3102e47b57e2dd773fca34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyShipIncremement: 16500
+  enemyShipIncremement: 28000
   leftBound: 0
-  rightBound: 100
-  topBound: 100
+  rightBound: 1000
+  topBound: 1000
   bottomBound: 0
   enemySpeed: 5
 --- !u!114 &1061629224
@@ -505,7 +505,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061629220}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8628312ba574b3f42b5317cfa69b67f0, type: 3}
   m_Name: 
