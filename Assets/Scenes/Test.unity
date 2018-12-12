@@ -189,8 +189,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 112262338}
-  m_LocalRotation: {x: 0.07838431, y: -0.590182, z: 0.057726536, w: 0.8013793}
-  m_LocalPosition: {x: 43.091064, y: 13.512432, z: -6.540712}
+  m_LocalRotation: {x: -0.42706293, y: -0.10246967, z: 0.04877901, w: -0.89707184}
+  m_LocalPosition: {x: 316.22272, y: 518.9709, z: -175.18814}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -445,6 +445,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1061629221}
   - component: {fileID: 1061629222}
+  - component: {fileID: 1061629223}
+  - component: {fileID: 1061629224}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -473,8 +475,38 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061629220}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 833216892ccb9bc44ab86bfae02edd10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1061629223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061629220}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67f7ae944f3102e47b57e2dd773fca34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyShipIncremement: 16500
+  leftBound: 0
+  rightBound: 100
+  topBound: 100
+  bottomBound: 0
+  enemySpeed: 5
+--- !u!114 &1061629224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061629220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8628312ba574b3f42b5317cfa69b67f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
