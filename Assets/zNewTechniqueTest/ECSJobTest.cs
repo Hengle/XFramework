@@ -36,7 +36,12 @@ public class ECSJobTest : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown("space"))
-              AddShips(enemyShipIncremement);
+        {
+            Debug.Log(1);
+            AddShips(enemyShipIncremement);
+            Debug.Log(2);
+        }
+            
 
     }
 

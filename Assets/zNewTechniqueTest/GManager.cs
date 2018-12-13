@@ -67,6 +67,7 @@ public class GManager : MonoBehaviour
             transforms.Add(obj.transform);
         }
     }
+
     private void OnDestroy()
     {
         transforms.Dispose();
