@@ -45,7 +45,6 @@ public class GManager : MonoBehaviour
         }
 
         moveJob.deltaTime = Time.deltaTime;
-        Debug.Log(moveJob.deltaTime +"   "+ Time.deltaTime);
 
         moveHandle = moveJob.Schedule(transforms);
         JobHandle.ScheduleBatchedJobs();

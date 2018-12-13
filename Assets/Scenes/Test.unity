@@ -447,6 +447,7 @@ GameObject:
   - component: {fileID: 1061629222}
   - component: {fileID: 1061629223}
   - component: {fileID: 1061629224}
+  - component: {fileID: 1061629225}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -475,7 +476,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061629220}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 833216892ccb9bc44ab86bfae02edd10, type: 3}
   m_Name: 
@@ -487,17 +488,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061629220}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67f7ae944f3102e47b57e2dd773fca34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyShipIncremement: 28000
+  enemyShipIncremement: 21000
   leftBound: 0
   rightBound: 1000
   topBound: 1000
   bottomBound: 0
-  enemySpeed: 5
+  enemySpeed: 50
 --- !u!114 &1061629224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -510,3 +511,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8628312ba574b3f42b5317cfa69b67f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1061629225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061629220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6501d1294ee63f4697533651d7eedbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyShipIncremement: 21000
+  leftBound: 0
+  rightBound: 1000
+  topBound: 1000
+  bottomBound: 0
+  enemySpeed: 50

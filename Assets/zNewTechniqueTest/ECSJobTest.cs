@@ -7,10 +7,13 @@ using Unity.Collections;
 using Random = UnityEngine.Random;
 using Unity.Transforms;
 using Unity.Mathematics;
+using Unity.Jobs;
+using Unity.Burst;
 
 public class ECSJobTest : MonoBehaviour
 {
     EntityManager manager;
+    public static ECSJobTest GM;
 
     public int enemyShipIncremement;
     public int leftBound;
@@ -24,6 +27,7 @@ public class ECSJobTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GM = this;
         enemyShipPrefab = Resources.Load("Prefabs/Cube") as GameObject;
         manager = World.Active.GetOrCreateManager<EntityManager>();
     }
@@ -53,13 +57,35 @@ public class ECSJobTest : MonoBehaviour
     }
 }
 
-[Serializable]
-public struct MoveSpeed : IComponentData
+public class MoveMentSystem : JobComponentSystem
 {
-    public float Value;
-}
+    [BurstCompile]
+    struct MovementJob : IJobProcessComponentData<Position, Rotation, MoveSpeed>
+    {
+        public float topBound;
+        public float bottomBound;
+        public float deltaTime;
 
-public class MoveSpeedComponent : ComponentDataWrapper<MoveSpeed>
-{
+        public void Execute(ref Position position,[ReadOnly] ref Rotation rotation,[ReadOnly] ref MoveSpeed speed)
+        {
+            float3 value = position.Value;
+            value += deltaTime * speed.Value * math.forward(rotation.Value);
+            if (value.z < bottomBound)
+                value.z = topBound;
+            position.Value = value;
+        }
+    }
 
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+        MovementJob moveJob = new MovementJob
+        {
+            topBound = ECSJobTest.GM.topBound,
+            bottomBound = ECSJobTest.GM.bottomBound,
+            deltaTime = Time.deltaTime,
+        };
+
+        JobHandle moveHandle = moveJob.Schedule(this, inputDeps);
+        return moveHandle;
+    }
 }

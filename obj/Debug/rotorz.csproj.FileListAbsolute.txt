@@ -124,7 +124,6 @@ F:\GitHub\xdedzl\Temp\bin\Debug\System.Xml.XmlDocument.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\System.Xml.XmlSerializer.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\System.Xml.XPath.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\System.Xml.XPath.XDocument.dll
-F:\GitHub\xdedzl\Temp\bin\Debug\Unity.Analytics.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\Unity.Analytics.Editor.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\Unity.Analytics.StandardEvents.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\Unity.Analytics.Tracker.dll
@@ -171,7 +170,6 @@ F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.PerformanceReportingModule.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.Physics2DModule.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.PhysicsModule.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.ProfilerModule.dll
-F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.Purchasing.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.ScreenCaptureModule.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.SharedInternalsModule.dll
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.SpatialTracking.dll
@@ -306,3 +304,14 @@ F:\GitHub\xdedzl\obj\Debug\rotorz.csproj.CoreCompileInputs.cache
 F:\GitHub\xdedzl\obj\Debug\rotorz.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\rotorz.dll
 F:\GitHub\xdedzl\obj\Debug\rotorz.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.Mdb.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.Pdb.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.Rocks.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.Advertisements.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\UnityEngine.Advertisements.Editor.dll
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.Mdb.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.Pdb.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\Mono.Cecil.Rocks.pdb
