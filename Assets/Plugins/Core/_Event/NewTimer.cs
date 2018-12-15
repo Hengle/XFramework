@@ -1,18 +1,11 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OnEventDelegate = System.Action<object, EventArgs>;
+using OnEventDelegate = System.Action;
 
-/// <summary>
-/// 计时器
-/// 最小处理间隔1毫秒
-/// 重新写计时器，感觉计时器没必要这么写，不需要和事件分发写在一块
-/// Timer暂时保留，新类命名NewTimer,稳定后全面替代
-/// </summary>
-public class OldTimer : EventDispatcher
+public class Timer
 {
-    private readonly Dictionary<EventDispatchType, List<OnEventDelegate>> events = new Dictionary<EventDispatchType, List<OnEventDelegate>>();
-
+    private OnEventDelegate timeUpDel;
     /// <summary>
     /// 是否执行
     /// </summary>
@@ -42,12 +35,11 @@ public class OldTimer : EventDispatcher
     /// <param name="interval">时间间隔，单位是毫秒</param>
     /// <param name="repeatCount">运行次数，一秒一次的话MaxValue可以执行68年</param>
     /// </summary>
-    public OldTimer(float interval, int repeatCount = int.MaxValue)
+    public Timer(float interval, int repeatCount = int.MaxValue)
     {
         RunTime = 0f;
         TimeInterval = Mathf.Max(interval, 1);  // 最小间隔为1毫秒
         RepeatCount = repeatCount;
-        RegistEvent(EventAction);
     }
 
     /// <summary>
@@ -69,7 +61,7 @@ public class OldTimer : EventDispatcher
                 {
                     TimerManager.Instance.RemoveTimer(this);
                 }
-                DispatchEvent(EventDispatchType.TIME_RUNCHANGE, _isRunning);
+                //DispatchEvent(EventDispatchType.TIME_RUNCHANGE, _isRunning);
             }
         }
     }
@@ -83,12 +75,12 @@ public class OldTimer : EventDispatcher
         if (IsRunning && UseCount < RepeatCount)
         {
             RunTime += deltaTime;
-            var f = TimeInterval/1000;
+            var f = TimeInterval / 1000;
             while (RunTime - _useTime > f && UseCount < RepeatCount)
             {
                 UseCount++;
                 _useTime += f;
-                DispatchEvent(EventDispatchType.TIMER);
+                timeUpDel?.Invoke();
             }
         }
         if (UseCount >= RepeatCount)
@@ -104,11 +96,7 @@ public class OldTimer : EventDispatcher
     /// <param name="fun"></param>
     public void AddEventListener(EventDispatchType type, OnEventDelegate fun)
     {
-        if (!events.ContainsKey(type))
-        {
-            events[type] = new List<OnEventDelegate>();
-        }
-        events[type].Add(fun);
+        timeUpDel += fun;
     }
 
     /// <summary>
@@ -118,40 +106,7 @@ public class OldTimer : EventDispatcher
     /// <param name="fun"></param>
     public void RemoveEventListener(EventDispatchType type, OnEventDelegate fun)
     {
-        if (!events.ContainsKey(type))
-        {
-            return;
-            //events[type] = new List<OnEventDelegate>();
-        }
-        events[type].Remove(fun);
-    }
-
-    private void EventAction(object sender, EventArgs data)
-    {
-        Array arr = Enum.GetValues(typeof(EventDispatchType));
-        
-        for (var i = 0; i < arr.Length; i++)
-        {
-            EventDispatchType e = (EventDispatchType)arr.GetValue(i);
-            if (data.eventType == e)
-            {
-                if (events.ContainsKey(e) && events[e].Count > 0)
-                {
-                    // 遍历列表挨个传入sender和data并执行
-                    events[e].ForEach(fun =>
-                    {
-                        try
-                        {
-                            fun(sender, data);
-                        }
-                        catch
-                        {
-                            Debug.LogWarning(fun.Target.ToString());
-                        }
-                    });
-                }
-            }
-        }
+        timeUpDel -= fun;
     }
 
     /// <summary>
@@ -187,7 +142,6 @@ public class OldTimer : EventDispatcher
     public void Dispose()
     {
         ReSet();
-        events.Clear();
     }
 
     /// <summary>
@@ -197,7 +151,7 @@ public class OldTimer : EventDispatcher
     public class TimerManager : Singleton<TimerManager>
     {
 
-        private readonly List<OldTimer> _timers = new List<OldTimer>();
+        private readonly List<Timer> _timers = new List<Timer>();
 
         public TimerManager()
         {
@@ -216,7 +170,7 @@ public class OldTimer : EventDispatcher
             }
         }
 
-        public void AddTimer(OldTimer timer)
+        public void AddTimer(Timer timer)
         {
             if (_timers.Contains(timer) == false)
             {
@@ -224,7 +178,7 @@ public class OldTimer : EventDispatcher
             }
         }
 
-        public void RemoveTimer(OldTimer timer)
+        public void RemoveTimer(Timer timer)
         {
             if (_timers.Contains(timer))
             {

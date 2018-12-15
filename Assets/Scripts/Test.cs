@@ -14,9 +14,9 @@ public class Test : MonoBehaviour
     void Start()
     {
         Timer timer = new Timer(1000);
-        timer.AddEventListener(EventDispatchType.TIMER, (aa,bb) =>
+        timer.AddEventListener(EventDispatchType.TIMER, () =>
         {
-            Debug.Log("aa");
+            Debug.Log("new time");
         });
         timer.Start();
 

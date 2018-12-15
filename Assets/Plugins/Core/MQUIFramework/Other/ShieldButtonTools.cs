@@ -67,14 +67,14 @@ public static class ShieldButtonTools
 public class ShieldButtonManager
 {
     private float m_Period;
-    private Timer timer;
+    private OldTimer timer;
     private Button m_Btn;
 
     public ShieldButtonManager(Button button, float period, ShieldBtnType type)
     {
         m_Btn = button;
         m_Period = period;
-        timer = new Timer(m_Period, 1);
+        timer = new OldTimer(m_Period, 1);
 
         switch (type)
         {
