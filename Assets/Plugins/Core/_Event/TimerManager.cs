@@ -153,7 +153,7 @@ public class Timer : EventDispatcher
     }
 
     /// <summary>
-    /// 开始
+    /// 开始(调用了IsRunning的Set,初始化了TimerManager)
     /// </summary>
     public void Start()
     {
@@ -184,13 +184,9 @@ public class Timer : EventDispatcher
     /// </summary>
     public void Dispose()
     {
-        Stop();
         ReSet();
         events.Clear();
     }
-
-
-
 
     /// <summary>
     /// 计时器管理

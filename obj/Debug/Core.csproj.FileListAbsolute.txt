@@ -631,5 +631,4 @@ E:\github\xdedzl\obj\Debug\Core.dll
 E:\github\xdedzl\obj\Debug\Core.pdb
 E:\github\xdedzl\Temp\bin\Debug\Core.dll
 E:\github\xdedzl\Temp\bin\Debug\Core.pdb
-E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.dll
 E:\github\xdedzl\obj\Debug\Core.csproj.CopyComplete

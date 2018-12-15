@@ -23,6 +23,7 @@ public class EventDispatcher
     /// </summary>
     public void RegistEvent(Action<object, EventArgs> fuc)
     {
+        // 防止重复添加事件
         EventListener -= fuc;
         EventListener += fuc;
     }
@@ -41,9 +42,6 @@ public class EventDispatcher
 /// </summary>
 public enum EventDispatchType
 {
-    CreatXXX,             // 创建某某某 
-    UpGrade,              // 升级
-    Dead,                 // 死亡
     TIMER,                // 计时器运行帧
     TIME_RUNCHANGE,       // 计时器运行状态改变
 }

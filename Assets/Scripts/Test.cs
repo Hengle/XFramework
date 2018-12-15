@@ -13,18 +13,24 @@ public class Test : MonoBehaviour
 
     void Start()
     {
+        Timer timer = new Timer(1000);
+        timer.AddEventListener(EventDispatchType.TIMER, (aa,bb) =>
+        {
+            Debug.Log("aa");
+        });
+        timer.Start();
 
         //测试场景可以打开用以在开始时清空之前建立的草和树
         //ClearTreeAndDetail();
-        ClearHeightMap();
+        //ClearHeightMap();
 
-        float[,] a = new float[,]
+        float[,] a = new float[3,3]
         {
             {11,12,13 },
             {21,22,23},
             {31,32,33},
         };
-        float[,] b = new float[,]
+        float[,] b = new float[6,3]
         {
             {11,12,13 },
             {21,22,23 },
