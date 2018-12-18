@@ -541,14 +541,12 @@ E:\github\xdedzl\Temp\bin\Debug\Unity.DataContract.dll
 E:\github\xdedzl\Temp\bin\Debug\ExCSS.Unity.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.Legacy.NRefactory.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.UNetWeaver.dll
-E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.IvyParser.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
 E:\github\xdedzl\Temp\bin\Debug\SyntaxTree.VisualStudio.Unity.Messaging.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.CecilTools.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.Cecil.Pdb.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.Cecil.Mdb.dll
-E:\github\xdedzl\Temp\bin\Debug\UniRx.Async.pdb
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.xml
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.xml
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.AIModule.xml
@@ -635,3 +633,4 @@ E:\github\xdedzl\Temp\bin\Debug\Mono.Cecil.Pdb.pdb
 E:\github\xdedzl\Temp\bin\Debug\Mono.Cecil.Rocks.pdb
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.xml
 E:\github\xdedzl\obj\Debug\UniRx.csproj.CopyComplete
+E:\github\xdedzl\Temp\bin\Debug\UniRx.Async.pdb

@@ -1,9 +1,8 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
-using UnityEngine.UI;
 using System.Reflection;
+using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 这个类管理一系列的拓展函数

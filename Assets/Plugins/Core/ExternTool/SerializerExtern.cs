@@ -4,10 +4,8 @@
 // 时间： 2018-11-12 13:38:45
 // 版本： V 1.0
 // ==========================================
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
 /// <summary>
 /// 序列化的Vector3，用以解决Vector3不能序列化的问题

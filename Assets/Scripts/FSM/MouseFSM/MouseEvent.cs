@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -77,7 +76,7 @@ namespace RCXC
                 return;
             }
 
-            CurrentState.OnDisactive();  
+            CurrentState.OnDisactive();
             CurrentState = stateDic[_type];          // 更新状态
             CurrentState.OnActive(para, args);
             CurrentStateType = _type;                // 赋值当前状态类型

@@ -632,3 +632,4 @@ E:\github\xdedzl\obj\Debug\AstarPathfindingProject.csproj.CoreCompileInputs.cach
 E:\github\xdedzl\obj\Debug\AstarPathfindingProject.csproj.CopyComplete
 E:\github\xdedzl\obj\Debug\AstarPathfindingProject.dll
 E:\github\xdedzl\obj\Debug\AstarPathfindingProject.pdb
+E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.dll

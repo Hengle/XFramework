@@ -6,23 +6,10 @@
 /// </summary>
 public class MonoEvent : MonoSingleton<MonoEvent>
 {
-    public MonoEvent()
-    {
-        singletonType = SingletonType.GlobalInstance;
-    }
-
-    public event Action AWAKE;
-    public event Action START;
     public event Action UPDATE;
     public event Action FIXEDUPDATE;
     public event Action ONGUI;
     public event Action LATEUPDATE;
-
-    private void Awake()
-    {
-        AWAKE?.Invoke();
-    }
-
 
     private void Update()
     {

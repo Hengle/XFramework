@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using OnEventDelegate = System.Action;
 
@@ -61,7 +60,7 @@ public class Timer
                 {
                     TimerManager.Instance.RemoveTimer(this);
                 }
-                //DispatchEvent(EventDispatchType.TIME_RUNCHANGE, _isRunning);
+                //这里可以加一个计时器状态变换的委托
             }
         }
     }
@@ -94,7 +93,7 @@ public class Timer
     /// </summary>
     /// <param name="type"></param>
     /// <param name="fun"></param>
-    public void AddEventListener(EventDispatchType type, OnEventDelegate fun)
+    public void AddEventListener(OnEventDelegate fun)
     {
         timeUpDel += fun;
     }
@@ -104,7 +103,7 @@ public class Timer
     /// </summary>
     /// <param name="type"></param>
     /// <param name="fun"></param>
-    public void RemoveEventListener(EventDispatchType type, OnEventDelegate fun)
+    public void RemoveEventListener(OnEventDelegate fun)
     {
         timeUpDel -= fun;
     }
@@ -120,7 +119,7 @@ public class Timer
     /// <summary>
     /// 停止
     /// </summary>
-    public void Stop()
+    public void Pause()
     {
         IsRunning = false;
     }
@@ -134,14 +133,6 @@ public class Timer
         RunTime = 0f;
         _useTime = 0f;
         UseCount = 0;
-    }
-
-    /// <summary>
-    /// 释放对象
-    /// </summary>
-    public void Dispose()
-    {
-        ReSet();
     }
 
     /// <summary>

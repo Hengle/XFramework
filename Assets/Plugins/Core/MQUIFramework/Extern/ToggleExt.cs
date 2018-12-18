@@ -4,8 +4,6 @@
 // 时间： 2018-11-22 13:15:42
 // 版本： V 1.0
 // ==========================================
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 

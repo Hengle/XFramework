@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
 using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 对应面板的枚举

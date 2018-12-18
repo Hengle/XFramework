@@ -7,18 +7,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-
-    void Start()
+    void Start() 
     {
         Timer timer = new Timer(1000);
-        timer.AddEventListener(EventDispatchType.TIMER, () =>
+        timer.AddEventListener(() =>
         {
             Debug.Log("new time");
         });
         timer.Start();
+        timer.Pause();
+        timer.ReSet();
 
         //测试场景可以打开用以在开始时清空之前建立的草和树
         //ClearTreeAndDetail();

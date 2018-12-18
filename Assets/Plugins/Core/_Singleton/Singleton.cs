@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 /// <summary>
-/// 不继承mono的单例基类，如果需要在单例中写Update类似的函数，需要将函数添加在MonoEvent的事件中
+/// 不继承mono的单例基类，如果需要Update，可以将方法注册进MonoEvent的事件中
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class Singleton<T> : MonoBehaviour where T : new()
+public class Singleton<T> where T : new()
 {
     private static T _instance;
     private static readonly object objlock = new object();

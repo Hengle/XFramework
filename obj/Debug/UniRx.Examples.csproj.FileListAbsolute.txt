@@ -1,5 +1,5 @@
-E:\github\xdedzl\Temp\bin\Debug\Core.dll
-E:\github\xdedzl\Temp\bin\Debug\Core.pdb
+E:\github\xdedzl\Temp\bin\Debug\UniRx.Examples.dll
+E:\github\xdedzl\Temp\bin\Debug\UniRx.Examples.pdb
 E:\github\xdedzl\Temp\bin\Debug\DOTween.dll
 E:\github\xdedzl\Temp\bin\Debug\DOTween43.dll
 E:\github\xdedzl\Temp\bin\Debug\DOTween46.dll
@@ -219,6 +219,7 @@ E:\github\xdedzl\Temp\bin\Debug\Unity.DataContract.dll
 E:\github\xdedzl\Temp\bin\Debug\ExCSS.Unity.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.Legacy.NRefactory.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.UNetWeaver.dll
+E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.IvyParser.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
 E:\github\xdedzl\Temp\bin\Debug\SyntaxTree.VisualStudio.Unity.Messaging.dll
@@ -310,7 +311,9 @@ E:\github\xdedzl\Temp\bin\Debug\Mono.Cecil.Mdb.pdb
 E:\github\xdedzl\Temp\bin\Debug\Mono.Cecil.Pdb.pdb
 E:\github\xdedzl\Temp\bin\Debug\Mono.Cecil.Rocks.pdb
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.xml
-E:\github\xdedzl\obj\Debug\Core.csproj.CoreCompileInputs.cache
-E:\github\xdedzl\obj\Debug\Core.csproj.CopyComplete
-E:\github\xdedzl\obj\Debug\Core.dll
-E:\github\xdedzl\obj\Debug\Core.pdb
+E:\github\xdedzl\obj\Debug\UniRx.Examples.csprojAssemblyReference.cache
+E:\github\xdedzl\obj\Debug\UniRx.Examples.csproj.CoreCompileInputs.cache
+E:\github\xdedzl\obj\Debug\UniRx.Examples.csproj.CopyComplete
+E:\github\xdedzl\obj\Debug\UniRx.Examples.dll
+E:\github\xdedzl\obj\Debug\UniRx.Examples.pdb
+E:\github\xdedzl\Temp\bin\Debug\UniRx.Async.pdb

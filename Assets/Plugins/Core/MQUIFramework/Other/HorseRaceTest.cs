@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class HorseRaceTest : Singleton<HorseRaceTest>
+﻿public class HorseRaceTest : Singleton<HorseRaceTest>
 {
 
     //public GameObject noticeTip_Panel;

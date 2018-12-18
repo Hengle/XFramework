@@ -6,9 +6,8 @@ using OnEventDelegate = System.Action<object, EventArgs>;
 /// <summary>
 /// 计时器
 /// 最小处理间隔1毫秒
-/// 重新写计时器，感觉计时器没必要这么写，不需要和事件分发写在一块
-/// Timer暂时保留，新类命名NewTimer,稳定后全面替代
 /// </summary>
+[Obsolete("请用Timer替代")]
 public class OldTimer : EventDispatcher
 {
     private readonly Dictionary<EventDispatchType, List<OnEventDelegate>> events = new Dictionary<EventDispatchType, List<OnEventDelegate>>();

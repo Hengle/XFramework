@@ -560,7 +560,6 @@ E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.Useful.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.CecilTools.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.Cecil.Pdb.dll
 E:\github\xdedzl\Temp\bin\Debug\Unity.Cecil.Mdb.dll
-E:\github\xdedzl\Temp\bin\Debug\AstarPathfindingProject.pdb
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.xml
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.xml
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.AIModule.xml
@@ -652,3 +651,4 @@ E:\github\xdedzl\obj\Debug\PackageToolsEditor.csproj.CoreCompileInputs.cache
 E:\github\xdedzl\obj\Debug\PackageToolsEditor.csproj.CopyComplete
 E:\github\xdedzl\obj\Debug\PackageToolsEditor.dll
 E:\github\xdedzl\obj\Debug\PackageToolsEditor.pdb
+E:\github\xdedzl\Temp\bin\Debug\AstarPathfindingProject.pdb
