@@ -260,10 +260,10 @@ public static class Utility
     /// 对二维数组做高斯模糊
     /// </summary>
     /// <param name="array">要处理的数组</param>
-    /// <param name="dev"></param>
+    /// <param name="dev">方差</param>
     /// <param name="r">高斯核扩展半径</param>
     /// <param name="isCircle">改变形状是否是圆</param>
-    public static void GaussianBlur(float[,] array, float dev, int r = 1, bool isCircle = true)
+    public static void GaussianBlur(float[,] array, float dev = 1.5f, int r = 1, bool isCircle = true)
     {
         // 构造半径为1的高斯核
         int length = r * 2 + 1;
@@ -278,7 +278,7 @@ public static class Utility
             }
         }
 
-        // 使权值和为1
+        // 使高斯核权值和为1
         float sum = 0;
         for (int i = 0; i < length; i++)
         {
