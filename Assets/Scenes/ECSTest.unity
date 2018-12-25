@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 422642148}
   - component: {fileID: 422642149}
+  - component: {fileID: 422642150}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -150,13 +151,34 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 422642147}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28ba6f1cc5b6d514fbe189606e0d86d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotatorObj: {fileID: 1411737251824155278, guid: 93b88cb77dfc70a4f94875ce01a1d994,
+  rotatorObj: {fileID: 6127565237152106989, guid: e0c3bbfe215d20b4387f33fe31cdaeb6,
     type: 3}
+--- !u!114 &422642150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422642147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 313f23d4005eef446adbd8eddf0f324f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topBound: 16.5
+  bottomBound: -13.5
+  leftBound: -23.5
+  rightBound: -23.5
+  enemyShipPrefab: {fileID: 2043331843927116883, guid: 981dc62312ad26a40a5b60874bd1aff9,
+    type: 3}
+  enemySpeed: 1
+  enemyShipCount: 1
+  enemyShipIncremement: 1
 --- !u!1 &1470240863
 GameObject:
   m_ObjectHideFlags: 0
