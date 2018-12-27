@@ -58,7 +58,7 @@ public class GroupPanel : BasePanel {
     /// </summary>
     public override void Init()
     {
-        CreatePanel createPanel = (CreatePanel)Singleton<UIManager>.Instance.GetPanel(UIPanelType.Create);
+        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIPanelType.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.groupBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.groupBtn.transform.GetSiblingIndex() + 1);

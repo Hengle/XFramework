@@ -138,31 +138,6 @@ public static class Utility
         return angles;
     }
 
-    /// <summary>
-    /// 左键点击获取点
-    /// </summary>
-    /// <param name="positions"></param>
-    public static void MouseAddPoints(List<Vector3> positions, Del<Vector3> action = null)
-    {
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            hit = SendRay();
-            if (hit.Equals(default(RaycastHit)))
-            {
-                Vector3 worldHitPos = hit.point;
-
-                if (action != null)
-                {
-                    worldHitPos = action(worldHitPos);
-                }
-
-                positions.Add(worldHitPos);
-                GameObject gameObject = CreatPrimitiveType(PrimitiveType.Cube, worldHitPos, 1f);
-            }
-        }
-    }
-
-
     public static async Task<float[,]> ZoomBilinearInterpAsync(float[,] array_In, int newWidth, int newHeight)
     {
         int originalHeight = array_In.GetLength(0);
@@ -260,10 +235,10 @@ public static class Utility
     /// 对二维数组做高斯模糊
     /// </summary>
     /// <param name="array">要处理的数组</param>
-    /// <param name="dev">方差</param>
+    /// <param name="dev"></param>
     /// <param name="r">高斯核扩展半径</param>
     /// <param name="isCircle">改变形状是否是圆</param>
-    public static void GaussianBlur(float[,] array, float dev = 1.5f, int r = 1, bool isCircle = true)
+    public async static Task GaussianBlur(float[,] array, float dev, int r = 1, bool isCircle = true)
     {
         // 构造半径为1的高斯核
         int length = r * 2 + 1;
@@ -278,7 +253,7 @@ public static class Utility
             }
         }
 
-        // 使高斯核权值和为1
+        // 使权值和为1
         float sum = 0;
         for (int i = 0; i < length; i++)
         {
@@ -297,27 +272,47 @@ public static class Utility
 
         // 对二维数组进行高斯模糊处理
         int circleR = array.GetLength(0) / 2;
-        for (int i = r, length_0 = array.GetLength(0) - r; i < length_0; i++)
-        {
-            for (int j = r, length_1 = array.GetLength(1) - r; j < length_1; j++)
-            {
-                if (isCircle && (i - circleR) * (i - circleR) + (j - circleR) * (j - circleR) > (circleR - r) * (circleR - r))
-                    continue;
 
-                // 用高斯核处理一个值
-                float value = 0;
-                for (int u = 0; u < length; u++)
+        await Task.Run(async () =>
+        {
+            for (int i = r, length_0 = array.GetLength(0) - r; i < length_0; i++)
+            {
+                await Task.Run(() =>
                 {
-                    for (int v = 0; v < length; v++)
+                    for (int j = r, length_1 = array.GetLength(1) - r; j < length_1; j++)
                     {
-                        if ((i + u - r) >= array.GetLength(0) || (i + u - r) < 0 || (j + v - r) >= array.GetLength(1) || (j + v - r) < 0)
-                            Debug.LogError("滴嘟滴嘟的报错");
-                        else
-                            value += gaussianCore[u, v] * array[i + u - r, j + v - r];
+                        if (isCircle && (i - circleR) * (i - circleR) + (j - circleR) * (j - circleR) > (circleR - r) * (circleR - r))
+                            continue;
+
+                        // 用高斯核处理一个值
+                        float value = 0;
+                        for (int u = 0; u < length; u++)
+                        {
+                            for (int v = 0; v < length; v++)
+                            {
+                                if ((i + u - r) >= array.GetLength(0) || (i + u - r) < 0 || (j + v - r) >= array.GetLength(1) || (j + v - r) < 0)
+                                    Debug.LogError("滴嘟滴嘟的报错");
+                                else
+                                    value += gaussianCore[u, v] * array[i + u - r, j + v - r];
+                            }
+                        }
+                        array[i, j] = value;
                     }
-                }
-                array[i, j] = value;
+                });
             }
-        }
+        });
+    }
+
+    /// <summary>
+    /// 打开一个文件
+    /// </summary>
+    /// <param name="fllePath"></param>
+    public static void OpenFile(string filePath)
+    {
+        Debug.Log(filePath);
+        System.Diagnostics.Process process = new System.Diagnostics.Process();
+        process.StartInfo.FileName = filePath;
+        process.Start();
+        process.Dispose();
     }
 }

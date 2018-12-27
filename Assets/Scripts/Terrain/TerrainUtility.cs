@@ -20,7 +20,13 @@ public static class TerrainUtility
     /// 用于修改高度的单位高度
     /// </summary>
     private static float deltaHeight;
+    /// <summary>
+    /// 地形大小
+    /// </summary>
     private static Vector3 terrainSize;
+    /// <summary>
+    /// 高度图分辨率
+    /// </summary>
     private static int heightMapRes;
     /// <summary>
     /// 用于记录要修改的Terrain目标数据，修改后统一刷新
@@ -44,9 +50,17 @@ public static class TerrainUtility
         terrainSize = Terrain.activeTerrain.terrainData.size;
         heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
         InitBrushs();
-        InitTreePrototype();
-        InitDetailPrototype();
-        InitTextures();
+        //InitPrototype(true, false);
+    }
+
+    public static void InitPrototype(bool tree = true, bool detail = true, bool texture = true)
+    {
+        if (tree)
+            InitTreePrototype();
+        if (detail)
+            InitDetailPrototype();
+        //if(texture)
+        //InitTextures();
     }
 
     #region 高度图相关
@@ -83,7 +97,7 @@ public static class TerrainUtility
     /// <param name="terrain">Terrain</param>
     /// <param name="point">Terrain上的某点</param>
     /// <returns>该点在HeightMap中的位置索引</returns>
-    public static int[] GetHeightmapIndex(Terrain terrain, Vector3 point)
+    private static Vector2Int GetHeightmapIndex(Terrain terrain, Vector3 point)
     {
         TerrainData tData = terrain.terrainData;
         float width = tData.size.x;
@@ -93,7 +107,7 @@ public static class TerrainUtility
         int x = (int)((point.x - terrain.GetPosition().x) / width * tData.heightmapWidth);
         int z = (int)((point.z - terrain.GetPosition().z) / length * tData.heightmapHeight);
 
-        return new int[2] { x, z };
+        return new Vector2Int(x, z);
     }
 
     /// <summary>
@@ -137,8 +151,8 @@ public static class TerrainUtility
         if (vertex)
         {
             // GetHeight得到的是离点最近的顶点的高度
-            int[] index = GetHeightmapIndex(terrain, point);
-            return terrain.terrainData.GetHeight(index[0], index[1]);
+            Vector2Int index = GetHeightmapIndex(terrain, point);
+            return terrain.terrainData.GetHeight(index.x, index.y);
         }
         else
         {
@@ -187,20 +201,21 @@ public static class TerrainUtility
         else if (differX <= 0 && differY > 0)  // 上边溢出
         {
             ret = terrain.terrainData.GetHeights(xBase, yBase, width, height - differY);
-            float[,] up = terrain.Up()?.terrainData.GetHeights(xBase, 0, width, differY);
+            float[,] up = terrain.Top()?.terrainData.GetHeights(xBase, 0, width, differY);
             if (up != null)
                 ret = ret.Concat1(up);
         }
         else // 上右均溢出
         {
             ret = terrain.terrainData.GetHeights(xBase, yBase, width - differX, height - differY);
+
             float[,] right = terrain.Right()?.terrainData.GetHeights(0, yBase, differX, height - differY);
-            float[,] up = terrain.Up()?.terrainData.GetHeights(xBase, 0, width - differX, differY);
-            float[,] upRight = terrain.Right()?.Up()?.terrainData.GetHeights(0, 0, differX, differY);
+            float[,] up = terrain.Top()?.terrainData.GetHeights(xBase, 0, width - differX, differY);
+            float[,] upRight = terrain.Right()?.Top()?.terrainData.GetHeights(0, 0, differX, differY);
 
             if (right != null)
                 ret = ret.Concat0(right);
-            if (up != null)
+            if (upRight != null)
                 ret = ret.Concat1(up.Concat0(upRight));
         }
 
@@ -218,7 +233,7 @@ public static class TerrainUtility
     /// <param name="mapRadius">修改半径对应的索引半径</param>
     /// <param name="limit">限制高度</param>
     /// <returns></returns>
-    public static Terrain InitHMArg(Vector3 center, float radius, ref int[] mapIndex, ref float[,] heightMap, ref int mapRadius, ref float limit)
+    private static Terrain InitHMArg(Vector3 center, float radius, ref Vector2Int mapIndex, ref float[,] heightMap, ref int mapRadius, ref int mapRadiusZ, ref float limit)
     {
         Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
         // 左下方Terrain
@@ -228,9 +243,13 @@ public static class TerrainUtility
         {
             // 获取相关参数
             mapRadius = (int)(terrain.terrainData.heightmapResolution / terrain.terrainData.size.x * radius);
+            mapRadiusZ = (int)(terrain.terrainData.heightmapResolution / terrain.terrainData.size.z * radius);
+            mapRadius = mapRadius < 1 ? 1 : mapRadius;
+            mapRadiusZ = mapRadiusZ < 1 ? 1 : mapRadiusZ;
+
             mapIndex = GetHeightmapIndex(terrain, leftDown);
-            heightMap = GetHeightMap(terrain, mapIndex[0], mapIndex[1], 2 * mapRadius, 2 * mapRadius);
-            limit = heightMap[mapRadius, mapRadius];
+            heightMap = GetHeightMap(terrain, mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadiusZ);
+            //limit = heightMap[mapRadius, mapRadius];
         }
         return terrain;
     }
@@ -245,10 +264,11 @@ public static class TerrainUtility
     public static void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool amass = true)
     {
         int mapRadius = 0;
-        int[] mapIndex = null;
+        int mapRadiusZ = 0;
+        Vector2Int mapIndex = default(Vector2Int);
         float[,] heightMap = null;
         float limit = 0;
-        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref limit);
+        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
         if (terrain == null) return;
 
         if (!isRise) opacity = -opacity;
@@ -259,11 +279,11 @@ public static class TerrainUtility
             for (int j = 0, length_1 = heightMap.GetLength(1); j < length_1; j++)
             {
                 // 限制范围为一个圆
-                float rPow = (i - mapRadius) * (i - mapRadius) + (j - mapRadius) * (j - mapRadius);
-                if (rPow > mapRadius * mapRadius)
+                float rPow = (i - mapRadiusZ) * (i - mapRadiusZ) + (j - mapRadius) * (j - mapRadius);
+                if (rPow > mapRadius * mapRadiusZ)
                     continue;
 
-                float differ = 1 - rPow / (mapRadius * mapRadius);
+                float differ = 1 - rPow / (mapRadius * mapRadiusZ);
                 if (amass)
                 {
                     heightMap[i, j] += differ * deltaHeight * opacity;
@@ -279,7 +299,7 @@ public static class TerrainUtility
             }
         }
         // 重新设置高度图
-        SetHeightMap(terrain, heightMap, mapIndex[0], mapIndex[1]);
+        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y);
     }
 
     /// <summary>
@@ -289,10 +309,11 @@ public static class TerrainUtility
     public static async void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true)
     {
         int mapRadius = 0;
-        int[] mapIndex = null;
+        int mapRadiusZ = 0;
+        Vector2Int mapIndex = default(Vector2Int);
         float[,] heightMap = null;
         float limit = 0;
-        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref limit);
+        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
         if (terrain == null) return;
 
         // 是否反转透明度
@@ -314,30 +335,31 @@ public static class TerrainUtility
         });
 
         // 重新设置高度图
-        SetHeightMap(terrain, heightMap, mapIndex[0], mapIndex[1]);
+        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y);
     }
 
     /// <summary>
-    /// 
+    /// 平滑地形
     /// </summary>
     /// <param name="center"></param>
     /// <param name="radius"></param>
     /// <param name="dev"></param>
     /// <param name="level"></param>
-    public static void Smooth(Vector3 center, float radius, float dev, int level = 1)
+    public async static void Smooth(Vector3 center, float radius, float dev, int level = 1)
     {
         center.x -= terrainSize.x / (heightMapRes - 1) * level;
         center.z -= terrainSize.z / (heightMapRes - 1) * level;
         radius += terrainSize.x / (heightMapRes - 1) * level;
         int mapRadius = 0;
-        int[] mapIndex = null;
+        int mapRadiusZ = 0;
+        Vector2Int mapIndex = default(Vector2Int);
         float[,] heightMap = null;
         float limit = 0;
-        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref limit);
+        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
         if (terrain == null) return;
 
-        Utility.GaussianBlur(heightMap, dev, level);
-        SetHeightMap(terrain, heightMap, mapIndex[0], mapIndex[1]);
+        await Utility.GaussianBlur(heightMap, dev, level);
+        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y);
     }
 
     /// <summary>
@@ -392,14 +414,14 @@ public static class TerrainUtility
         else if (differX <= 0 && differY > 0) // 上溢出
         {
             terrain.terrainData.SetHeights(xBase, yBase, heights.GetPart(0, 0, length_0 - differY + 1, length_1));  // 最后的 +1是为了和上边的地图拼接
-            terrain.Up()?.terrainData.SetHeights(xBase, 0, heights.GetPart(length_0 - differY, 0, differY, length_1));
+            terrain.Top()?.terrainData.SetHeights(xBase, 0, heights.GetPart(length_0 - differY, 0, differY, length_1));
         }
         else  // 右上均溢出
         {
             terrain.terrainData.SetHeights(xBase, yBase, heights.GetPart(0, 0, length_0 - differY + 1, length_1 - differX + 1));  // 最后的 +1是为了和上边及右边的地图拼接
             terrain.Right()?.terrainData.SetHeights(0, yBase, heights.GetPart(0, length_1 - differX, length_0 - differY + 1, differX));
-            terrain.Up()?.terrainData.SetHeights(xBase, 0, heights.GetPart(length_0 - differY, 0, differY, length_1 - differX + 1));
-            terrain.Up()?.Right().terrainData.SetHeights(0, 0, heights.GetPart(length_0 - differY, length_1 - differX, differY, differX));
+            terrain.Top()?.terrainData.SetHeights(xBase, 0, heights.GetPart(length_0 - differY, 0, differY, length_1 - differX + 1));
+            terrain.Top()?.Right().terrainData.SetHeights(0, 0, heights.GetPart(length_0 - differY, length_1 - differX, differY, differX));
         }
     }
 
@@ -411,47 +433,6 @@ public static class TerrainUtility
     public static void SaveHeightmapData(Terrain terrain/*, string path*/)
     {
 
-    }
-
-    /// <summary>
-    /// 扩大笔刷作用范围。
-    /// </summary>
-    /// <param name="heights">HeightMap</param>
-    /// <param name="deltaHeight">高度变化量[-1,1]</param>
-    /// <param name="initHeight">笔刷中心点的初始高度</param>
-    /// <param name="row">HeightMap行数</param>
-    /// <param name="column">HeightMap列数</param>
-    /// <param name="amass">当笔刷范围内其他点的高度已经高于笔刷中心点时是否同时提高其他点的高度</param>
-    private static void ExpandBrush(float[,] heights, float deltaHeight, float initHeight, int row, int column, int radius, bool amass)
-    {
-        // 高度限制
-        float limit = initHeight + deltaHeight;
-
-        for (int i = 0; i < row; i++)
-        {
-            for (int j = 0; j < column; j++)
-            {
-                // 圆外的点不做处理
-                float rPow = (i - radius) * (i - radius) + (j - radius) * (j - radius);
-                if (rPow >= radius * radius)
-                    continue;
-
-                float differ = 1 - rPow / (radius * radius);
-
-                if (amass) { heights[i, j] += differ * deltaHeight; }
-                else  // 不累加高度时
-                {
-                    if (deltaHeight > 0)  // 升高地形
-                    {
-                        heights[i, j] = heights[i, j] >= limit ? heights[i, j] : heights[i, j] + differ * deltaHeight;
-                    }
-                    else  // 降低地形
-                    {
-                        heights[i, j] = heights[i, j] <= limit ? heights[i, j] : heights[i, j] + differ * deltaHeight;
-                    }
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -471,7 +452,7 @@ public static class TerrainUtility
         {
             Vector3 pos = poses[p];
 
-            int[] index = GetHeightmapIndex(terrain, pos);
+            Vector2Int index = GetHeightmapIndex(terrain, pos);
             heights[p] = heights[p] / terrainData.size.y;    // 获取目标高度的相对比
 
             // 改变一个方形块的高度
@@ -479,8 +460,8 @@ public static class TerrainUtility
             {
                 for (int j = 0; j < 2; j++)
                 {
-                    int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
-                    int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                    int zIndex = Mathf.Clamp(index.y + j, 0, terrainData.heightmapWidth);
+                    int xIndex = Mathf.Clamp(index.x + i, 0, terrainData.heightmapHeight);
                     totalHeightMap[zIndex, xIndex] = heights[p];
                 }
             }
@@ -497,7 +478,7 @@ public static class TerrainUtility
         TerrainData terrainData = terrain.terrainData;
         float[,] totalHeightMap = terrainDic[terrain];  // 获取整块地图的高度数据
 
-        int[] index = GetHeightmapIndex(terrain, pos);
+        Vector2Int index = GetHeightmapIndex(terrain, pos);
         height = height / terrainData.size.y;    // 获取目标高度的相对比
 
         // 改变一个方形块的高度
@@ -505,8 +486,8 @@ public static class TerrainUtility
         {
             for (int j = 0; j < 2; j++)
             {
-                int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
-                int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                int zIndex = Mathf.Clamp(index.y + j, 0, terrainData.heightmapWidth);
+                int xIndex = Mathf.Clamp(index.x + i, 0, terrainData.heightmapHeight);
                 totalHeightMap[zIndex, xIndex] = height;
             }
         }
@@ -534,7 +515,7 @@ public static class TerrainUtility
         {
             Vector3 pos = poses[p];
 
-            int[] index = GetHeightmapIndex(terrain, pos);
+            Vector2Int index = GetHeightmapIndex(terrain, pos);
             heights[p] = heights[p] / terrainData.size.y;     // 获取目标高度的相对比
 
             // 改变一个圆心区域的高度
@@ -547,8 +528,8 @@ public static class TerrainUtility
                     if (rPow >= Mathf.Pow((radiusX + radiusZ) / 2, 2))
                         continue;
 
-                    int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
-                    int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                    int zIndex = Mathf.Clamp(index.y + j, 0, terrainData.heightmapWidth);
+                    int xIndex = Mathf.Clamp(index.x + i, 0, terrainData.heightmapHeight);
                     totalHeightMap[zIndex, xIndex] = heights[p];
                 }
             }
@@ -568,7 +549,7 @@ public static class TerrainUtility
         int radiusX = (int)(radius / (terrainData.size.x / terrainData.heightmapWidth)) + 1;
         int radiusZ = (int)(radius / (terrainData.size.z / terrainData.heightmapHeight)) + 1;
 
-        int[] index = GetHeightmapIndex(terrain, pos);
+        Vector2Int index = GetHeightmapIndex(terrain, pos);
         height = height / terrainData.size.y;     // 获取目标高度的相对比
 
         // 改变一个圆心区域的高度
@@ -581,8 +562,8 @@ public static class TerrainUtility
                 if (rPow >= Mathf.Pow((radiusX + radiusZ) / 2, 2))
                     continue;
 
-                int zIndex = Mathf.Clamp(index[1] + j, 0, terrainData.heightmapWidth);
-                int xIndex = Mathf.Clamp(index[0] + i, 0, terrainData.heightmapHeight);
+                int zIndex = Mathf.Clamp(index.x + j, 0, terrainData.heightmapWidth);
+                int xIndex = Mathf.Clamp(index.y + i, 0, terrainData.heightmapHeight);
                 totalHeightMap[zIndex, xIndex] = height;
             }
         }
@@ -597,7 +578,7 @@ public static class TerrainUtility
     /// </summary>
     private static void InitTreePrototype()
     {
-        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/Trees");
+        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree/Trees");
         TreePrototype[] trees = new TreePrototype[objs.Length];
         for (int i = 0, length = objs.Length; i < length; i++)
         {
@@ -616,7 +597,7 @@ public static class TerrainUtility
     /// </summary>
     /// <param name="terrain"></param>
     /// <param name="pos"></param>
-    public static void CreatTree(Terrain terrain, Vector3 pos, int count, int radius)
+    public static void CreatTree(Terrain terrain, Vector3 pos, int count, int radius, int index = 0)
     {
         TerrainData terrainData = terrain.terrainData;
         Vector3 relativePosition;
@@ -636,7 +617,7 @@ public static class TerrainUtility
 
             // 设置新添加的树的参数
             TreeInstance instance = new TreeInstance();
-            instance.prototypeIndex = 0;
+            instance.prototypeIndex = index;
             instance.color = Color.white;
             instance.lightmapColor = Color.white;
             instance.widthScale = 1;
@@ -670,13 +651,13 @@ public static class TerrainUtility
     }
 
     /// <summary>
-    /// 移除地形上的树
+    /// 移除地形上的树，没有做多地图的处理
     /// </summary>
     /// <param name="terrain">目标地形</param>
     /// <param name="center">中心点</param>
     /// <param name="radius">半径</param>
     /// <param name="index">树模板的索引</param>
-    public static void RemoveTree(Terrain terrain, Vector3 center, float radius, int index)
+    public static void RemoveTree(Terrain terrain, Vector3 center, float radius, int index = 0)
     {
         center -= terrain.GetPosition();     // 转为相对位置
         Vector2 v2 = new Vector2(center.x, center.z);
@@ -725,7 +706,7 @@ public static class TerrainUtility
     /// <param name="terrain">Terrain</param>
     /// <param name="point">Terrain上的某点</param>
     /// <returns>该点在DetialMap中的位置索引</returns>
-    private static int[] GetDetialMapIndex(Terrain terrain, Vector3 point)
+    private static Vector2Int GetDetialMapIndex(Terrain terrain, Vector3 point)
     {
         TerrainData tData = terrain.terrainData;
         float width = tData.size.x;
@@ -735,7 +716,7 @@ public static class TerrainUtility
         int x = (int)((point.x - terrain.GetPosition().x) / width * tData.detailWidth);
         int z = (int)((point.z - terrain.GetPosition().z) / length * tData.detailHeight);
 
-        return new int[2] { x, z };
+        return new Vector2Int(x, z);
     }
 
     /// <summary>
@@ -745,9 +726,10 @@ public static class TerrainUtility
     /// <param name="center">目标中心点</param>
     /// <param name="radius">半径</param>
     /// <param name="layer">层级</param>
-    public static void AddDetial(Terrain terrain, Vector3 center, float radius, int layer)
+    public static void AddDetial(Terrain terrain, Vector3 center, float radius, int count, int layer = 0)
     {
-        SetDetail(terrain, center, radius, layer, 2);
+        //SetDetail(terrain, center, radius, layer, count);
+        NewSetDetail(center, radius, layer, count);
     }
 
     /// <summary>
@@ -757,23 +739,24 @@ public static class TerrainUtility
     /// <param name="center">目标中心点</param>
     /// <param name="radius">半径</param>
     /// <param name="layer">层级</param>
-    public static void RemoveDetial(Terrain terrain, Vector3 point, float radius, int layer)
+    public static void RemoveDetial(Terrain terrain, Vector3 point, float radius, int layer = 0)
     {
-        SetDetail(terrain, point, radius, layer, 0);
+        //SetDetail(terrain, point, radius, layer, 0);
+        NewSetDetail(point, radius, layer, 0);
     }
 
     /// <summary>
-    /// 修改细节
+    /// 不考虑跨地形的细节修改
     /// </summary>
     public static void SetDetail(Terrain terrain, Vector3 point, float radius, int layer, int count)
     {
         TerrainData terrainData = terrain.terrainData;
 
         // 将位置转为细节图索引，半径转为索引半径
-        int[] index = GetDetialMapIndex(terrain, point);
+        Vector2Int index = GetDetialMapIndex(terrain, point);
         int mapRadius = (int)(radius / terrainData.size.x * terrainData.detailResolution);
 
-        int[,] map = terrainData.GetDetailLayer(index[0] - mapRadius, index[1] - mapRadius, 2 * mapRadius, 2 * mapRadius, layer);
+        int[,] map = terrainData.GetDetailLayer(index.x - mapRadius, index.y - mapRadius, 2 * mapRadius, 2 * mapRadius, layer);
 
         for (int i = 0, length_0 = map.GetLength(0); i < length_0; i++)
         {
@@ -787,7 +770,145 @@ public static class TerrainUtility
         }
 
         // 设置细节图层
-        terrainData.SetDetailLayer(index[0] - mapRadius, index[1] - mapRadius, layer, map);
+        terrainData.SetDetailLayer(index.x - mapRadius, index.y - mapRadius, layer, map);
+    }
+
+    /// <summary>
+    /// 获取细节数据
+    /// </summary>
+    private static int[,] GetDetailLayer(Terrain terrain, int xBase = 0, int yBase = 0, int width = 0, int height = 0, int layer = 0)
+    {
+        if (xBase + yBase + width + height == 0)
+        {
+            width = height = terrain.terrainData.detailResolution;
+            return terrain.terrainData.GetDetailLayer(xBase, yBase, width, height, layer);
+        }
+
+        TerrainData terrainData = terrain.terrainData;
+        int differX = xBase + width - terrainData.detailResolution;
+        int differY = yBase + height - terrainData.detailResolution;
+        int[,] ret;
+        if (differX <= 0 && differY <= 0)  // 无溢出
+        {
+            ret = terrain.terrainData.GetDetailLayer(xBase, yBase, width, height, layer);
+        }
+        else if (differX > 0 && differY <= 0) // 右边溢出
+        {
+            ret = terrain.terrainData.GetDetailLayer(xBase, yBase, width - differX, height, layer);
+            int[,] right = terrain.Right()?.terrainData.GetDetailLayer(0, yBase, differX, height, layer);
+            if (right != null)
+                ret = ret.Concat0(right);
+        }
+        else if (differX <= 0 && differY > 0)  // 上边溢出
+        {
+            ret = terrain.terrainData.GetDetailLayer(xBase, yBase, width, height - differY, layer);
+            int[,] up = terrain.Top()?.terrainData.GetDetailLayer(xBase, 0, width, differY, layer);
+            if (up != null)
+                ret = ret.Concat1(up);
+        }
+        else // 上右均溢出
+        {
+            ret = terrain.terrainData.GetDetailLayer(xBase, yBase, width - differX, height - differY, layer);
+            int[,] right = terrain.Right()?.terrainData.GetDetailLayer(0, yBase, differX, height - differY, layer);
+            int[,] up = terrain.Top()?.terrainData.GetDetailLayer(xBase, 0, width - differX, differY, layer);
+            int[,] upRight = terrain.Right()?.Top()?.terrainData.GetDetailLayer(0, 0, differX, differY, layer);
+
+            if (right != null)
+                ret = ret.Concat0(right);
+            if (upRight != null)
+                ret = ret.Concat1(up.Concat0(upRight));
+        }
+
+        return ret;
+    }
+
+    /// <summary>
+    /// 设置细节数据
+    /// </summary>
+    /// <param name="terrain"></param>
+    /// <param name="detailMap"></param>
+    /// <param name="xBase"></param>
+    /// <param name="yBase"></param>
+    /// <param name="layer"></param>
+    private static void SetDetailLayer(Terrain terrain, int[,] detailMap, int xBase, int yBase, int layer)
+    {
+        TerrainData terrainData = terrain.terrainData;
+        int length_1 = detailMap.GetLength(1);
+        int length_0 = detailMap.GetLength(0);
+
+        int differX = xBase + length_1 - (terrainData.detailResolution);
+        int differY = yBase + length_0 - (terrainData.detailResolution);
+
+        if (differX <= 0 && differY <= 0) // 无溢出
+        {
+            terrain.terrainData.SetDetailLayer(xBase, yBase, layer, detailMap);
+        }
+        else if (differX > 0 && differY <= 0) // 右溢出
+        {
+            terrain.terrainData.SetDetailLayer(xBase, yBase, layer, detailMap.GetPart(0, 0, length_0, length_1 - differX));
+            terrain.Right()?.terrainData.SetDetailLayer(0, yBase, layer, detailMap.GetPart(0, length_1 - differX, length_0, differX));
+        }
+        else if (differX <= 0 && differY > 0) // 上溢出
+        {
+            terrain.terrainData.SetDetailLayer(xBase, yBase, layer, detailMap.GetPart(0, 0, length_0 - differY, length_1));
+            terrain.Top()?.terrainData.SetDetailLayer(xBase, 0, layer, detailMap.GetPart(length_0 - differY, 0, differY, length_1));
+        }
+        else  // 右上均溢出
+        {
+            terrain.terrainData.SetDetailLayer(xBase, yBase, layer, detailMap.GetPart(0, 0, length_0 - differY, length_1 - differX));
+            terrain.Right()?.terrainData.SetDetailLayer(0, yBase, layer, detailMap.GetPart(0, length_1 - differX, length_0 - differY, differX));
+            terrain.Top()?.terrainData.SetDetailLayer(xBase, 0, layer, detailMap.GetPart(length_0 - differY, 0, differY, length_1 - differX));
+            terrain.Top()?.Right().terrainData.SetDetailLayer(0, 0, layer, detailMap.GetPart(length_0 - differY, length_1 - differX, differY, differX));
+        }
+    }
+
+    /// <summary>
+    /// 修改细节数据
+    /// </summary>
+    /// <param name="detailMap"></param>
+    /// <param name="count"></param>
+    private static void ChangeDetailMap(int[,] detailMap, int count)
+    {
+        int mapRadius = detailMap.GetLength(0) / 2;
+        // 修改数据
+        for (int i = 0, length_0 = detailMap.GetLength(0); i < length_0; i++)
+        {
+            for (int j = 0, length_1 = detailMap.GetLength(1); j < length_1; j++)
+            {
+                // 限定圆
+                if ((i - mapRadius) * (i - mapRadius) + (j - mapRadius) * (j - mapRadius) > mapRadius * mapRadius)
+                    continue;
+                detailMap[i, j] = count;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 可跨多块地形的细节修改
+    /// </summary>
+    /// <param name="terrain"></param>
+    /// <param name="center"></param>
+    /// <param name="radius"></param>
+    /// <param name="layer"></param>
+    /// <param name="count"></param>
+    public static void NewSetDetail(Vector3 center, float radius, int layer, int count)
+    {
+        Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
+        Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+        if (terrain != null)
+        {
+            // 获取数据
+            TerrainData terrainData = terrain.terrainData;
+            int mapRadius = (int)(radius / terrainData.size.x * terrainData.detailResolution);
+            Vector2Int mapIndex = GetDetialMapIndex(terrain, leftDown);
+            int[,] detailMap = GetDetailLayer(terrain, mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadius, layer);
+
+            // 修改数据
+            ChangeDetailMap(detailMap, count);
+
+            // 设置数据
+            SetDetailLayer(terrain, detailMap, mapIndex.x, mapIndex.y, layer);
+        }
     }
 
 
@@ -886,9 +1007,9 @@ public static class TerrainUtility
         }
     }
 
-#endregion
+    #endregion
 
-#region 修改与恢复
+    #region 修改与恢复
 
     /// <summary>
     /// 添加一个记录点
@@ -920,9 +1041,9 @@ public static class TerrainUtility
         }
     }
 
-#endregion
+    #endregion
 
-#region  工具
+    #region  工具
 
     /// <summary>
     /// 刷新地图
@@ -942,12 +1063,19 @@ public static class TerrainUtility
     public static Terrain GetTerrain(Vector3 pos)
     {
         RaycastHit hitInfo;
-        Physics.Raycast(pos + Vector3.up * 1000, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
+        Physics.Raycast(pos + Vector3.up * 10000, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
     }
 
-#endregion
-
+    /// <summary>
+    /// 获取当前位置在地图上的对应位置
+    /// </summary>
+    /// <returns></returns>
+    public static Vector3 GetPositionOnTerrain(Vector3 pos)
+    {
+        return new Vector3(pos.x, GetTerrain(pos).SampleHeight(pos), pos.z);
+    }
+    #endregion
 
     struct TerrainCmdData
     {
@@ -956,6 +1084,18 @@ public static class TerrainUtility
         public TerrainCmdData(float[,] _heights)
         {
             heights = _heights;
+        }
+    }
+
+    struct Vector2Int
+    {
+        public int x;
+        public int y;
+
+        public Vector2Int(int _x = 0, int _y = 0)
+        {
+            x = _x;
+            y = _y;
         }
     }
 }

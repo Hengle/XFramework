@@ -4,10 +4,14 @@
 // 时间： 2018-11-26 09:00:47
 // 版本： V 1.0
 // ==========================================
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
-public class SliderMixInput : MonoBehaviour {
+public class SliderMixInput : MonoBehaviour
+{
 
     public Slider slider;         // 滑动器
     public InputField input;      // 输入框
@@ -17,14 +21,18 @@ public class SliderMixInput : MonoBehaviour {
     public int minValue;
     public int maxValue;
 
+    public SliderMixInputEvent onValueChange { get; set; }
 
-    public void Start()
+
+    public void Awake()
     {
-        if(slider == null)
+        onValueChange = new SliderMixInputEvent();
+
+        if (slider == null)
             slider = transform.Find("Slider").GetComponent<Slider>();
-        if(input == null)
+        if (input == null)
             input = transform.Find("Input").GetComponent<InputField>();
-        if(text == null)
+        if (text == null)
             text = transform.Find("Name").GetComponent<Text>();
 
         // 监听滑动器值变动
@@ -32,6 +40,7 @@ public class SliderMixInput : MonoBehaviour {
         {
             input.text = a.ToString();
             Value = a;
+            onValueChange.Invoke(a);
         });
 
         //监听输入框输入
@@ -70,5 +79,10 @@ public class SliderMixInput : MonoBehaviour {
         slider.value = min;
         input.text = min.ToString();
         Value = min;
+    }
+
+    public class SliderMixInputEvent : UnityEvent<float>
+    {
+        public SliderMixInputEvent() { }
     }
 }

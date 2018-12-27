@@ -7,7 +7,7 @@ public class WorldListen : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Singleton<UIManager>.Instance.PushPanel(UIPanelType.Setting);
+            UIManager.Instance.PushPanel(UIPanelType.Setting);
             Time.timeScale = 1;
         }
 	}

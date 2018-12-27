@@ -30,7 +30,7 @@ public class SettingPanel : BasePanel {
 
     private void OnBackClick()
     {
-        Singleton<UIManager>.Instance.PopPanel();
+        UIManager.Instance.PopPanel();
         Time.timeScale = 1;
     }
 

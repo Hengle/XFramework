@@ -11,14 +11,6 @@ public enum MouseStateType
     /// </summary>
     DefaultState,
     /// <summary>
-    /// 创建地面单位状态
-    /// </summary>
-    CreateArmyState,
-    /// <summary>
-    /// 创建空中单位状态
-    /// </summary>
-    CreateAirForceState,
-    /// <summary>
     /// 坦克火力范围
     /// </summary>
     AttackRangeState,
@@ -55,18 +47,27 @@ public enum MouseStateType
     /// </summary>
     SelectObjs,
     /// <summary>
-    /// 地图测距
+    /// 地形编辑
     /// </summary>
-    TerrainRangingState
+    TerrainModifier,
 }
 
 public class MouseState
 {
     /// <summary>
+    /// 是否已经初始化
+    /// </summary>
+    public bool isInited { get; private set; }
+    /// <summary>
     /// 检测射线信息
     /// </summary>
     protected RaycastHit hitInfo;
 
+    public MouseState() { isInited = false; }
+    /// <summary>
+    /// 状态初始化，只会执行一次
+    /// </summary>
+    public virtual void OnInit() { isInited = true; }
     /// <summary>
     /// 状态激活时
     /// </summary>

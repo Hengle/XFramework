@@ -43,26 +43,12 @@ public class CommandPostPanel : BasePanel {
     /// <param name="modelName"> 名字 </param>
     private void OnClick(string modelName)
     {
-        // 在创建单位状态创建对应单位
-        if (MouseEvent.Instance.CurrentStateType == MouseStateType.CreateArmyState)
-        {
-            // 当前有选中单位时，将其取消
 
-            // 重新实例化一个单位
-            //GameObject obj = Singleton<GameObjectFactory>.Instance.Instantiate(modelName);
-            //MouseEvent.Instance.CurrentState.OnActive(obj);
-        }
-        else
-        {
-            // 非创建单位状态
-            //GameObject obj = Singleton<GameObjectFactory>.Instance.Instantiate(modelName);
-            //MouseEvent.Instance.ChangeState(MouseStateType.CreateArmyState, obj);
-        }
     }
 
     public override void Init()
     {
-        CreatePanel createPanel = (CreatePanel)Singleton<UIManager>.Instance.GetPanel(UIPanelType.Create);
+        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIPanelType.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.commandPostBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.commandPostBtn.transform.GetSiblingIndex() + 1);

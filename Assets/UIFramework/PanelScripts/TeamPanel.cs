@@ -93,7 +93,7 @@ public class TeamPanel : BasePanel {
 
     public override void Init()
     {
-        CreatePanel createPanel = (CreatePanel)Singleton<UIManager>.Instance.GetPanel(UIPanelType.Create);
+        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIPanelType.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.teamBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.teamBtn.transform.GetSiblingIndex() + 1);

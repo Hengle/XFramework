@@ -27,6 +27,6 @@ public class MainPanel : BasePanel {
     /// <param name="_type"></param>
     private void OnClick(UIPanelType _type)
     {
-        Singleton<UIManager>.Instance.PushPanel(_type);
+        UIManager.Instance.PushPanel(_type);
     }
 }

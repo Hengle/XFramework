@@ -59,7 +59,7 @@ public class CreatePanel : BasePanel {
     /// <param name="panelType"></param>
     private void OnClick(UIPanelType panelType)
     {
-        Singleton<UIManager>.Instance.PushPanel(panelType);
+        UIManager.Instance.PushPanel(panelType);
         
 
         Vector2 rectSize = rect.sizeDelta;
@@ -92,7 +92,7 @@ public class CreatePanel : BasePanel {
         if (rectTran.GetComponent<ButtonExt>().CurrentBtnState == 1)
         {
             float y = rectTran.position.y;
-            Singleton<UIManager>.Instance.ShowDescribe(y, str_1, str_2);
+            UIManager.Instance.ShowDescribe(y, str_1, str_2);
         }
     }
 
@@ -102,6 +102,6 @@ public class CreatePanel : BasePanel {
     private async void DelayOut()
     {
         await Task.Delay(TimeSpan.FromSeconds(0.2f));
-        Singleton<UIManager>.Instance.CloseDescribe();
+        UIManager.Instance.CloseDescribe();
     }
 }

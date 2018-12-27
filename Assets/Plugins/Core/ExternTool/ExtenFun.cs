@@ -237,10 +237,14 @@ public static class ExtenFun
     /// <returns></returns>
     public static Terrain Right(this Terrain terrain)
     {
+#if UNITY_2018
+        return terrain.rightNeighbor;
+#else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 1.5f, 1000, terrain.terrainData.size.z * 0.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
+#endif
     }
 
     /// <summary>
@@ -248,12 +252,16 @@ public static class ExtenFun
     /// </summary>
     /// <param name="terrain"></param>
     /// <returns></returns>
-    public static Terrain Up(this Terrain terrain)
+    public static Terrain Top(this Terrain terrain)
     {
+#if UNITY_2018
+        return terrain.topNeighbor;
+#else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 1000, terrain.terrainData.size.z * 1.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
+#endif
     }
 
     /// <summary>
@@ -263,10 +271,14 @@ public static class ExtenFun
     /// <returns></returns>
     public static Terrain Left(this Terrain terrain)
     {
+#if UNITY_2018
+        return terrain.leftNeighbor;
+#else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(-terrain.terrainData.size.x * 0.5f, 1000, terrain.terrainData.size.z * 0.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
+#endif
     }
 
     /// <summary>
@@ -274,12 +286,16 @@ public static class ExtenFun
     /// </summary>
     /// <param name="terrain"></param>
     /// <returns></returns>
-    public static Terrain Down(this Terrain terrain)
+    public static Terrain Bottom(this Terrain terrain)
     {
+#if UNITY_2018
+        return terrain.bottomNeighbor;
+#else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 1000, -terrain.terrainData.size.z * 0.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
+#endif
     }
 
     #endregion
