@@ -213,10 +213,23 @@ public static class TerrainUtility
             float[,] up = terrain.Top()?.terrainData.GetHeights(xBase, 0, width - differX, differY);
             float[,] upRight = terrain.Right()?.Top()?.terrainData.GetHeights(0, 0, differX, differY);
 
+            //if (right != null)
+            //    ret = ret.Concat0(right);
+            //if (upRight != null)
+            //    ret = ret.Concat1(up.Concat0(upRight));
+
             if (right != null)
-                ret = ret.Concat0(right);
-            if (upRight != null)
-                ret = ret.Concat1(up.Concat0(upRight));
+            {
+                if (up != null)
+                    ret = ret.Concat0(right).Concat1(up.Concat0(upRight));
+                else
+                    ret = ret.Concat0(right);
+            }
+            else if (up != null)
+            {
+                ret = ret.Concat1(up);
+            }
+
         }
 
         return ret;

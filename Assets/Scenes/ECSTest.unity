@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -173,12 +173,16 @@ MonoBehaviour:
   topBound: 16.5
   bottomBound: -13.5
   leftBound: -23.5
-  rightBound: -23.5
+  rightBound: 23.5
   enemyShipPrefab: {fileID: 2043331843927116883, guid: 981dc62312ad26a40a5b60874bd1aff9,
     type: 3}
-  enemySpeed: 1
-  enemyShipCount: 1
+  enemySpeed: 15
+  enemyShipCount: 1000
   enemyShipIncremement: 1
+  mat: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  monoShip: {fileID: 2043331843927116883, guid: 46e3599c157fa0e4ba9c511446654eac,
+    type: 3}
 --- !u!1 &1470240863
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,8 +258,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470240863}
-  m_LocalRotation: {x: -0.13485076, y: -0.8267331, z: 0.22374862, w: -0.4982612}
-  m_LocalPosition: {x: -5.873827, y: 3.9058762, z: 3.0876079}
+  m_LocalRotation: {x: -0.7224112, y: 0.005760918, z: -0.0060195215, w: -0.6914136}
+  m_LocalPosition: {x: -0.38574082, y: 37.81482, z: -1.0680695}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

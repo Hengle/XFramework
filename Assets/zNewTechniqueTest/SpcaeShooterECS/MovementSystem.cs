@@ -25,6 +25,13 @@ public class MovementSystem : JobComponentSystem
                 value.z = topBound;
             position.Value = value;
         }
+
+        public MovementJob(float _topBound, float _bottomBound, float _deltaTime)
+        {
+            topBound = _topBound;
+            bottomBound = _bottomBound;
+            deltaTime = _deltaTime;
+        }
     }
 
     protected override JobHandle OnUpdate(JobHandle inputDeps)

@@ -126,10 +126,14 @@ public static class ExtenFun
 
     public static T[,] Concat0<T>(this T[,] array_0, T[,] array_1)
     {
+        if(array_1 == null)
+        {
+            return array_1;
+        }
         if (array_0.GetLength(0) != array_1.GetLength(0))
         {
             Debug.LogError("两个数组第一维不一致");
-            return null;
+            return array_1;
         }
         T[,] ret = new T[array_0.GetLength(0), array_0.GetLength(1) + array_1.GetLength(1)];
         for (int i = 0; i < array_0.GetLength(0); i++)
@@ -151,6 +155,10 @@ public static class ExtenFun
 
     public static T[,] Concat1<T>(this T[,] array_0, T[,] array_1)
     {
+        if (array_1 == null)
+        {
+            return array_1;
+        }
         if (array_0.GetLength(1) != array_1.GetLength(1))
         {
             Debug.LogError("两个数组第二维不一致");

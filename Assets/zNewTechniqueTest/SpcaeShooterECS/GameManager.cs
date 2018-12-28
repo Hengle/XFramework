@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Collections;
 using Unity.Transforms;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -30,9 +31,16 @@ public class GameManager : MonoBehaviour
 
     private EntityManager manager;
 
+    // ------------------------------- //
+
+    public Material mat;
+    public Mesh mesh;
+
+    public GameObject monoShip;
+
     private void Awake()
     {
-        if (GM = null)
+        if (GM == null)
             GM = this;
         //else if (GM != this)
         //    Destroy(gameObject);
@@ -42,7 +50,6 @@ public class GameManager : MonoBehaviour
     {
         //fps = GetComponent<FPS>();
         manager = World.Active.GetOrCreateManager<EntityManager>();
-        AddShips(enemyShipCount);
     }
 
     private void Update()
@@ -50,7 +57,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             AddShips(enemyShipCount);
-        }   
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            AddMonoShip(enemyShipCount);
+        }
     }
     
     private void AddShips(int amount)
@@ -68,8 +79,44 @@ public class GameManager : MonoBehaviour
             manager.SetComponentData(entities[i], new MoveSpeed { Value = enemySpeed });
         }
         entities.Dispose();
-          
+
+        // ---------------------------------- //
+
+
+        //EntityArchetype Cube;
+        //Cube = manager.CreateArchetype(typeof(Position), typeof(Rotation), typeof(MoveSpeed), typeof(MeshInstanceRenderer));
+
+        //MeshInstanceRenderer MSI = new MeshInstanceRenderer();
+        //MSI.material = mat;
+        //MSI.mesh = mesh;
+
+        //for (int i = 0; i < amount; i++)
+        //{
+        //    float xVal = Random.Range(leftBound, rightBound);
+        //    float zVal = Random.Range(0f, 10f);
+        //    Entity cubeEnity = manager.CreateEntity(Cube);
+        //    manager.SetComponentData(cubeEnity, new Position { Value = new float3(xVal, 0f, topBound + zVal) });
+        //    manager.SetComponentData(cubeEnity, new Rotation { Value = new quaternion(0, 1, 0, 0) });
+        //    manager.SetComponentData(cubeEnity, new MoveSpeed { Value = enemySpeed });
+        //    manager.SetSharedComponentData(cubeEnity, MSI);
+        //}
+
+        // ---------------------------------- //
+
         count += amount;
-        //fps.SetElementCount(count);
+        Debug.Log(count);
+
+    }
+
+    private void AddMonoShip(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            float xVal = Random.Range(GM.leftBound, GM.rightBound);
+            float zVal = Random.Range(0f, 10f);
+            Instantiate(monoShip, new Vector3(xVal, 0, zVal), Quaternion.identity);
+        }
+        count += amount;
+        print(count);
     }
 }
