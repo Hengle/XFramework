@@ -652,3 +652,4 @@ F:\GitHub\xdedzl\obj\Debug\PackageToolsEditor.csproj.CoreCompileInputs.cache
 F:\GitHub\xdedzl\obj\Debug\PackageToolsEditor.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\PackageToolsEditor.dll
 F:\GitHub\xdedzl\obj\Debug\PackageToolsEditor.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

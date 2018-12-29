@@ -632,3 +632,4 @@ F:\GitHub\xdedzl\obj\Debug\Core.csproj.CoreCompileInputs.cache
 F:\GitHub\xdedzl\obj\Debug\Core.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\Core.dll
 F:\GitHub\xdedzl\obj\Debug\Core.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

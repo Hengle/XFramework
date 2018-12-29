@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameObjectFactory
+public class GameObjectFactory : Singleton<GameObjectFactory>
 {
 
     /// <summary>
@@ -34,7 +35,7 @@ public class GameObjectFactory
         {
             //从Resource制定路径下读取模型
             List<UnityEngine.Object> objs = new List<UnityEngine.Object>();
-            objs.AddRange(Resources.LoadAll("GameObjectPoll", typeof(GameObject)));
+            objs.AddRange(Resources.LoadAll("GameObjectPool", typeof(GameObject)));
             //objs.AddRange(Resources.LoadAll(" ***path*** ", typeof(GameObject)));
 
             //便利所有模型进行处理
@@ -51,7 +52,7 @@ public class GameObjectFactory
             // 创建对象池
             foreach (var item in poolTemplateDic)
             {
-                CreatPool(item.Value);
+                //CreatPool(item.Value);
                 yield return new WaitForFixedUpdate();
             }
         }
@@ -61,44 +62,35 @@ public class GameObjectFactory
     /// 创建一个对象池
     /// </summary>
     /// <param name="template"></param>
-    public void CreatPool(GameObject template)
+    public GameObjectPool CreatPool(GameObject template)
     {
         GameObjectPool _newPol = new GameObjectPool(template);
         poolDic.Add(template.name, _newPol);
+        return _newPol;
     }
 
     /// <summary>
     /// 通过名字实例化gameobj方法
     /// </summary>
-    public GameObject Instantiate(string _name, Vector3 _pos, Quaternion _quaternion)
+    public GameObject Instantiate(string name, Vector3 pos = default, Quaternion quaternion = default)
     {
-        GameObject _objClone = Instantiate(_name);
-
-        if (_objClone != null)
+        if (!poolTemplateDic.ContainsKey(name))
         {
-            _objClone.transform.position = _pos;
-            _objClone.transform.rotation = _quaternion;
-            return _objClone;
+            throw new Exception("无法创建名为" + name + "的对象池");
         }
-        return null;
-    }
 
-    /// <summary>
-    /// 通过名字实例化gameobj方法
-    /// </summary>
-    public GameObject Instantiate(string _name)
-    {
         GameObjectPool pool;
-        if (poolDic.TryGetValue(_name, out pool))
+        if (!poolDic.TryGetValue(name, out pool))
         {
-            GameObject obj = pool.GetPooledObject();
-            obj.SetActive(true);
-            return obj;
+            pool = CreatPool(poolTemplateDic[name]);
         }
-        else
-        {
-            return null;
-        }
+
+        GameObject obj = pool.GetPooledObject();
+        obj.transform.position = pos;
+        obj.transform.rotation = quaternion;
+        obj.SetActive(true);
+
+        return obj;
     }
 
     /// <summary>

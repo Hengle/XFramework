@@ -632,3 +632,4 @@ F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.csproj.CoreCompileInputs.cach
 F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.dll
 F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

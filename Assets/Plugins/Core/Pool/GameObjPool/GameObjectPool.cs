@@ -7,7 +7,10 @@ using UnityEngine;
 /// </summary>
 public class GameObjectPool
 {
-
+    /// <summary>
+    /// 所有对象池的父物体
+    /// </summary>
+    private static Transform poolRoot;
     /// <summary>
     /// 对象池模板
     /// </summary>
@@ -32,6 +35,13 @@ public class GameObjectPool
     /// 是否锁定对象池大小
     /// </summary>
     private readonly bool lockPoolSize = false;
+    /// <summary>
+    /// 切换场景时是否卸载
+    /// 后面默认值要改为false
+    /// </summary>
+    private bool dontDestroyOnLoad = true;
+
+    public Transform objParent;
 
     /// <summary>
     /// 当前指向链表位置索引
@@ -44,19 +54,29 @@ public class GameObjectPool
     /// <param name="_template"></param>
     /// <param name="_initCount"></param>
     /// <param name="_lookPoolSize"></param>
-    public GameObjectPool(GameObject _template, bool dontDestroy = true, int _initCount = 5, int _maxCount = 10, bool _lookPoolSize = false)
+    public GameObjectPool(GameObject _template, bool _dontDestroyOnLoad = false, int _initCount = 5, int _maxCount = 10, bool _lookPoolSize = false)
     {
         template = _template;
         currentCount = initCount = _initCount;
         lockPoolSize = _lookPoolSize;
+        dontDestroyOnLoad = _dontDestroyOnLoad;
+
+        objParent = new GameObject(template.name + "Pool").transform;
+
+        poolRoot = poolRoot ?? new GameObject("PoolRoot").transform;
+        objParent.SetParent(poolRoot);
+
+        if (dontDestroyOnLoad)
+            Object.DontDestroyOnLoad(objParent);
 
         pooledObjects = new List<GameObject>();             // 初始化链表
         for (int i = 0; i < currentCount; ++i)
         {
             GameObject obj = Object.Instantiate(template); // 创建对象
-            if (dontDestroy)
+            if (dontDestroyOnLoad)
                 Object.DontDestroyOnLoad(obj);
             obj.SetActive(false);                           // 设置对象无效
+            obj.transform.SetParent(objParent);
             pooledObjects.Add(obj);                         // 把对象添加到对象池中
         }
     }
@@ -83,7 +103,9 @@ public class GameObjectPool
         if (!lockPoolSize || currentCount < maxCount)
         {
             GameObject obj = Object.Instantiate(template);
-            Object.DontDestroyOnLoad(obj);
+            obj.transform.SetParent(objParent);
+            if (dontDestroyOnLoad)
+                Object.DontDestroyOnLoad(obj);
             pooledObjects.Add(obj);
             currentCount++;
             return obj;
@@ -109,5 +131,10 @@ public class GameObjectPool
                 pooledObjects[i].SetActive(false);
             }
         }
+    }
+
+    public void Test()
+    {
+
     }
 }

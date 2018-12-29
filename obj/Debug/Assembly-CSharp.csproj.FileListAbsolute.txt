@@ -701,3 +701,4 @@ F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
 F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.dll
 F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.pdb
+F:\GitHub\xdedzl\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb

@@ -1,20 +1,26 @@
-﻿// ==========================================
-// 描述： 
-// 作者： HAK
-// 时间： 2018-12-04 08:45:05
-// 版本： V 1.0
-// ==========================================
+﻿using PathologicalGames;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
+    SpawnPool spawnPool;
+    // Start is called before the first frame update
     void Start()
     {
-        UIManager.Instance.PushPanel(UIPanelType.TerrainModifier);
-        MouseEvent.Instance.ChangeState(MouseStateType.TerrainModifier);
+        spawnPool = GetComponent<SpawnPool>();
+
+        StartCoroutine(GameObjectFactory.Instance.InitPool());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            GameObjectFactory.Instance.Instantiate("Cube", Vector3.up);
+            GameObjectFactory.Instance.Instantiate("Cube");
+        }
     }
 }
