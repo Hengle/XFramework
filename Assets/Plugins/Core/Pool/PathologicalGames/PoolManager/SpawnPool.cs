@@ -10,9 +10,7 @@ namespace PathologicalGames
     public sealed class SpawnPool : MonoBehaviour, IList<Transform>
     {
 
-        //--zhoujie
         public bool m_bIsNotPrefabRes = false;
-        //--
 
         #region Inspector Parameters
         /// <summary>
@@ -315,15 +313,12 @@ namespace PathologicalGames
                     poolName
                 ));
 
-            //---zhoujie
             if(m_bIsNotPrefabRes)
             {
                 prefabPool.prefab.SetParent(transform);
                 prefabPool.prefabGO.SetActive(false);
             }
 
-            //---
-			
 			// Used internally to reference back to this spawnPool for things 
 			//   like anchoring co-routines.
 			prefabPool.spawnPool = this;
@@ -1459,7 +1454,6 @@ namespace PathologicalGames
         /// </summary>
         internal void SelfDestruct()
         {
-            //--zhoujie
             if (null != spawnPool && spawnPool.m_bIsNotPrefabRes)
             {
                 if(prefabGO is GameObject)
@@ -1468,7 +1462,7 @@ namespace PathologicalGames
                 }
                
             }
-            //--
+
             // Probably overkill but no harm done
             prefab = null;
             prefabGO = null;
@@ -1794,12 +1788,10 @@ namespace PathologicalGames
 
 			GameObject instGO = spawnPool.InstantiatePrefab(prefabGO, pos, rot);
 
-            //--zhoujie
             if (spawnPool.m_bIsNotPrefabRes)
             {
                 instGO.SetActive(true);
             }
-            //--
             Transform inst = instGO.transform;
 
             nameInstance(inst);  // Adds the number to the end
