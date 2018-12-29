@@ -1,59 +1,113 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// 对象池
 /// </summary>
-public class GameObjectPool{
+public class GameObjectPool
+{
 
-    private GameObject myObject;                            // 对象perfabs
-    private int pooledAmount;                               // 对象池初始大小
-    private bool lockPoolSize = false;                      // 是否锁定对象池大小
+    /// <summary>
+    /// 对象池模板
+    /// </summary>
+    private GameObject template;
+    /// <summary>
+    /// 对象池链表
+    /// </summary>
+    private List<GameObject> pooledObjects;
+    /// <summary>
+    /// 初始化大小
+    /// </summary>
+    private readonly int initCount;
+    /// <summary>
+    /// 对象池数量
+    /// </summary>
+    private int currentCount;
+    /// <summary>
+    /// 对象池最大数量
+    /// </summary>
+    private readonly int maxCount;
+    /// <summary>
+    /// 是否锁定对象池大小
+    /// </summary>
+    private readonly bool lockPoolSize = false;
 
-    private List<GameObject> pooledObjects;                 // 对象池链表
+    /// <summary>
+    /// 当前指向链表位置索引
+    /// </summary>
+    private int currentIndex = 0;
 
-    private int currentIndex = 0;                           // 当前指向链表位置索引
-
-    public GameObjectPool(GameObject _Obj, int _pooledAmount = 5, bool _lookPoolSize = false)
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="_template"></param>
+    /// <param name="_initCount"></param>
+    /// <param name="_lookPoolSize"></param>
+    public GameObjectPool(GameObject _template, bool dontDestroy = true, int _initCount = 5, int _maxCount = 10, bool _lookPoolSize = false)
     {
-        myObject = _Obj;
-        pooledAmount = _pooledAmount;
+        template = _template;
+        currentCount = initCount = _initCount;
         lockPoolSize = _lookPoolSize;
 
         pooledObjects = new List<GameObject>();             // 初始化链表
-        for (int i = 0; i < pooledAmount; ++i)
+        for (int i = 0; i < currentCount; ++i)
         {
-            Debug.Log("创建对象");
-            GameObject obj = GameObject.Instantiate(myObject); // 创建对象
-            GameObject.DontDestroyOnLoad(obj);
+            GameObject obj = Object.Instantiate(template); // 创建对象
+            if (dontDestroy)
+                Object.DontDestroyOnLoad(obj);
             obj.SetActive(false);                           // 设置对象无效
-            pooledObjects.Add(obj);                         // 把对象添加到链表（对象池）中
+            pooledObjects.Add(obj);                         // 把对象添加到对象池中
         }
     }
 
-    public GameObject GetPooledObject()                     // 获取对象池中可以使用的对象。
+    /// <summary>
+    /// 获取对象池中可以使用的对象。
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetPooledObject()
     {
-        for (int i = 0; i < pooledObjects.Count; ++i)       // 把对象池遍历一遍
+        for (int i = 0; i < pooledObjects.Count; ++i)
         {
-            // 每一次遍历都是从上一次被使用的对象的下一个开始
+            //每一次遍历都是从上一次被使用的对象的下一个
             int Item = (currentIndex + i) % pooledObjects.Count;
-            if (!pooledObjects[Item].activeInHierarchy)     // 判断该对象是否在场景中激活。
+            if (!pooledObjects[Item].activeSelf)
             {
                 currentIndex = (Item + 1) % pooledObjects.Count;
-                return pooledObjects[Item];                 // 找到没有被激活的对象并返回
+                //返回第一个未激活的对象
+                return pooledObjects[Item];
             }
         }
 
-        //如果遍历完一遍对象库发现没有可以用的，执行下面
-        if (!lockPoolSize)                                  // 如果没有锁定对象池大小，创建对象并添加到对象池中。
+        //如果遍历完一遍对象库发现没有闲置对象且对象池未达到数量限制
+        if (!lockPoolSize || currentCount < maxCount)
         {
-            GameObject obj = GameObject.Instantiate(myObject);
-            GameObject.DontDestroyOnLoad(obj);
+            GameObject obj = Object.Instantiate(template);
+            Object.DontDestroyOnLoad(obj);
             pooledObjects.Add(obj);
+            currentCount++;
             return obj;
         }
 
         //如果遍历完没有而且锁定了对象池大小，返回空。
         return null;
+    }
+
+    /// <summary>
+    /// 将对象池的数量回归5
+    /// </summary>
+    public void Clear()
+    {
+        for (int i = 0; i < pooledObjects.Count; i++)
+        {
+            if (i > initCount)
+            {
+                Object.Destroy(pooledObjects[i]);
+            }
+            else if (pooledObjects[i].activeInHierarchy)
+            {
+                pooledObjects[i].SetActive(false);
+            }
+        }
     }
 }

@@ -2,36 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameObjectFactory{
+public class GameObjectFactory
+{
 
     /// <summary>
-    /// 利用GameObject的Name，索引对应的Pool对象,可以将字符串改成枚举
+    /// 利用GameObject的int型Hash值，索引对应的Pool对象
     /// </summary>
-    private Dictionary<string, GameObjectPool> poolDictionary;
+    private Dictionary<string, GameObjectPool> poolDic;
+    /// <summary>
+    /// 所有模型字典
+    /// </summary>
+    public Dictionary<string, GameObject> poolTemplateDic { get; private set; }
+    /// <summary>
+    /// 这个用于LoadingTest的测试
+    /// </summary>
+    private bool isLoad = true;
 
     public GameObjectFactory()
     {
-        poolDictionary = new Dictionary<string, GameObjectPool>();
+        poolTemplateDic = new Dictionary<string, GameObject>();
+        poolDic = new Dictionary<string, GameObjectPool>();
     }
 
     /// <summary>
-    /// 配置对象池
+    /// 读取并预处理指定模型
     /// </summary>
-    public IEnumerator CreatObjPool()
+    /// <returns></returns>
+    public IEnumerator InitPool()
     {
-        List<GameObject> objs = new List<GameObject>();
-        // 根据需要add多个文件夹的预制体
-        objs.AddRange(Resources.LoadAll<GameObject>("GameObjPool"));
-        //objs.AddRange(Resources.LoadAll<GameObject>("***"));
-
-        for (int i = 0, length = objs.Count; i < length; i++)
+        if (isLoad)
         {
-            GameObjectPool _newPool = new GameObjectPool(objs[i]);
-            poolDictionary.Add(objs[i].name, _newPool);
-            yield return new WaitForFixedUpdate();
+            //从Resource制定路径下读取模型
+            List<UnityEngine.Object> objs = new List<UnityEngine.Object>();
+            objs.AddRange(Resources.LoadAll("GameObjectPoll", typeof(GameObject)));
+            //objs.AddRange(Resources.LoadAll(" ***path*** ", typeof(GameObject)));
+
+            //便利所有模型进行处理
+            foreach (var _obj in objs)
+            {
+                //将模型加入到字典中
+                poolTemplateDic.Add(_obj.name, _obj as GameObject);
+            }
+
+            isLoad = false;
+
+            yield return null;
+
+            // 创建对象池
+            foreach (var item in poolTemplateDic)
+            {
+                CreatPool(item.Value);
+                yield return new WaitForFixedUpdate();
+            }
         }
     }
-    
+
+    /// <summary>
+    /// 创建一个对象池
+    /// </summary>
+    /// <param name="template"></param>
+    public void CreatPool(GameObject template)
+    {
+        GameObjectPool _newPol = new GameObjectPool(template);
+        poolDic.Add(template.name, _newPol);
+    }
+
     /// <summary>
     /// 通过名字实例化gameobj方法
     /// </summary>
@@ -43,8 +78,9 @@ public class GameObjectFactory{
         {
             _objClone.transform.position = _pos;
             _objClone.transform.rotation = _quaternion;
+            return _objClone;
         }
-        return _objClone;
+        return null;
     }
 
     /// <summary>
@@ -52,9 +88,27 @@ public class GameObjectFactory{
     /// </summary>
     public GameObject Instantiate(string _name)
     {
-        poolDictionary.TryGetValue(_name, out GameObjectPool objPool);
-        GameObject retrunObj = objPool?.GetPooledObject();
-        retrunObj?.SetActive(true);
-        return retrunObj;
+        GameObjectPool pool;
+        if (poolDic.TryGetValue(_name, out pool))
+        {
+            GameObject obj = pool.GetPooledObject();
+            obj.SetActive(true);
+            return obj;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// 清理对象池
+    /// </summary>
+    public void Clear()
+    {
+        foreach (var item in poolDic)
+        {
+            item.Value.Clear();
+        }
     }
 }
