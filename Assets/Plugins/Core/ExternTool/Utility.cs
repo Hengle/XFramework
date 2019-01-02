@@ -188,6 +188,13 @@ public static class Utility
         return array_Out;
     }
 
+    /// <summary>
+    /// 对二维数组进行双线性插值
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="length_0"></param>
+    /// <param name="length_1"></param>
+    /// <returns></returns>
     public static async Task<float[,]> BilinearInterp(float[,] array, int length_0, int length_1)
     {
         float[,] _out = new float[length_0, length_1];

@@ -23,4 +23,13 @@ public class Test : MonoBehaviour
             GameObjectFactory.Instance.Instantiate("Cube");
         }
     }
+
+    AAA a = new AAA();
+    AAA b = new AAA();
+
+}
+
+public class AAA
+{
+
 }
