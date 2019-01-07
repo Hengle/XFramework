@@ -81,32 +81,47 @@ namespace XDEDZL.Mathematics
         /// 判断线与线之间的相交
         /// </summary>
         /// <param name="intersection">交点</param>
-        /// <param name="linePoint1">直线1上一点</param>
-        /// <param name="lineVec1">直线1方向</param>
-        /// <param name="linePoint2">直线2上一点</param>
-        /// <param name="lineVec2">直线2方向</param>
+        /// <param name="p1">直线1上一点</param>
+        /// <param name="v1">直线1方向</param>
+        /// <param name="p2">直线2上一点</param>
+        /// <param name="v2">直线2方向</param>
         /// <returns>是否相交</returns>
-        public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
+        public static bool LineLineIntersection(out Vector3 intersection, Vector3 p1, Vector3 v1, Vector3 p2, Vector3 v2)
         {
             intersection = Vector3.zero;
-            Vector3 lhs = linePoint2 - linePoint1;
-            Vector3 rhs = Vector3.Cross(lineVec1, lineVec2);
-            Vector3 lhs2 = Vector3.Cross(lhs, lineVec2);
-            float num = Vector3.Dot(lhs, rhs);
+            Vector3 startPointSeg = p2 - p1;
+            Vector3 vecS1 = Vector3.Cross(v1, v2);            // 有向面积1
+            Vector3 vecS2 = Vector3.Cross(startPointSeg, v2); // 有向面积2
+            float num = Vector3.Dot(startPointSeg, vecS1);
+
+            // 用于在场景中观察向量
+            //Debug.DrawLine(p1, p1 + v1, Color.white, 20000);
+            //Debug.DrawLine(p2, p2 + v2, Color.black, 20000);
+
+            //Debug.DrawLine(p1, p1 + startPointSeg, Color.red, 20000);
+            //Debug.DrawLine(p1, p1 + vecS1, Color.blue, 20000);
+            //Debug.DrawLine(p1, p1 + vecS2, Color.yellow, 20000);
+
+            // 判断两这直线是否共面
             if (num >= 1E-05f || num <= -1E-05f)
             {
                 return false;
             }
-            float num2 = Vector3.Dot(lhs2, rhs) / rhs.sqrMagnitude;
+
+            // 有向面积比值，利用点乘是因为结果可能是正数或者负数
+            float num2 = Vector3.Dot(vecS2, vecS1) / vecS1.sqrMagnitude;
+
             if (num2 >= 0f && num2 <= 1f)
             {
-                intersection = linePoint1 + lineVec1 * num2;
+                intersection = p1 + v1 * num2;
                 return true;
             }
             return false;
         }
 
-        // Token: 0x060019F1 RID: 6641 RVA: 0x000BA100 File Offset: 0x000B8300
+        /// <summary>
+        /// 计算两直线的起点分别到交点的有向距离
+        /// </summary>
         public static bool LineLineIntersection(out float tLine1, out float tLine2, Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2)
         {
             tLine1 = float.PositiveInfinity;
@@ -564,6 +579,63 @@ namespace XDEDZL.Mathematics
             OnePoint,
             TwoPoint,
         }
+    }
+}
+
+/// <summary>
+/// 坐标系
+/// </summary>
+public class Coordinate
+{
+    public Vector2 origin;
+    private float theta;
+
+    public Coordinate(Vector2 _origin, float _theta)
+    {
+        origin = _origin;
+        theta = _theta;
+    }
+
+    public Coordinate(Vector2 _origin,Vector3 dir)
+    {
+        origin = _origin;
+        theta = Mathf.Atan(dir.x / dir.z);
+    }
+
+    public Coordinate(Vector2 _origin, Vector2 dir)
+    {
+        origin = _origin;
+        theta = Mathf.Atan(dir.x / dir.y);
+    }
+
+    public Coordinate(Vector3 _origin, float _theta)
+    {
+        origin = new Vector2(_origin.x, _origin.z);
+        theta = _theta;
+    }
+
+    public Vector2 GetPoint(Vector2 pos)
+    {
+        float dis = (pos - origin).magnitude;
+        float x = dis * Mathf.Cos(dis);
+        float y = dis * Mathf.Sin(dis);
+        return new Vector2(x, y);
+    }
+
+    public Vector2 GetPoint(Vector3 pos)
+    {
+        return GetPoint(new Vector2(pos.x, pos.z));
+    }
+
+    public Vector3 GetPoint3(Vector2 pos)
+    {
+        Vector2 vec = GetPoint(pos);
+        return new Vector3(vec.x, 0, vec.y);
+    }
+
+    public Vector3 GetPoint3(Vector3 pos)
+    {
+        return GetPoint(new Vector2(pos.x, pos.z));
     }
 }
 
