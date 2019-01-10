@@ -182,7 +182,7 @@ public class RoadTest : MonoBehaviour
 
         List<float> roadHeights = PointsFitToTerrain(terrain, ref vertice);                     // 路面高度适配地形
 
-        TerrainUtility.ChangeHeights(terrain, _roadPoints.ToArray(), roadHeights.ToArray());    // 将道路整平
+        //TerrainUtility.ChangeHeights(terrain, _roadPoints.ToArray(), roadHeights.ToArray());    // 将道路整平
 
         meshFilter.mesh.Clear();
         meshFilter.mesh.vertices = vertice.ToArray();

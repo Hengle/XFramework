@@ -17,7 +17,7 @@ public class Test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J)) 
         {
             GameObjectFactory.Instance.Instantiate("Cube", Vector3.up);
             GameObjectFactory.Instance.Instantiate("Cube");

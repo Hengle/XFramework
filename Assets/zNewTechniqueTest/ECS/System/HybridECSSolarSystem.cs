@@ -27,7 +27,6 @@ public class HybridECSSolarSystem : ComponentSystem
     {
         foreach (var starEntity in GetEntities<Stars>())
         {
-            Debug.Log(starEntity.starComponent.name);
             int timeAsInt = (int)Time.time;
             if (Random.Range(1f, 100f) < starEntity.starComponent.twinkleFrequency)
             {

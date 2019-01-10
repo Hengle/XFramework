@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace XDEDZL.Mathematics
+namespace RCXC.Mathematics
 {
     /// <summary>
     /// 有关3D数学的计算
@@ -89,6 +89,12 @@ namespace XDEDZL.Mathematics
         public static bool LineLineIntersection(out Vector3 intersection, Vector3 p1, Vector3 v1, Vector3 p2, Vector3 v2)
         {
             intersection = Vector3.zero;
+            if (Vector3.Dot(v1, v2) == 1)
+            {
+                // 两线平行
+                return false;
+            }
+
             Vector3 startPointSeg = p2 - p1;
             Vector3 vecS1 = Vector3.Cross(v1, v2);            // 有向面积1
             Vector3 vecS2 = Vector3.Cross(startPointSeg, v2); // 有向面积2
@@ -111,12 +117,8 @@ namespace XDEDZL.Mathematics
             // 有向面积比值，利用点乘是因为结果可能是正数或者负数
             float num2 = Vector3.Dot(vecS2, vecS1) / vecS1.sqrMagnitude;
 
-            if (num2 >= 0f && num2 <= 1f)
-            {
-                intersection = p1 + v1 * num2;
-                return true;
-            }
-            return false;
+            intersection = p1 + v1 * num2;
+            return true;
         }
 
         /// <summary>
@@ -568,7 +570,7 @@ namespace XDEDZL.Mathematics
         public Line(Vector3 startPoint, Vector3 endPointOrVec, CreatType creatType = CreatType.TwoPoint)
         {
             point = startPoint;
-            if(creatType == CreatType.TwoPoint)
+            if (creatType == CreatType.TwoPoint)
                 vec = endPointOrVec - startPoint;
             else
                 vec = endPointOrVec;
@@ -596,7 +598,7 @@ public class Coordinate
         theta = _theta;
     }
 
-    public Coordinate(Vector2 _origin,Vector3 dir)
+    public Coordinate(Vector2 _origin, Vector3 dir)
     {
         origin = _origin;
         theta = Mathf.Atan(dir.x / dir.z);
