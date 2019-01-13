@@ -633,3 +633,5 @@ F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.dll
 F:\GitHub\xdedzl\obj\Debug\AstarPathfindingProject.pdb
 F:\GitHub\xdedzl\Temp\bin\Debug\UnityEditor.Android.Extensions.dll
+E:\github\xdedzl\Temp\bin\Debug\DestMath.dll
+E:\github\xdedzl\Temp\bin\Debug\DestMath.xml

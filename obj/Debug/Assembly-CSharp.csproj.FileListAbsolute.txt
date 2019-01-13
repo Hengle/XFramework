@@ -248,7 +248,6 @@ E:\github\xdedzl\Temp\bin\Debug\Unity.Cecil.Mdb.dll
 E:\github\xdedzl\Temp\bin\Debug\AstarPathfindingProject.pdb
 E:\github\xdedzl\Temp\bin\Debug\PackageToolsEditor.pdb
 E:\github\xdedzl\Temp\bin\Debug\AstarPathfindingProjectEditor.pdb
-E:\github\xdedzl\Temp\bin\Debug\Core.pdb
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.xml
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.xml
 E:\github\xdedzl\Temp\bin\Debug\Cinemachine.pdb
@@ -702,3 +701,7 @@ F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.dll
 F:\GitHub\xdedzl\obj\Debug\Assembly-CSharp.pdb
 F:\GitHub\xdedzl\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+E:\github\xdedzl\Temp\bin\Debug\DestMath.dll
+E:\github\xdedzl\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+E:\github\xdedzl\Temp\bin\Debug\Coree.pdb
+E:\github\xdedzl\Temp\bin\Debug\DestMath.xml

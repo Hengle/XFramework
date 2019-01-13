@@ -8,22 +8,30 @@ public class LoomTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Loom.Initialize();
+        //Loom.Initialize();
 
         DoLoomThread();
     }
 
     void DoLoomThread()
     {
-        int a = 10;
-        Loom.RunAsync(() =>
-        {
-            Thread.Sleep(1000);
-            Loom.QueueOnMainThread(() =>
-            {
-                GameObject go = new GameObject("asd");
-            });
-            GameObject oo = new GameObject("dasda");
-        });
+        //int a = 10;
+        //Loom.RunAsync(() =>
+        //{
+        //    Debug.Log("异步开始");
+        //    Loom.QueueOnMainThread(() =>
+        //    {
+        //        Debug.Log("回到主线程");
+        //        GameObject go = new GameObject("asd");
+        //        Loom.RunAsync(() =>
+        //        {
+        //            Debug.Log("有一个线程");
+        //            Loom.QueueOnMainThread(() =>
+        //            {
+        //                Debug.Log("回到主线程");
+        //            });
+        //        });
+        //    },3);
+        //});
     }
 }
