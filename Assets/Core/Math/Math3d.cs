@@ -404,13 +404,22 @@ namespace RCXC.Mathematics
             return q * Vector3.right;
         }
 
-        // Token: 0x06001A03 RID: 6659 RVA: 0x000BA62C File Offset: 0x000B882C
+        /// <summary>
+        /// 通过矩阵获取一个四元数
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
         public static Quaternion QuaternionFromMatrix(Matrix4x4 m)
         {
+            // GetColum是从矩阵中取出第i行构造一个Vector4
             return Quaternion.LookRotation(m.GetColumn(2), m.GetColumn(1));
         }
 
-        // Token: 0x06001A04 RID: 6660 RVA: 0x000BA658 File Offset: 0x000B8858
+        /// <summary>
+        /// 通过矩阵获取一个位置
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
         public static Vector3 PositionFromMatrix(Matrix4x4 m)
         {
             Vector4 column = m.GetColumn(3);
@@ -441,7 +450,13 @@ namespace RCXC.Mathematics
             gameObjectInOut.transform.rotation = Quaternion.LookRotation(directionVector, normalVector);
         }
 
-        // Token: 0x06001A08 RID: 6664 RVA: 0x000BA730 File Offset: 0x000B8930
+        /// <summary>
+        /// 判断一个点在一个线段的哪一边
+        /// </summary>
+        /// <param name="linePoint1"></param>
+        /// <param name="linePoint2"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
         public static int PointOnWhichSideOfLineSegment(Vector3 linePoint1, Vector3 linePoint2, Vector3 point)
         {
             Vector3 rhs = linePoint2 - linePoint1;
@@ -587,57 +602,96 @@ namespace RCXC.Mathematics
 /// <summary>
 /// 坐标系
 /// </summary>
-public class Coordinate
+public class GameCoordinate
 {
+    /// <summary>
+    /// 坐标原点在世界中的位置
+    /// </summary>
     public Vector2 origin;
-    private float theta;
+    /// <summary>
+    /// 和世界坐标系的夹角(y轴向x轴方向)
+    /// </summary>
+    private readonly float theta;
 
-    public Coordinate(Vector2 _origin, float _theta)
+    #region 构造函数
+
+    public GameCoordinate(Vector2 _origin, float _theta)
     {
         origin = _origin;
         theta = _theta;
     }
 
-    public Coordinate(Vector2 _origin, Vector3 dir)
+    public GameCoordinate(Vector3 _origin, Vector3 dir)
     {
-        origin = _origin;
-        theta = Mathf.Atan(dir.x / dir.z);
+        origin = new Vector2(_origin.x, _origin.z);
+        theta = Mathf.Atan(-dir.z / dir.x);
     }
 
-    public Coordinate(Vector2 _origin, Vector2 dir)
+    public GameCoordinate(Vector2 _origin, Vector2 dir)
     {
         origin = _origin;
-        theta = Mathf.Atan(dir.x / dir.y);
+        theta = Mathf.Atan(-dir.y / dir.x);
     }
 
-    public Coordinate(Vector3 _origin, float _theta)
+    public GameCoordinate(Vector3 _origin, float _theta)
     {
         origin = new Vector2(_origin.x, _origin.z);
         theta = _theta;
     }
 
-    public Vector2 GetPoint(Vector2 pos)
+    #endregion
+
+    #region 世界坐标转本地坐标
+
+    public Vector2 World2Loacal(Vector2 pos)
     {
-        float dis = (pos - origin).magnitude;
-        float x = dis * Mathf.Cos(dis);
-        float y = dis * Mathf.Sin(dis);
+        Vector2 rel = pos - origin;
+        float x = rel.x * Mathf.Cos(theta) - rel.y * Mathf.Sin(theta);
+        float y = rel.x * Mathf.Sin(theta) + rel.y * Mathf.Cos(theta);
         return new Vector2(x, y);
     }
 
-    public Vector2 GetPoint(Vector3 pos)
+    public Vector2 World2Loacal(Vector3 pos)
     {
-        return GetPoint(new Vector2(pos.x, pos.z));
+        return World2Loacal(new Vector2(pos.x, pos.z));
     }
 
-    public Vector3 GetPoint3(Vector2 pos)
+    public Vector3 World2Loacal3(Vector2 pos)
     {
-        Vector2 vec = GetPoint(pos);
+        Vector2 vec = World2Loacal(pos);
         return new Vector3(vec.x, 0, vec.y);
     }
 
-    public Vector3 GetPoint3(Vector3 pos)
+    public Vector3 World2Loacal3(Vector3 pos)
     {
-        return GetPoint(new Vector2(pos.x, pos.z));
+        return World2Loacal3(new Vector2(pos.x, pos.z));
     }
-}
 
+    #endregion
+
+    #region 本地坐标转世界坐标
+    public Vector2 Local2World(Vector2 pos)
+    {
+        float x = pos.x * Mathf.Cos(theta) + pos.y * Mathf.Sin(theta) + origin.x;
+        float y = pos.y * Mathf.Cos(theta) - pos.x * Mathf.Sin(theta) + origin.y;
+        return new Vector2(x, y);
+    }
+
+    public Vector2 Local2World(Vector3 pos)
+    {
+        return Local2World(new Vector2(pos.x, pos.z));
+    }
+
+    public Vector3 Local2World3(Vector2 pos)
+    {
+        Vector2 vec = Local2World(pos);
+        return new Vector3(vec.x, 0, vec.y);
+    }
+
+    public Vector3 Local2World3(Vector3 pos)
+    {
+        return Local2World3(new Vector2(pos.x, pos.z));
+    }
+
+    #endregion
+}

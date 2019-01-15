@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
+    public Vector3 forworad;
+    public Vector3 up;
     SpawnPool spawnPool;
     // Start is called before the first frame update
     void Start()
@@ -19,8 +21,7 @@ public class Test : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.J)) 
         {
-            GameObjectFactory.Instance.Instantiate("Cube", Vector3.up);
-            GameObjectFactory.Instance.Instantiate("Cube");
+            transform.rotation = Quaternion.LookRotation(forworad, up);
         }
     }
 
