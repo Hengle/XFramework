@@ -11,42 +11,6 @@ public enum MouseStateType
     /// </summary>
     DefaultState,
     /// <summary>
-    /// 坦克火力范围
-    /// </summary>
-    AttackRangeState,
-    /// <summary>
-    /// 防空火力范围
-    /// </summary>
-    AirDefenceState,
-    /// <summary>
-    /// 炮兵火力打击范围
-    /// </summary>
-    ArtilleryRangeState,
-    /// <summary>
-    /// 空中单位火力范围
-    /// </summary>
-    AirForceRangeState,
-    /// <summary>
-    /// 地面单位移动
-    /// </summary>
-    MoveState,
-    /// <summary>
-    /// 地面单位攻击
-    /// </summary>
-    AttackState,
-    /// <summary>
-    /// 空中单位移动
-    /// </summary>
-    AirMoveState,
-    /// <summary>
-    /// 空中单位攻击
-    /// </summary>
-    AirAttackState,
-    /// <summary>
-    /// 框选
-    /// </summary>
-    SelectObjs,
-    /// <summary>
     /// 地形编辑
     /// </summary>
     TerrainModifier,
