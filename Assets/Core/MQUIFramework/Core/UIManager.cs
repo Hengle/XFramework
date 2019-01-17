@@ -287,6 +287,7 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void ShowDescribe(float y, string headStr, string describeStr)
     {
+        return;
         Vector3 xyz = describeRect.position;
         xyz.y = y;
         describeRect.position = xyz;

@@ -9,20 +9,6 @@ using DG.Tweening;
 /// </summary>
 public class GroupPanel : BasePanel {
 
-    // 五群的按钮
-    private Button QYZGQ_M;
-    private Button QYZGQ_A;
-    private Button ZSGJQ;
-    private Button PBQ;
-    private Button ZSBZQ;
-
-    // 五群对应的预制体的名字，用于对象池的创建
-    private const string name_QYZGQ_M = "Tank_96A";
-    private const string name_QYZGQ_A = "Armortruck04";
-    private const string name_ZSGJQ = "cn_whe_08wheeled";
-    private const string name_PBQ = "cn_whe_ZZH09_122";
-    private const string name_ZSBZQ = "cn_tra_zbd05z";
-
     private Vector2 rectSize;
 
     protected override void Awake ()
@@ -30,19 +16,6 @@ public class GroupPanel : BasePanel {
         base.Awake();
         level = UILevel.Three;
         rectSize = rect.sizeDelta;
-        // 按钮赋值
-        QYZGQ_M = transform.Find("Viewport/Content/QYZGQ_M").GetComponent<Button>();
-        QYZGQ_A = transform.Find("Viewport/Content/QYZGQ_A").GetComponent<Button>();
-        ZSGJQ = transform.Find("Viewport/Content/ZSGJQ").GetComponent<Button>();
-        PBQ = transform.Find("Viewport/Content/PBQ").GetComponent<Button>();
-        ZSBZQ = transform.Find("Viewport/Content/ZSBZQ").GetComponent<Button>();
-
-        // 监听点击事件
-        QYZGQ_M.onClick.AddListener(() => { OnClick(name_QYZGQ_M); });
-        QYZGQ_A.onClick.AddListener(() => { OnClick(name_QYZGQ_A); });
-        ZSGJQ.onClick.AddListener(() => { OnClick(name_ZSGJQ); });
-        PBQ.onClick.AddListener(() => { OnClick(name_PBQ); });
-        ZSBZQ.onClick.AddListener(() => { OnClick(name_ZSBZQ); });
     }
 
     /// <summary>

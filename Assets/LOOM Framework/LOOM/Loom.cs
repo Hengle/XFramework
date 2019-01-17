@@ -9,10 +9,6 @@ using Frankfort.Threading;
 using Frankfort.Threading.Internal;
 using UnityEngine;
 
-
-
-
-
 /// <summary>
 /// Primairy accespoint/interface to all framework methods & helpers. This is just a static wrapper-class for sake of ease...
 /// </summary>

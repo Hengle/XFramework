@@ -7,12 +7,6 @@ using RCXC;
 
 public class CommandPostPanel : BasePanel {
 
-    private Button basicCommandBtn;    // 基本指挥所
-    private Button advanceCommandBtn;  // 前进指挥所
-    private Button rearCommandBtn;     // 后方指挥所
-
-    private const string modelName = "Tank_96A";
-
     private Vector2 rectSize;
 
     // Use this for initialization
@@ -20,16 +14,6 @@ public class CommandPostPanel : BasePanel {
         base.Awake();
         level = UILevel.Three;
         rectSize = rect.sizeDelta;
-
-        // 按钮赋值
-        basicCommandBtn = transform.Find("Viewport/Content/BasicBtn").GetComponent<Button>();
-        advanceCommandBtn = transform.Find("Viewport/Content/AdvanceBtn").GetComponent<Button>();
-        rearCommandBtn = transform.Find("Viewport/Content/RearBtn").GetComponent<Button>();
-
-        // 注册按钮事件
-        basicCommandBtn.onClick.AddListener(() => { OnClick(modelName); });
-        advanceCommandBtn.onClick.AddListener(() => { OnClick(modelName); });
-        rearCommandBtn.onClick.AddListener(() => { OnClick(modelName); });
     }
 	
 	// Update is called once per frame
