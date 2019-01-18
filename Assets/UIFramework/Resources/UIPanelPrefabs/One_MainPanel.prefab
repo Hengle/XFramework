@@ -64,7 +64,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 111bc1ba7b1f9944da4acd5b3735900c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -73,6 +74,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!114 &2490435012059387873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,7 +102,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 7c1915cce3da4f3499d6721d602329d4, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 7c1915cce3da4f3499d6721d602329d4,
+      type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 881c38ee0f01fb147ac696efca08751d, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -113,7 +116,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &5319630583813320153
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +182,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 84216e34cca4f0c4ea9073233febde11, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -187,6 +192,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!114 &1087196082249740523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +220,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 46c165ea87fdba74c9151315dde7c04a, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 46c165ea87fdba74c9151315dde7c04a,
+      type: 3}
     m_PressedSprite: {fileID: 21300000, guid: c9330d3e17352054cbb853c1ca9a190a, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -227,7 +234,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &7315559091338167103
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,8 +247,8 @@ GameObject:
   - component: {fileID: 7559381115003130899}
   - component: {fileID: 1765881542677306828}
   - component: {fileID: 8400383693826806795}
-  - component: {fileID: 2747610045649570818}
   - component: {fileID: 7908722888441188584}
+  - component: {fileID: 2092641096196631389}
   m_Layer: 5
   m_Name: One_MainPanel
   m_TagString: Untagged
@@ -290,19 +298,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &2747610045649570818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7315559091338167103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74a14d65705347f4bbe9d9b2554a640e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: 0
 --- !u!114 &7908722888441188584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,6 +321,19 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+--- !u!114 &2092641096196631389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7315559091338167103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a14d65705347f4bbe9d9b2554a640e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 0
 --- !u!1 &8041777544675426472
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,7 +398,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: a18342f4626907549a0e115ac5d4cf09, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -399,6 +408,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!114 &7078186001223913207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +436,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: a217e797b35809e42bba4ea6928b5a6c, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: a217e797b35809e42bba4ea6928b5a6c,
+      type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 0f325a3d42ab6934991e51fb5b09f6ec, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -439,4 +450,5 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
