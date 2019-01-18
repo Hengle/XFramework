@@ -1,4 +1,11 @@
-﻿using System;
+﻿// ==========================================
+// 描述： 
+// 作者： HAK
+// 时间： 2018-10-22 08:45:01
+// 版本： V 1.0
+// ==========================================
+using System;
+using System.Collections;
 
 /// <summary>
 /// Mono生命周期事件
@@ -6,6 +13,11 @@
 /// </summary>
 public class MonoEvent : MonoSingleton<MonoEvent>
 {
+    public MonoEvent()
+    {
+        isGlobal = true;
+    }
+
     public event Action UPDATE;
     public event Action FIXEDUPDATE;
     public event Action ONGUI;
@@ -29,5 +41,10 @@ public class MonoEvent : MonoSingleton<MonoEvent>
     private void LateUpdate()
     {
         LATEUPDATE?.Invoke();
+    }
+
+    public void StartCoroutine(Func<IEnumerator> func)
+    {
+        StartCoroutine(func);
     }
 }

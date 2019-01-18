@@ -1,24 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
-/// 此单例继承于Mono，绝大多情况下，都不需要使用此单例类型。请使用Singleton
-/// 不需要手动挂载
+/// 此单例继承于Mono，不需要手动创建
 /// </summary>
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
-    /// <summary>
-    /// 线程锁
-    /// </summary>
+
     private static readonly object _lock = new object();
-    /// <summary>
-    /// 程序是否正在退出
-    /// </summary>
-    protected static bool ApplicationIsQuitting { get; private set; }
-    /// <summary>
-    /// 是否为全局单例
-    /// </summary>
-    protected static bool isGolbal = true;
+
+    protected static bool isGlobal = false; // 是否是全局单例
 
     static MonoSingleton()
     {
@@ -33,8 +26,8 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
             {
                 if (Debug.isDebugBuild)
                 {
-                    Debug.LogWarning("[Singleton] " + typeof(T) +
-                                            " already destroyed on application quit." +
+                    Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
+                                            "' already destroyed on application quit." +
                                             " Won't create again - returning null.");
                 }
 
@@ -45,32 +38,31 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
             {
                 if (_instance == null)
                 {
-                    // 先在场景中找寻
+                    // 先在场景中找寻这个单例
                     _instance = (T)FindObjectOfType(typeof(T));
 
                     if (FindObjectsOfType(typeof(T)).Length > 1)
                     {
                         if (Debug.isDebugBuild)
                         {
-                            Debug.LogWarning("[Singleton] " + typeof(T).Name +" should never be more than 1 in scene!");
+                            Debug.LogWarning("[Singleton] " + typeof(T) +
+                                                    " - there should never be more than 1 singleton!");
                         }
 
                         return _instance;
                     }
 
-                    // 场景中找不到就创建新物体挂载
+                    // 场景中找不到就创建
                     if (_instance == null)
                     {
-                        GameObject singletonObj = new GameObject();
-                        _instance = singletonObj.AddComponent<T>();
-                        singletonObj.name = "(singleton) " + typeof(T);
+                        var singleton = new GameObject();
+                        _instance = singleton.AddComponent<T>();
+                        singleton.name = "(singleton) " + typeof(T);
 
-                        if (isGolbal && Application.isPlaying)
+                        if (isGlobal && Application.isPlaying)
                         {
-                            DontDestroyOnLoad(singletonObj);
+                            DontDestroyOnLoad(singleton);
                         }
-
-                        return _instance;
                     }
                 }
 
@@ -79,8 +71,10 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
+    protected static bool ApplicationIsQuitting { get; private set; }
+
     /// <summary>
-    /// 当工程运行结束，在退出时，不允许访问单例
+    /// 当工程运行结束，在退出时机时候，不允许访问单例
     /// </summary>
     public void OnApplicationQuit()
     {
