@@ -5,15 +5,35 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    public Vector3 forworad;
-    public Vector3 up;
-    SpawnPool spawnPool;
-    // Start is called before the first frame update
     void Start()
     {
-        spawnPool = GetComponent<SpawnPool>();
+        Graph<string> graph = new Graph<string>();
+        graph.AddVertex("");
+        graph.AddVertex("");
+        graph.AddVertex("");
+        graph.AddVertex("");
+        graph.AddVertex("");
+        graph.AddVertex("");
 
-        StartCoroutine(GameObjectFactory.Instance.InitPool());
+        graph.AddEdge(0, 1);
+        graph.AddEdge(0, 5);
+        graph.AddEdge(1, 0);
+        graph.AddEdge(1, 2);
+        graph.AddEdge(1, 3);
+        graph.AddEdge(1, 4);
+        graph.AddEdge(2, 1);
+        graph.AddEdge(2, 3);
+        graph.AddEdge(2, 4);
+        graph.AddEdge(3, 2);
+        graph.AddEdge(3, 4);
+        graph.AddEdge(4, 1);
+        graph.AddEdge(4, 2);
+        graph.AddEdge(4, 3);
+        graph.AddEdge(4, 5);
+        graph.AddEdge(5, 0);
+        graph.AddEdge(5, 4);
+
+        graph.GetShortPath(0, 1);
     }
 
     // Update is called once per frame
@@ -21,16 +41,6 @@ public class Test : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.J)) 
         {
-            transform.rotation = Quaternion.LookRotation(forworad, up);
         }
     }
-
-    AAA a = new AAA();
-    AAA b = new AAA();
-
-}
-
-public class AAA
-{
-
 }

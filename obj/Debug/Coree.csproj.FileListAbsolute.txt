@@ -317,3 +317,6 @@ E:\github\xdedzl\obj\Debug\Coree.csproj.CoreCompileInputs.cache
 E:\github\xdedzl\obj\Debug\Coree.csproj.CopyComplete
 E:\github\xdedzl\obj\Debug\Coree.dll
 E:\github\xdedzl\obj\Debug\Coree.pdb
+E:\github\xdedzl\Temp\bin\Debug\Google.Protobuf.dll
+E:\github\xdedzl\Temp\bin\Debug\MySql.Data.dll
+E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.dll

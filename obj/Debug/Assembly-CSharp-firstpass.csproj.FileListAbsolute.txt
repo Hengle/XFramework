@@ -703,3 +703,5 @@ E:\github\xdedzl\obj\Debug\Assembly-CSharp-firstpass.csproj.CoreCompileInputs.ca
 E:\github\xdedzl\obj\Debug\Assembly-CSharp-firstpass.csproj.CopyComplete
 E:\github\xdedzl\obj\Debug\Assembly-CSharp-firstpass.dll
 E:\github\xdedzl\obj\Debug\Assembly-CSharp-firstpass.pdb
+E:\github\xdedzl\Temp\bin\Debug\Google.Protobuf.dll
+E:\github\xdedzl\Temp\bin\Debug\MySql.Data.dll
