@@ -23,17 +23,23 @@ public class Test : MonoBehaviour
         graph.AddEdge(1, 4);
         graph.AddEdge(2, 1);
         graph.AddEdge(2, 3);
-        graph.AddEdge(2, 4);
+        graph.AddEdge(3, 1);
         graph.AddEdge(3, 2);
         graph.AddEdge(3, 4);
         graph.AddEdge(4, 1);
-        graph.AddEdge(4, 2);
         graph.AddEdge(4, 3);
-        graph.AddEdge(4, 5);
+        graph.AddEdge(4, 5); 
         graph.AddEdge(5, 0);
         graph.AddEdge(5, 4);
 
-        graph.GetShortPath(0, 1);
+        graph.GetShortPath(0);
+        Debug.Log("-------------------");
+
+        int[,] dis = graph.GetShortPath();
+        for (int i = 0; i < dis.GetLength(0); i++)
+        {
+            Debug.Log(dis[0,i]);
+        }
     }
 
     // Update is called once per frame
@@ -42,5 +48,11 @@ public class Test : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J)) 
         {
         }
+    }
+
+    void AAA()
+    {
+        Vector3 a;
+        a.x = 10;
     }
 }

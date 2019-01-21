@@ -147,8 +147,6 @@ E:\github\xdedzl\Temp\bin\Debug\UnityEditor.UI.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.VR.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEditor.WindowsStandalone.Extensions.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.AccessibilityModule.dll
-E:\github\xdedzl\Temp\bin\Debug\UnityEngine.Advertisements.dll
-E:\github\xdedzl\Temp\bin\Debug\UnityEngine.Advertisements.Editor.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.AIModule.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.AnimationModule.dll
 E:\github\xdedzl\Temp\bin\Debug\UnityEngine.ARModule.dll
@@ -319,4 +317,3 @@ E:\github\xdedzl\obj\Debug\Coree.dll
 E:\github\xdedzl\obj\Debug\Coree.pdb
 E:\github\xdedzl\Temp\bin\Debug\Google.Protobuf.dll
 E:\github\xdedzl\Temp\bin\Debug\MySql.Data.dll
-E:\github\xdedzl\Temp\bin\Debug\Boo.Lang.dll

@@ -7,6 +7,10 @@ using UnityEngine;
 public class Graph<T>
 {
     /// <summary>
+    /// 是否有向
+    /// </summary>
+    public readonly bool isDirected;
+    /// <summary>
     /// 图的顶点数组
     /// </summary>
     private VertexNode[] vertexs;
@@ -15,9 +19,10 @@ public class Graph<T>
     /// </summary>
     private int index;
 
-    public Graph(int capacity = 10)
+    public Graph(int capacity = 10,bool _isDirected = true)
     {
         vertexs = new VertexNode[capacity];
+        isDirected = _isDirected;
     }
 
     /// <summary>
@@ -48,6 +53,19 @@ public class Graph<T>
     /// <param name="weight"></param>
     public void AddEdge(int fromIndex, int toIndex, int weight = 1)
     {
+        AddDirEdge(fromIndex, toIndex, weight);
+        if(!isDirected)
+            AddDirEdge(toIndex, fromIndex, weight);
+    }
+
+    /// <summary>
+    /// 添加边
+    /// </summary>
+    /// <param name="fromIndex"></param>
+    /// <param name="toIndex"></param>
+    /// <param name="weight"></param>
+    private void AddDirEdge(int fromIndex, int toIndex, int weight)
+    {
         if (fromIndex > index || toIndex > index)
         {
             throw new System.Exception("添加临界点的索引超出范围");
@@ -64,8 +82,10 @@ public class Graph<T>
         {
             while (edge.headLink != null)
             {
-                edge = edge.headLink;
                 // 重复添加的判断
+                if (edge.headIndex == newEdge.headIndex && edge.tailIndex == newEdge.tailIndex)
+                    return;
+                edge = edge.headLink;
             }
             edge.headLink = newEdge;
         }
@@ -79,19 +99,18 @@ public class Graph<T>
         else
         {
             while (edge.tailLink != null)
-            {
+            {                
+                // 重复添加的判断在邻接表中判断
                 edge = edge.tailLink;
-                // 重复添加的判断
-
             }
             edge.tailLink = newEdge;
         }
     }
 
     /// <summary>
-    /// 找寻最短路径
+    /// 找寻最短路径startIndex到其余所有点的最短路径,Dijkstra
     /// </summary>
-    public void GetShortPath(int startIndex, int endIndex)
+    public void GetShortPath(int startIndex)
     {
         // 初始化最短路径集合，第i个值代表从startIndex到i的最短路径
         Path[] paths = new Path[index];
@@ -125,7 +144,7 @@ public class Graph<T>
             int min = int.MaxValue;
             for (int i = 0; i < paths.Length; i++)
             {
-                if(paths[i].ensure == false && paths[i].length < min)
+                if(!paths[i].ensure && paths[i].length <= min)
                 {
                     min = paths[i].length;
                     tempIndex = i;
@@ -135,20 +154,65 @@ public class Graph<T>
             Edge edgeIn = vertexs[tempIndex].firstIn;
             while(edgeIn != null)
             {
-                Debug.Log(edgeIn.headIndex + " : " + paths[edgeIn.headIndex]);
                 if (paths[edgeIn.headIndex].length != int.MaxValue && paths[edgeIn.headIndex].length + edgeIn.weight < paths[tempIndex].length)
                 {
                     paths[tempIndex].length = paths[edgeIn.headIndex].length + edgeIn.weight;
                 }
                 edgeIn = edgeIn.tailLink;
             }
+            paths[tempIndex].ensure = true;
             count++;
         }
 
         foreach (var item in paths)
         {
-            UnityEngine.Debug.Log(item.length);
+            Debug.Log(item.length);
         }
+    }
+
+    /// <summary>
+    /// 找寻最短路径startIndex到endIndex短路径,Floyd
+    /// </summary>
+    public int[,] GetShortPath()
+    {
+        int[,] d = new int[index,index];
+        for (int i = 0; i < d.GetLength(0); i++)
+        {
+            for (int k = 0; k < d.GetLength(0); k++)
+            {
+                d[i, k] = 1000;
+            }
+        }
+        for (int i = 0; i < index; i++)
+        {
+            Edge edge = vertexs[i].firstOut;
+            while (edge != null)
+            {
+                d[edge.headIndex, edge.tailIndex] = edge.weight;
+                edge = edge.headLink;
+            }
+        }
+
+        //for (int i = 0; i < d.GetLength(0); i++)
+        //{
+        //    string str = "";
+        //    for (int k = 0; k < d.GetLength(0); k++)
+        //    {
+        //        str += d[i, k] + "   ";
+        //    }
+        //    Debug.Log(str);
+        //}
+
+        for (int k = 0; k < index; k++)
+            for (int i = 0; i < index; i++)
+                for (int j = 0; j < index; j++)
+                {
+                    if (i == j)
+                        d[i, j] = 0;
+                    else if (i != k && k != j && d[i, k] + d[k, j] < d[i, j])
+                        d[i, j] = d[i, k] + d[k, j];
+                }
+        return d;
     }
 
     /// <summary>
