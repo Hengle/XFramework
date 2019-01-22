@@ -215,20 +215,47 @@ public class Graph<T>: IGraph<T>
     }
 
     /// <summary>
-    /// 便利所有边并执行同一操作
+    /// 遍历所有边并执行同一操作
     /// </summary>
     /// <param name="action"></param>
     public void Foreach(Action<Edge> action)
     {
         Edge edge;
-        for (int i = 0; i < vertexs.Length; i++)
+        if (isDirected)
         {
-            edge = vertexs[i].firstOut;
-            while (edge != null)
+            for (int i = 0; i < vertexs.Length; i++)
             {
-                action(edge);
-                edge = edge.headLink;
+                edge = vertexs[i].firstOut;
+                while (edge != null)
+                {
+                    action(edge);
+                    edge = edge.headLink;
+                }
             }
+        }
+        else
+        {
+            List<Edge> edges = new List<Edge>();
+            for (int i = 0; i < 6; i++)
+            {
+                edge = vertexs[i].firstOut;
+                while (edge != null)
+                {
+                    if (edge.visited != true)
+                    {
+                        action(edge);
+                        edge.visited = true;
+                    }
+                    if (edge.headIndex == i)
+                        edge = edge.headLink;
+                    else
+                        edge = edge.tailLink;
+                }
+            }
+            edges.ForEach((a) =>
+            {
+                a.visited = false;
+            });
         }
     }
 

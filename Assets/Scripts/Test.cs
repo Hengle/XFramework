@@ -9,8 +9,7 @@ public class Test : MonoBehaviour
 {
     void Start()
     {
-        //NoDirGraph();
-        BBB b = Activator.CreateInstance(typeof(BBB),10) as BBB;
+        NoDirGraph();
     }
 
     // Update is called once per frame
@@ -78,19 +77,10 @@ public class Test : MonoBehaviour
         graph.AddEdge(1, 4);
         graph.AddEdge(1, 3);
 
-        for (int i = 0; i < 6; i++)
+        graph.Foreach((a) =>
         {
-            Graph<string>.Edge edge = graph[i].firstOut;
-            while (edge != null)
-            {
-                Debug.Log(edge);
-                if(edge.headIndex == i)
-                    edge = edge.headLink;
-                else
-                    edge = edge.tailLink;
-            }
-            Debug.Log("-------------------");
-        }
+            Debug.Log(a);
+        });
     }
 
     private void HAKULAMATATA()
