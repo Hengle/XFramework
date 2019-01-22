@@ -582,6 +582,20 @@ public class PhysicsMath
 
     #region 通用多边形相关
 
+    public static List<int> DrawSimplePolygon(List<Vector3> points)
+    {
+        List<int> triangles = new List<int>();
+
+        for (int i = 1; i < points.Count - 1; i++)
+        {
+            triangles.Add(0);
+            triangles.Add(i);
+            triangles.Add(i + 1);
+        }
+
+        return triangles;
+    }
+
     /// <summary>
     /// 获取凹多边形平面排序
     /// </summary>

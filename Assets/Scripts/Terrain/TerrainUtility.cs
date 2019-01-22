@@ -4,7 +4,8 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Threading.Tasks;
-using RCXC.Mathematics;
+using XDEDZL.Mathematics;
+using System.Threading;
 /** 
 * Terrain的HeightMap坐标原点在左下角
 *   z
@@ -388,7 +389,7 @@ public static class TerrainUtility
         await Task.Run(async () =>
         {
             //float[,] deltaMap = await Utility.BilinearInterp(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
-            float[,] deltaMap = await Utility.ZoomBilinearInterpAsync(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
+            float[,] deltaMap = await Math2d.ZoomBilinearInterpAsync(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
 
             for (int i = 0; i < 2 * mapRadius; i++)
             {
@@ -410,7 +411,7 @@ public static class TerrainUtility
     /// <param name="radius"></param>
     /// <param name="dev"></param>
     /// <param name="level"></param>
-    public async static void Smooth(Vector3 center, float radius, float dev, int level = 1)
+    public static void Smooth(Vector3 center, float radius, float dev, int level = 1)
     {
         center.x -= terrainSize.x / (heightMapRes - 1) * level;
         center.z -= terrainSize.z / (heightMapRes - 1) * level;
@@ -422,9 +423,81 @@ public static class TerrainUtility
         float limit = 0;
         Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
         if (terrain == null) return;
+        Math2d.GaussianBlur(heightMap, dev, level);
+        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
+        //Debug.Log("Smooth" + Test.time);
+    }
 
-        await Utility.GaussianBlur(heightMap, dev, level);
-        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y);
+    /// <summary>
+    /// 批量平滑操作
+    /// </summary>
+    public static void BatchSmooth(Vector3[] centers, float radius, float dev, int level = 1)
+    {
+        float differx = terrainSize.x / (heightMapRes - 1) * level;
+        float differz = terrainSize.z / (heightMapRes - 1) * level;
+        int arrayLength = centers.Length;
+        for (int i = 0; i < arrayLength; i++)
+        {
+            centers[i].x -= differx;
+            centers[i].z -= differz;
+        }
+        Terrain[] terrains = new Terrain[arrayLength];
+
+        Vector2Int[] mapIndexs = new Vector2Int[arrayLength];
+        //List<float[,]> heightMaps = new List<float[,]>
+        float[][,] heightMaps = new float[arrayLength][,];
+        float limit = 0;
+        int mapRadius = 0;
+        int mapRadiusZ = 0;
+        LoomA.Initialize();
+        for (int i = 0; i < arrayLength; i++)
+        {
+            terrains[i] = InitHMArg(centers[i], radius, ref mapIndexs[i], ref heightMaps[i], ref mapRadius, ref mapRadiusZ, ref limit);
+            BatchSmooth(terrains[i], heightMaps[i], mapIndexs[i], dev, level);
+            //await Task.Run(() =>
+            //{
+            //     BatchSmooth(terrains[i], heightMaps[i], mapIndexs[i], dev, level);
+            //});
+        }
+    }
+
+    private static void BatchSmooth(Terrain terrain, float[,] heightMap, Vector2Int mapIndex, float dev, int level = 1)
+    {
+        if (terrain != null)
+        {
+            LoomA.RunAsync(() =>
+            {
+                Math2d.GaussianBlur(heightMap, dev, level);
+                //Debug.Log(Test.TimeStr);
+                //Loom.QueueOnMainThread(() =>
+                //{
+                //    SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
+                //});
+            });
+        }
+    }
+
+    /// <summary>
+    /// 异步效率测试代码，后期删掉
+    /// </summary>
+    /// <param name="terrain"></param>
+    /// <param name="heightMap"></param>
+    /// <param name="mapIndex"></param>
+    /// <param name="dev"></param>
+    /// <param name="level"></param>
+    private async static void BatchSmoothAsync(Terrain terrain, float[,] heightMap, Vector2Int mapIndex, float dev, int level = 1)
+    {
+        if (terrain != null)
+        {
+            await Task.Run(() =>
+            {
+                Math2d.GaussianBlur(heightMap, dev, level);
+                //Debug.Log(Test.TimeStr);
+            });
+
+            //Debug.Log(System.DateTime.Now.Millisecond + " :: " + Test.time);
+            SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
+        }
     }
 
     /// <summary>
@@ -448,6 +521,125 @@ public static class TerrainUtility
 
         tData.SetHeights(0, 0, heights);
     }
+
+    #endregion
+
+    #region 道路系统
+
+    ///// <summary>
+    ///// 压平路面
+    ///// </summary>
+    ///// <param name="point_0">线段起点</param>
+    ///// <param name="point_1">线段末点</param>
+    ///// <param name="halfLength"></param>
+    //public static void FlattenRoad(Vector3 pos_0, Vector3 pos_1, Vector3 pos_2, Vector3 pos_3, RoadsOrBridges road)
+    //{
+    //    Vector3 point_0 = (pos_0 + pos_1) / 2;
+    //    Vector3 point_1 = (pos_2 + pos_3) / 2;
+
+    //    float maxX = Mathf.Max(pos_0.x, pos_1.x, pos_2.x, pos_3.x);
+    //    float minX = Mathf.Min(pos_0.x, pos_1.x, pos_2.x, pos_3.x);
+    //    float maxZ = Mathf.Max(pos_0.z, pos_1.z, pos_2.z, pos_3.z);
+    //    float minZ = Mathf.Min(pos_0.z, pos_1.z, pos_2.z, pos_3.z);
+    //    Vector3 startPos = new Vector3(minX, 0, minZ);
+    //    Terrain terrain = GetTerrain(startPos);
+
+    //    int mapWidth = (int)((maxX - minX) / pieceWidth);
+    //    int mapHeight = (int)((maxZ - minZ) / pieceHeight);
+
+    //    if (terrain != null)
+    //    {
+    //        // 构造坐标系
+    //        GameCoordinate localCor = new GameCoordinate(pos_0, pos_1 - pos_0);
+    //        Vector3 localPos_0 = localCor.World2Loacal3(pos_0);
+    //        Vector3 localPos_1 = localCor.World2Loacal3(pos_1);
+    //        Vector3 localPos_2 = localCor.World2Loacal3(pos_2);
+    //        Vector3 localPos_3 = localCor.World2Loacal3(pos_3);
+    //        float maxLX = Mathf.Max(localPos_0.x, localPos_1.x, localPos_2.x, localPos_3.x);
+    //        float minLX = Mathf.Min(localPos_0.x, localPos_1.x, localPos_2.x, localPos_3.x);
+    //        float maxLZ = Mathf.Max(localPos_0.z, localPos_1.z, localPos_2.z, localPos_3.z);
+    //        float minLZ = Mathf.Min(localPos_0.z, localPos_1.z, localPos_2.z, localPos_3.z)/* - localPos_3.y / 2*/;
+
+    //        Vector2Int mapIndex = GetHeightmapIndex(terrain, startPos);
+    //        startPos = GetPositionInWorild(terrain, mapIndex.x, mapIndex.y);
+    //        startPos.y = 0;
+
+    //        float[,] heightMap = GetHeightMap(terrain, mapIndex.x, mapIndex.y, mapWidth + 1, mapHeight + 1);
+
+    //        for (int i = 0; i < heightMap.GetLength(0); i++)
+    //        {
+    //            for (int j = 0; j < heightMap.GetLength(1); j++)
+    //            {
+    //                Vector2Int newMapIndex = new Vector2Int(mapIndex.x + j, mapIndex.y + i);
+    //                if (newMapIndex.x > (heightMapRes - 1))
+    //                {
+    //                    terrain = terrain.Right() ?? terrain;
+    //                    newMapIndex.x -= heightMapRes;
+    //                }
+    //                if (newMapIndex.y > (heightMapRes - 1))
+    //                {
+    //                    terrain = terrain.Top() ?? terrain;
+    //                    newMapIndex.y -= heightMapRes;
+    //                }
+    //                Vector3 worldPos = GetPositionInWorild(terrain, newMapIndex.x, newMapIndex.y);
+    //                Vector3 loacalPos = localCor.World2Loacal3(worldPos);
+    //                if (loacalPos.x < minLX || loacalPos.x > maxLX || loacalPos.z < minLZ || loacalPos.z > maxLZ)
+    //                {
+    //                    //continue;
+    //                }
+
+    //                Vector3 pos = startPos + new Vector3(j * pieceWidth, 0, i * pieceHeight);
+    //                Vector3 intersection;
+    //                // 判断相交
+    //                if (Math3d.LineLineIntersection(out intersection, point_0, point_1 - point_0, pos, pos_3 - pos_2))
+    //                {
+    //                    // 存储路面撤回相关的数据
+    //                    if (!road.terrains.Contains(terrain))
+    //                    {
+    //                        float[,] oldHM = GetHeightMap(terrain);
+    //                        road.terrains.Add(terrain);
+    //                        road.oldHeigtMaps.Add(oldHM);
+    //                        road.isChanges.Add(new bool[heightMapRes, heightMapRes]);
+    //                    }
+
+    //                    road.isChanges[road.terrains.IndexOf(terrain)][newMapIndex.y, newMapIndex.x] = true;
+
+    //                    // 修改HeightMap
+    //                    heightMap[i, j] = GetPointHeight(GetTerrain(intersection), intersection) * deltaHeight;
+    //                }
+    //            }
+    //        }
+
+    //        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
+    //    }
+    //}
+
+    ///// <summary>
+    ///// 删除路的时候调用
+    ///// </summary>
+    ///// <param name="roadId"></param>
+    //public static void RecoverRoadTerrainData(RoadsOrBridges road)
+    //{
+    //    if (road != null)
+    //    {
+    //        for (int i = 0, lenghth = road.terrains.Count; i < lenghth; i++)
+    //        {
+    //            bool[,] isChange = road.isChanges[i];
+    //            float[,] HM = GetHeightMap(road.terrains[i]);
+    //            float[,] oldHM = road.oldHeigtMaps[i];
+    //            for (int j = 0; j < HM.GetLength(0); j++)
+    //            {
+    //                for (int k = 0; k < HM.GetLength(1); k++)
+    //                {
+    //                    if (isChange[j, k])
+    //                        HM[j, k] = oldHM[j, k];
+    //                }
+    //            }
+    //            SetSingleHeightMapDelayLOD(road.terrains[i], 0, 0, HM);
+    //        }
+    //        Refresh();
+    //    }
+    //}
 
     #endregion
 
