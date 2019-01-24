@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
-using System.Reflection;
 using System.Linq;
 using System.Threading.Tasks;
-using XDEDZL.Mathematics;
-using System.Threading;
+using RCXC.Mathematics;
 /** 
 * Terrain的HeightMap坐标原点在左下角
 *   z
@@ -25,7 +22,7 @@ public static class TerrainUtility
     /// <summary>
     /// 地形大小
     /// </summary>
-    private static Vector3 terrainSize;
+    private static readonly Vector3 terrainSize;
     /// <summary>
     /// 高度图分辨率
     /// </summary>
@@ -33,14 +30,14 @@ public static class TerrainUtility
     /// <summary>
     /// 用于记录要修改的Terrain目标数据，修改后统一刷新
     /// </summary>
-    private static Dictionary<int, float[,]> brushDic = new Dictionary<int, float[,]>();
+    private static readonly Dictionary<int, float[,]> brushDic = new Dictionary<int, float[,]>();
     /// <summary>
     /// 用于记录要修改的Terrain目标数据，修改后统一刷新
     /// </summary>
     private static List<Terrain> terrainList = new List<Terrain>();
 
     /// <summary>
-    /// 高度每一小格的宽高
+    /// 高度图每一小格的宽高
     /// </summary>
     private static readonly float pieceWidth;
     private static readonly float pieceHeight;
@@ -62,13 +59,13 @@ public static class TerrainUtility
         terrainSize = Terrain.activeTerrain.terrainData.size;
         heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
         InitBrushs();
-        //InitPrototype(true, false);
+        InitPrototype(false, false);
 
         pieceWidth = terrainSize.x / (heightMapRes - 1);
         pieceHeight = terrainSize.z / (heightMapRes - 1);
     }
 
-    public static void InitPrototype(bool tree = true, bool detail = true, bool texture = true)
+    public static void InitPrototype(bool tree = false, bool detail = false, bool texture = false)
     {
         if (tree)
             InitTreePrototype();
@@ -291,6 +288,7 @@ public static class TerrainUtility
     /// <summary>
     /// 初始化地形高度图编辑所需要的参数
     /// 后四个参数需要在调用前定义
+    /// 编辑高度时所需要用到的参数后期打算用一个结构体封装
     /// </summary>
     /// <param name="center">目标中心</param>
     /// <param name="radius">半径</param>
@@ -299,23 +297,47 @@ public static class TerrainUtility
     /// <param name="mapRadius">修改半径对应的索引半径</param>
     /// <param name="limit">限制高度</param>
     /// <returns></returns>
-    private static Terrain InitHMArg(Vector3 center, float radius, ref Vector2Int mapIndex, ref float[,] heightMap, ref int mapRadius, ref int mapRadiusZ, ref float limit)
+    private static Terrain InitHMArg(Vector3 center, float radius, out HMArg arg)
     {
         Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
         // 左下方Terrain
-        Terrain terrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+        Terrain terrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
         // 左下至少有一个方向没有Terrain
         if (terrain != null)
         {
             // 获取相关参数
-            mapRadius = (int)(terrain.terrainData.heightmapResolution / terrain.terrainData.size.x * radius);
-            mapRadiusZ = (int)(terrain.terrainData.heightmapResolution / terrain.terrainData.size.z * radius);
-            mapRadius = mapRadius < 1 ? 1 : mapRadius;
-            mapRadiusZ = mapRadiusZ < 1 ? 1 : mapRadiusZ;
+            arg.mapRadiusX = (int)(heightMapRes / terrainSize.x * radius);
+            arg.mapRadiusZ = (int)(heightMapRes / terrainSize.z * radius);
+            arg.mapRadiusX = arg.mapRadiusX < 1 ? 1 : arg.mapRadiusX;
+            arg.mapRadiusZ = arg.mapRadiusZ < 1 ? 1 : arg.mapRadiusZ;
 
-            mapIndex = GetHeightmapIndex(terrain, leftDown);
-            heightMap = GetHeightMap(terrain, mapIndex.x, mapIndex.y, 2 * mapRadius, 2 * mapRadiusZ);
-            //limit = heightMap[mapRadius, mapRadius];
+            arg.centerMapIndex = GetHeightmapIndex(terrain, center);
+            arg.startMapIndex = new Vector2Int(arg.centerMapIndex.x - arg.mapRadiusX, arg.centerMapIndex.y - arg.mapRadiusZ);
+
+            int width = 2 * arg.mapRadiusX, height = 2 * arg.mapRadiusZ;
+            if (arg.startMapIndex.x < 0)
+            {
+                width += arg.startMapIndex.x;
+                arg.startMapIndex.x = 0;
+            }
+            if (arg.startMapIndex.y < 0)
+            {
+                height += arg.startMapIndex.y;
+                arg.startMapIndex.y = 0;
+            }
+            arg.startMapIndex.y = arg.startMapIndex.y < 0 ? 0 : arg.startMapIndex.y;
+
+            arg.heightMap = GetHeightMap(terrain, arg.startMapIndex.x, arg.startMapIndex.y, width, height);
+            arg.limit = 0/*heightMap[mapRadius, mapRadius]*/;
+        }
+        else
+        {
+            terrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+            if (terrain != null)
+            {
+                arg.centerMapIndex = new Vector2Int(0, 0);
+            }
+            arg = default(HMArg);
         }
         return terrain;
     }
@@ -329,43 +351,39 @@ public static class TerrainUtility
     /// <param name="amass"></param>
     public static void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool amass = true)
     {
-        int mapRadius = 0;
-        int mapRadiusZ = 0;
-        Vector2Int mapIndex = default(Vector2Int);
-        float[,] heightMap = null;
-        float limit = 0;
-        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
+        HMArg arg;
+        Terrain terrain = InitHMArg(center, radius, out arg);
         if (terrain == null) return;
 
         if (!isRise) opacity = -opacity;
 
         // 修改高度图
-        for (int i = 0, length_0 = heightMap.GetLength(0); i < length_0; i++)
+        for (int i = 0, length_0 = arg.heightMap.GetLength(0); i < length_0; i++)
         {
-            for (int j = 0, length_1 = heightMap.GetLength(1); j < length_1; j++)
+            for (int j = 0, length_1 = arg.heightMap.GetLength(1); j < length_1; j++)
             {
                 // 限制范围为一个圆
-                float rPow = (i - mapRadiusZ) * (i - mapRadiusZ) + (j - mapRadius) * (j - mapRadius);
-                if (rPow > mapRadius * mapRadiusZ)
+                float rPow = Mathf.Pow(i + arg.mapRadiusZ - (arg.centerMapIndex.y - arg.startMapIndex.y) - arg.mapRadiusZ, 2) + Mathf.Pow(j + arg.mapRadiusX - (arg.centerMapIndex.x - arg.startMapIndex.x) - arg.mapRadiusX, 2);
+                if (rPow > arg.mapRadiusX * arg.mapRadiusZ)
                     continue;
 
-                float differ = 1 - rPow / (mapRadius * mapRadiusZ);
+                float differ = 1 - rPow / (arg.mapRadiusX * arg.mapRadiusZ);
                 if (amass)
                 {
-                    heightMap[i, j] += differ * deltaHeight * opacity;
+                    arg.heightMap[i, j] += differ * deltaHeight * opacity;
                 }
                 else if (isRise)
                 {
-                    heightMap[i, j] = heightMap[i, j] >= limit ? heightMap[i, j] : heightMap[i, j] + differ * deltaHeight * opacity;
+                    arg.heightMap[i, j] = arg.heightMap[i, j] >= arg.limit ? arg.heightMap[i, j] : arg.heightMap[i, j] + differ * deltaHeight * opacity;
                 }
                 else
                 {
-                    heightMap[i, j] = heightMap[i, j] <= limit ? heightMap[i, j] : heightMap[i, j] + differ * deltaHeight * opacity;
+                    arg.heightMap[i, j] = arg.heightMap[i, j] <= arg.limit ? arg.heightMap[i, j] : arg.heightMap[i, j] + differ * deltaHeight * opacity;
                 }
             }
         }
         // 重新设置高度图
-        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
+        SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
     }
 
     /// <summary>
@@ -374,34 +392,27 @@ public static class TerrainUtility
     /// <param name="terrain"></param>
     public static async void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true)
     {
-        int mapRadius = 0;
-        int mapRadiusZ = 0;
-        Vector2Int mapIndex = default(Vector2Int);
-        float[,] heightMap = null;
-        float limit = 0;
-        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
+        HMArg arg;
+        Terrain terrain = InitHMArg(center, radius, out arg);
         if (terrain == null) return;
 
         // 是否反转透明度
         if (!isRise) opacity = -opacity;
 
         //修改高度图
-        await Task.Run(async () =>
-        {
-            //float[,] deltaMap = await Utility.BilinearInterp(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
-            float[,] deltaMap = await Math2d.ZoomBilinearInterpAsync(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
+        //float[,] deltaMap = await Utility.BilinearInterp(brushDic[brushIndex], 2 * mapRadius, 2 * mapRadius);
+        float[,] deltaMap = await Math2d.ZoomBilinearInterpAsync(brushDic[brushIndex], 2 * arg.mapRadiusX, 2 * arg.mapRadiusX);
 
-            for (int i = 0; i < 2 * mapRadius; i++)
+        for (int i = 0; i < 2 * arg.mapRadiusX; i++)
+        {
+            for (int j = 0; j < 2 * arg.mapRadiusX; j++)
             {
-                for (int j = 0; j < 2 * mapRadius; j++)
-                {
-                    heightMap[i, j] += deltaMap[i, j] * deltaHeight * opacity;
-                }
+                arg.heightMap[i, j] += deltaMap[i, j] * deltaHeight * opacity;
             }
-        });
+        }
 
         // 重新设置高度图
-        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y);
+        SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y);
     }
 
     /// <summary>
@@ -411,21 +422,16 @@ public static class TerrainUtility
     /// <param name="radius"></param>
     /// <param name="dev"></param>
     /// <param name="level"></param>
-    public static void Smooth(Vector3 center, float radius, float dev, int level = 1)
+    public static void Smooth(Vector3 center, float radius, float dev, int level = 3)
     {
         center.x -= terrainSize.x / (heightMapRes - 1) * level;
         center.z -= terrainSize.z / (heightMapRes - 1) * level;
         radius += terrainSize.x / (heightMapRes - 1) * level;
-        int mapRadius = 0;
-        int mapRadiusZ = 0;
-        Vector2Int mapIndex = default(Vector2Int);
-        float[,] heightMap = null;
-        float limit = 0;
-        Terrain terrain = InitHMArg(center, radius, ref mapIndex, ref heightMap, ref mapRadius, ref mapRadiusZ, ref limit);
+        HMArg arg;
+        Terrain terrain = InitHMArg(center, radius, out arg);
         if (terrain == null) return;
-        Math2d.GaussianBlur(heightMap, dev, level);
-        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
-        //Debug.Log("Smooth" + Test.time);
+        Math2d.GaussianBlur(arg.heightMap, dev, level, false);
+        SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
     }
 
     /// <summary>
@@ -443,21 +449,13 @@ public static class TerrainUtility
         }
         Terrain[] terrains = new Terrain[arrayLength];
 
-        Vector2Int[] mapIndexs = new Vector2Int[arrayLength];
-        //List<float[,]> heightMaps = new List<float[,]>
-        float[][,] heightMaps = new float[arrayLength][,];
-        float limit = 0;
-        int mapRadius = 0;
-        int mapRadiusZ = 0;
+        HMArg[] args = new HMArg[arrayLength];
         LoomA.Initialize();
         for (int i = 0; i < arrayLength; i++)
         {
-            terrains[i] = InitHMArg(centers[i], radius, ref mapIndexs[i], ref heightMaps[i], ref mapRadius, ref mapRadiusZ, ref limit);
-            BatchSmooth(terrains[i], heightMaps[i], mapIndexs[i], dev, level);
-            //await Task.Run(() =>
-            //{
-            //     BatchSmooth(terrains[i], heightMaps[i], mapIndexs[i], dev, level);
-            //});
+            terrains[i] = InitHMArg(centers[i], radius, out args[i]);
+            BatchSmooth(terrains[i], args[i].heightMap, args[i].startMapIndex, dev, level);
+            //BatchSmoothAsync(terrains[i], heightMaps[i], mapIndexs[i], dev, level);
         }
     }
 
@@ -467,12 +465,14 @@ public static class TerrainUtility
         {
             LoomA.RunAsync(() =>
             {
-                Math2d.GaussianBlur(heightMap, dev, level);
-                //Debug.Log(Test.TimeStr);
-                //Loom.QueueOnMainThread(() =>
-                //{
-                //    SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
-                //});
+                for (int i = 0; i < 10; i++)
+                {
+                    Math2d.GaussianBlur(heightMap, dev, level);
+                }
+                LoomA.QueueOnMainThread(() =>
+                {
+                    SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
+                });
             });
         }
     }
@@ -507,19 +507,18 @@ public static class TerrainUtility
     /// <param name="height">高度</param>
     public static void Flatten(Terrain terrain, float height)
     {
-        TerrainData tData = terrain.terrainData;
-        float scaledHeight = height / tData.size.y;
+        float scaledHeight = height * deltaHeight;
 
-        float[,] heights = new float[tData.heightmapWidth, tData.heightmapHeight];
-        for (int i = 0; i < tData.heightmapWidth; i++)
+        float[,] heights = new float[heightMapRes, heightMapRes];
+        for (int i = 0; i < heightMapRes; i++)
         {
-            for (int j = 0; j < tData.heightmapHeight; j++)
+            for (int j = 0; j < heightMapRes; j++)
             {
                 heights[i, j] = scaledHeight;
             }
         }
 
-        tData.SetHeights(0, 0, heights);
+        terrain.terrainData.SetHeights(0, 0, heights);
     }
 
     #endregion
@@ -650,7 +649,7 @@ public static class TerrainUtility
     /// </summary>
     private static void InitTreePrototype()
     {
-        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree/Trees");
+        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree");
         TreePrototype[] trees = new TreePrototype[objs.Length];
         for (int i = 0, length = objs.Length; i < length; i++)
         {
@@ -1201,29 +1200,16 @@ public static class TerrainUtility
         }
     }
 
-    class RoadTerrainData
+    /// <summary>
+    /// 高度图修改的初始化参数
+    /// </summary>
+    struct HMArg
     {
-        public List<Terrain> terrains;
-        public List<float[,]> oldHeigtMaps;
-        public List<bool[,]> isChanges;
-
-        public RoadTerrainData()
-        {
-            terrains = new List<Terrain>();
-            oldHeigtMaps = new List<float[,]>();
-            isChanges = new List<bool[,]>();
-        }
-    }
-}
-
-public struct Vector2Int
-{
-    public int x;
-    public int y;
-
-    public Vector2Int(int _x = 0, int _y = 0)
-    {
-        x = _x;
-        y = _y;
+        public int mapRadiusX;
+        public int mapRadiusZ;
+        public Vector2Int centerMapIndex;
+        public Vector2Int startMapIndex;
+        public float[,] heightMap;
+        public float limit;
     }
 }

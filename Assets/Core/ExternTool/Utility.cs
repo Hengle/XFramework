@@ -157,8 +157,8 @@ public static class Utility
     /// <returns></returns>
     public static float DebugActionRunTime(Action action)
     {
-        float time = DateTime.Now.Millisecond + DateTime.Now.Second * 1000;
+        float time =DateTime.Now.Millisecond + DateTime.Now.Second * 1000 + DateTime.Now.Minute * 60000;
         action();
-        return DateTime.Now.Millisecond + DateTime.Now.Second * 1000 - time;
+        return DateTime.Now.Millisecond + DateTime.Now.Second * 1000 + DateTime.Now.Minute * 60000 - time;
     }
 }

@@ -24,7 +24,7 @@ public class MouseEvent : Singleton<MouseEvent>
     /// <summary>
     /// 鼠标是否移动
     /// </summary>
-    public bool mouseMove { get; private set; }
+    public bool MouseMove { get; private set; }
 
     public MouseEvent()
     {
@@ -45,6 +45,10 @@ public class MouseEvent : Singleton<MouseEvent>
             if (Input.GetMouseButton(0))
             {
                 CurrentState.OnLeftButtonHold();
+            }
+            if (Input.GetMouseButton(1))
+            {
+                CurrentState.OnRightButtonHold();
             }
             if (Input.GetMouseButtonUp(0))
             {
@@ -71,11 +75,11 @@ public class MouseEvent : Singleton<MouseEvent>
         if (Input.mousePosition != lastPosition)
         {
             lastPosition = Input.mousePosition;
-            mouseMove = true;
+            MouseMove = true;
         }
         else
         {
-            mouseMove = false;
+            MouseMove = false;
         }
     }
 

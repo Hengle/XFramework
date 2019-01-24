@@ -50,6 +50,10 @@ public class MouseState
     /// </summary>
     public virtual void OnLeftButtonHold() { }
     /// <summary>
+    /// 右键保持按下状态
+    /// </summary>
+    public virtual void OnRightButtonHold() { }
+    /// <summary>
     /// 左键抬起
     /// </summary>
     public virtual void OnLeftButtonUp() { }

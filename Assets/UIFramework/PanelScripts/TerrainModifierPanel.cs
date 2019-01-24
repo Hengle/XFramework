@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using XDEDZL;
 
 public class TerrainModifierPanel : BasePanel
 {
@@ -21,34 +22,54 @@ public class TerrainModifierPanel : BasePanel
     /// 力度的滑动器输入框组合
     /// </summary>
     public SliderMixInput opticalMix { get; private set; }
+
+    /// <summary>
+    /// 用于显示原型贴图的卷轴
+    /// </summary>
+    private Transform textureScroll;
+    /// <summary>
+    /// 卷轴内容的第一层父物体
+    /// </summary>
+    private Transform scrollContent;
+
     /// <summary>
     /// 地形修改模式
     /// </summary>
     public ModifierType modifierType { get; private set; }
+    /// <summary>
+    /// 原型索引
+    /// </summary>
+    public int PrototypeIndex { get; private set; }
 
     /// <summary>
-    /// 创建路
+    /// 卷轴类容预制
     /// </summary>
-    private Button creatRoadBtn;
-    private Button deleteRoadBtn;
+    private GameObject toogleImage;
+    private Dictionary<ModifierType, Sprite[]> textureDic;
 
     protected override void Awake()
     {
+        InitTextureDic();
         rect = GetComponent<RectTransform>();
 
         // 初始化组件
         rangeMix = transform.Find("Range").GetComponent<SliderMixInput>();
         opticalMix = transform.Find("Optical").GetComponent<SliderMixInput>();
 
+        textureScroll = transform.Find("TextureScroll");
+        scrollContent = transform.Find("TextureScroll/Viewport/Content");
+        toogleImage = Resources.Load("UIPrefabs/ToggleImage") as GameObject;
     }
 
     private void Start()
     {
-        rangeMix.SetMinMax(10, 1000);
+        rangeMix.SetMinMax(2, 50);
         opticalMix.SetMinMax(1, 10);
         transform.Find("Dropdown").GetComponent<Dropdown>().onValueChanged.AddListener((a) =>
         {
             modifierType = (ModifierType)a;
+            textureDic.TryGetValue(modifierType, out Sprite[] sprits);
+
             switch (modifierType)
             {
                 case ModifierType.Up:
@@ -68,17 +89,77 @@ public class TerrainModifierPanel : BasePanel
                     opticalMix.SetMinMax(1, 10);
                     SetShow(true);
                     break;
-                case ModifierType.BuildBridge:
-                case ModifierType.BuildRoad:
-                    SetShow(false);
-                    break;
                 default:
                     break;
             }
 
+            // 自动设置卷轴贴图
+            AutoSetToogle(sprits, toogleImage);
+
             // 通过类型修改投影的显示
             MouseEvent.Instance.GetState<MouseTerrainModifierState>(MouseStateType.TerrainModifier).OnDropDownChange(a);
         });
+    }
+
+    /// <summary>
+    /// 初始化可选择的贴图
+    /// </summary>
+    private void InitTextureDic()
+    {
+        textureDic = new Dictionary<ModifierType, Sprite[]>
+        {
+            { ModifierType.AddDetial, Resources.LoadAll("Terrain/Details", typeof(Sprite)).Convert<Sprite>() },
+            { ModifierType.AddTree, Resources.LoadAll("Terrain/Sprites/Trees", typeof(Sprite)).Convert<Sprite>() },
+            { ModifierType.AddBuilding, Resources.LoadAll("Terrain/Sprites/Buildings", typeof(Sprite)).Convert<Sprite>() },
+        };
+    }
+
+    /// <summary>
+    /// 适配Toogle的数量
+    /// 后期传参不是int，应该是一个Texture[]
+    /// </summary>
+    private void AutoSetToogle(Sprite[] sprites = null, GameObject toogleObj = null)
+    {
+        int count = sprites == null ? 0 : sprites.Length;
+        int differ = count - scrollContent.childCount;
+        // 根据现有按钮数量补齐或删除
+        if (differ >= 0)
+        {
+            for (int i = scrollContent.childCount, length = count; i < length; i++)
+            {
+                Transform btn = Instantiate(toogleObj).transform;
+                btn.SetParent(scrollContent, false);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < -differ; i++)
+            {
+                Transform btn = scrollContent.GetChild(scrollContent.childCount - 1);
+                DestroyImmediate(btn.gameObject);
+            }
+        }
+
+        // 注册Toogle事件
+        ToggleGroup group = scrollContent.GetComponent<ToggleGroup>();
+        foreach (var item in scrollContent.GetComponentsInChildren<Toggle>())
+        {
+            item.group = group;
+            item.onValueChanged.AddListener((a) =>
+            {
+                if (a == true)
+                {
+                    // 其在父物体中的索引当作原型索引
+                    PrototypeIndex = item.transform.GetSiblingIndex();
+                }
+            });
+        }
+
+        // 为Image赋贴图
+        for (int i = 0; i < scrollContent.childCount; i++)
+        {
+            scrollContent.GetChild(i).GetComponent<Image>().sprite = sprites[i];
+        }
     }
 
     public override void OnEnter()
@@ -101,8 +182,7 @@ public class TerrainModifierPanel : BasePanel
         Smooth,      // 平滑地面 
         AddTree,     // 种树
         AddDetial,   // 种草
-        BuildBridge, // 建桥
-        BuildRoad,   // 建路
+        AddBuilding, // 添加建筑物 
     }
 
     /// <summary>
@@ -122,6 +202,10 @@ public class TerrainModifierPanel : BasePanel
 public class MouseTerrainModifierState : MouseState
 {
     private bool isAdd = true;
+    /// <summary>
+    /// 选中的建筑
+    /// </summary>
+    private Transform selectBuild;
 
     /// <summary>
     /// 对应的地形修改面板
@@ -137,7 +221,6 @@ public class MouseTerrainModifierState : MouseState
         }
     }
 
-
     /// <summary>
     /// 投影
     /// </summary>
@@ -152,7 +235,8 @@ public class MouseTerrainModifierState : MouseState
                 projectorObj.transform.localEulerAngles = new Vector3(90, 0, 0);
                 projector = projectorObj.AddComponent<Projector>();
                 projector.orthographic = true;
-                projector.material = Resources.Load("Materials/ProjectorMat") as Material;
+                projector.farClipPlane = 20000;
+                projector.material = Resources.Load("Terrain/Materials/ProjectorMat") as Material;
             }
             return projector;
         }
@@ -192,7 +276,10 @@ public class MouseTerrainModifierState : MouseState
     /// <param name="args"></param>
     public override void OnActive(object para = null, params object[] args)
     {
-        Projection.enabled = true;
+        if ((int)panel.modifierType < 5)
+        {
+            Projection.enabled = true;
+        }
     }
 
     /// <summary>
@@ -217,10 +304,13 @@ public class MouseTerrainModifierState : MouseState
                 TerrainUtility.Smooth(hitInfo.point, (int)Panel.rangeMix.Value, Panel.opticalMix.Value);
                 break;
             case TerrainModifierPanel.ModifierType.AddDetial:
-                if (isAdd)
-                    TerrainUtility.AddDetial(terrain, hitInfo.point, Panel.rangeMix.Value, (int)(Panel.opticalMix.Value));
-                else
-                    TerrainUtility.RemoveDetial(terrain, hitInfo.point, Panel.rangeMix.Value);
+                if (MouseEvent.Instance.MouseMove)
+                {
+                    if (isAdd)
+                        TerrainUtility.AddDetial(terrain, hitInfo.point, Panel.rangeMix.Value, (int)(Panel.opticalMix.Value), Panel.PrototypeIndex);
+                    else
+                        TerrainUtility.RemoveDetial(terrain, hitInfo.point, Panel.rangeMix.Value, Panel.PrototypeIndex);
+                }
                 break;
             default:
                 break;
@@ -228,7 +318,14 @@ public class MouseTerrainModifierState : MouseState
     }
 
     /// <summary>
-    /// 不同的状态对应不同的点击事件
+    /// 左键按下
+    /// </summary>
+    public override void OnLeftButtonDown()
+    {
+    }
+
+    /// <summary>
+    /// 左键抬起
     /// </summary>
     public override void OnLeftButtonUp()
     {
@@ -239,11 +336,17 @@ public class MouseTerrainModifierState : MouseState
         Terrain terrain = hitInfo.collider.GetComponent<Terrain>();
         switch (Panel.modifierType)
         {
+            case TerrainModifierPanel.ModifierType.Up:
+            case TerrainModifierPanel.ModifierType.Down:
+            case TerrainModifierPanel.ModifierType.Smooth:
+                TerrainUtility.Refresh();
+                TerrainUtility.AddOldData();
+                break;
             case TerrainModifierPanel.ModifierType.AddTree:
                 if (isAdd)
-                    TerrainUtility.CreatTree(terrain, hitInfo.point, (int)(Panel.opticalMix.Value), (int)Panel.rangeMix.Value);
+                    TerrainUtility.CreatTree(terrain, hitInfo.point, (int)(Panel.opticalMix.Value), (int)Panel.rangeMix.Value, Panel.PrototypeIndex);
                 else
-                    TerrainUtility.RemoveTree(terrain, hitInfo.point, (int)Panel.rangeMix.Value);
+                    TerrainUtility.RemoveTree(terrain, hitInfo.point, (int)Panel.rangeMix.Value, Panel.PrototypeIndex);
                 break;
             default:
                 break;
@@ -261,12 +364,14 @@ public class MouseTerrainModifierState : MouseState
         if (Input.GetKeyUp(KeyCode.LeftShift))
             isAdd = true;
 
-
-        // 更新投影的位置
-        hitInfo = Utility.SendRay(LayerMask.GetMask("Terrain"));
-        if (!hitInfo.Equals(default(RaycastHit)))
+        if (Projection.enabled)
         {
-            Projection.transform.position = hitInfo.point + Vector3.up * 50;
+            // 更新投影的位置
+            hitInfo = Utility.SendRay(LayerMask.GetMask("Terrain"));
+            if (!hitInfo.Equals(default(RaycastHit)))
+            {
+                Projection.transform.position = hitInfo.point + Vector3.up * 10000;
+            }
         }
     }
 

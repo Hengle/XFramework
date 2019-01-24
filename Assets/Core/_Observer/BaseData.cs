@@ -36,17 +36,6 @@ namespace XDEDZL
         private static Dictionary<Type, BaseData> s_uiDataByInstanceTypeDic = new Dictionary<Type, BaseData>();//类型和数据类对应的字典
 
         /// <summary>
-        /// T应该是继承自BaseData，转化成T返回
-        /// </summary>
-        public static T DataConvert<T>(BaseData data) where T : class
-        {
-            T tDate = data as T;
-            if (tDate == null)
-                throw new ArgumentException(string.Format("类型转换失败:源类型: {0} 目标类型:{1}", data.GetType(), typeof(T)));
-            return tDate;
-        }
-
-        /// <summary>
         /// 判断是否包含type类型
         /// </summary>
         private static bool ContainsKey(Type type)

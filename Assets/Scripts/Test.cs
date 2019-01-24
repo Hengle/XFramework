@@ -1,15 +1,47 @@
-﻿using PathologicalGames;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
 public class Test : MonoBehaviour
 {
+
+    private void QQQ(in List<int> yyy)
+    {
+        yyy[0] = 100;
+        Debug.Log(yyy[0]);
+    }
+
     void Start()
     {
-        NoDirGraph();
+        Dictionary<int, int> aa = new Dictionary<int, int>();
+
+        List<int> aaa = new List<int>();
+        aaa.Add(0);
+
+        QQQ(in aaa);
+        Debug.Log(aaa[0]);
+
+        //int a = 1;
+        //int b = 1;
+        //float c = Utility.DebugActionRunTime(() =>
+        //{
+        //    for (float i = 0; i < 1000000000; i++)
+        //    {
+        //        a = 1;
+        //    }
+        //});
+        //float d = Utility.DebugActionRunTime(() =>
+        //{
+        //    for (float i = 0; i < 1000000000; i++)
+        //    {
+        //        if(a == b)
+        //        {
+
+        //        }
+        //    }
+        //});
+        //Debug.Log(c);
+        //Debug.Log(d);
     }
 
     // Update is called once per frame
@@ -92,9 +124,11 @@ public class Test : MonoBehaviour
 
 public class AAA
 {
+    
     protected AAA()
     {
         Debug.Log("AAA午餐");
+        
     }
 
     public AAA(int a)

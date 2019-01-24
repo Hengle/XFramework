@@ -33,10 +33,7 @@ namespace XDEDZL
         /// </summary>
         public void Notify(T1 arg1, T2 arg2, T3 arg3)
         {
-            if (null != m_delegate)
-            {
-                m_delegate(arg1, arg2, arg3);
-            }
+            m_delegate?.Invoke(arg1, arg2, arg3);
         }
     }
 }

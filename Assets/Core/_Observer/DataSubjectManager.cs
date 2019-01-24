@@ -9,7 +9,7 @@ namespace XDEDZL
     {
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         {
-            //主题，这么写应该只是为了方便看吧，否则把ObservableSubjectTemplate直接写成嵌套类会很乱
+            //主题，这么写应该只是为了方便看，否则把ObservableSubjectTemplate直接写成嵌套类会很乱
         }
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace XDEDZL
         private Dictionary<DataType, Subject> m_subjectDic = new Dictionary<DataType, Subject>();
 
         /// <summary>
-        /// 把subject做一层封装，加入dataType参数以便识别,但好像又没什么必要,但本蟑螂觉得暂时没什么必要，所有去掉了
+        /// 把subject做一层封装，加入dataType参数以便识别,但本蟑螂觉得暂时没什么必要，所有去掉了
         /// </summary>
         //private class Entry
         //{
@@ -61,14 +61,6 @@ namespace XDEDZL
         }
 
         /// <summary>
-        /// 返回一个BaseData的派生类
-        /// </summary>
-        public static T GetData<T>() where T : BaseData, new()
-        {
-            return BaseData.GetData<T>();
-        }
-
-        /// <summary>
         /// 通知事件
         /// </summary>
         /// <param name="data">data主题</param>
@@ -76,8 +68,16 @@ namespace XDEDZL
         /// <param name="obj">映射参数</param>
         public void Notify(BaseData data, int type = 0, object obj = null)
         {
-            //if (m_subjectDic.ContainsKey(data.dataType))
-                m_subjectDic[data.dataType]?.Notify(data, type, obj);
+            if (m_subjectDic.ContainsKey(data.dataType))
+                m_subjectDic[data.dataType].Notify(data, type, obj);
+        }
+
+        /// <summary>
+        /// 返回一个BaseData的派生类
+        /// </summary>
+        public static T GetData<T>() where T : BaseData, new()
+        {
+            return BaseData.GetData<T>();
         }
     }
 }

@@ -117,6 +117,16 @@ public static class ExtenFun
         }
     }
 
+    public static T[] Convert<T>(this Array array) where T : class
+    {
+        T[] tArray = new T[array.Length];
+        for (int i = 0; i < array.Length; i++)
+        {
+            tArray[i] = array.GetValue(i) as T;
+        }
+        return tArray;
+    }
+
     public static Value GetValue<Key, Value>(this Dictionary<Key, Value> dic, Key key)
     {
         Value value;
@@ -126,14 +136,10 @@ public static class ExtenFun
 
     public static T[,] Concat0<T>(this T[,] array_0, T[,] array_1)
     {
-        if(array_1 == null)
-        {
-            return array_1;
-        }
         if (array_0.GetLength(0) != array_1.GetLength(0))
         {
             Debug.LogError("两个数组第一维不一致");
-            return array_1;
+            return null;
         }
         T[,] ret = new T[array_0.GetLength(0), array_0.GetLength(1) + array_1.GetLength(1)];
         for (int i = 0; i < array_0.GetLength(0); i++)
@@ -155,10 +161,6 @@ public static class ExtenFun
 
     public static T[,] Concat1<T>(this T[,] array_0, T[,] array_1)
     {
-        if (array_1 == null)
-        {
-            return array_1;
-        }
         if (array_0.GetLength(1) != array_1.GetLength(1))
         {
             Debug.LogError("两个数组第二维不一致");
@@ -248,7 +250,7 @@ public static class ExtenFun
 #if UNITY_2018
         return terrain.rightNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 1.5f, 1000, terrain.terrainData.size.z * 0.5f);
+        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 1.5f, 10000, terrain.terrainData.size.z * 0.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
@@ -265,7 +267,7 @@ public static class ExtenFun
 #if UNITY_2018
         return terrain.topNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 1000, terrain.terrainData.size.z * 1.5f);
+        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 1.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
@@ -282,7 +284,7 @@ public static class ExtenFun
 #if UNITY_2018
         return terrain.leftNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(-terrain.terrainData.size.x * 0.5f, 1000, terrain.terrainData.size.z * 0.5f);
+        Vector3 rayStart = terrain.GetPosition() + new Vector3(-terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 0.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
@@ -299,11 +301,39 @@ public static class ExtenFun
 #if UNITY_2018
         return terrain.bottomNeighbor;
 #else
-        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 1000, -terrain.terrainData.size.z * 0.5f);
+        Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, -terrain.terrainData.size.z * 0.5f);
         RaycastHit hitInfo;
         Physics.Raycast(rayStart, Vector3.down, out hitInfo, float.MaxValue, LayerMask.GetMask("Terrain"));
         return hitInfo.collider?.GetComponent<Terrain>();
 #endif
+    }
+
+    #endregion
+
+    #region Bounds
+
+    /// <summary>
+    /// 绘制一个包围盒
+    /// </summary>
+    /// <param name="bounds"></param>
+    /// <param name="color"></param>
+    public static void Draw(this Bounds bounds, Color color)
+    {
+        var e = bounds.extents;
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, +e.y, +e.z), bounds.center + new Vector3(-e.x, +e.y, +e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, -e.y, +e.z), bounds.center + new Vector3(-e.x, -e.y, +e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, -e.y, -e.z), bounds.center + new Vector3(-e.x, -e.y, -e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, +e.y, -e.z), bounds.center + new Vector3(-e.x, +e.y, -e.z), color);
+
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, +e.y, +e.z), bounds.center + new Vector3(+e.x, -e.y, +e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(-e.x, +e.y, +e.z), bounds.center + new Vector3(-e.x, -e.y, +e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(-e.x, +e.y, -e.z), bounds.center + new Vector3(-e.x, -e.y, -e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, +e.y, -e.z), bounds.center + new Vector3(+e.x, -e.y, -e.z), color);
+
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, +e.y, +e.z), bounds.center + new Vector3(+e.x, +e.y, -e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(+e.x, -e.y, +e.z), bounds.center + new Vector3(+e.x, -e.y, -e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(-e.x, +e.y, +e.z), bounds.center + new Vector3(-e.x, +e.y, -e.z), color);
+        Debug.DrawLine(bounds.center + new Vector3(-e.x, -e.y, +e.z), bounds.center + new Vector3(-e.x, -e.y, -e.z), color);
     }
 
     #endregion
