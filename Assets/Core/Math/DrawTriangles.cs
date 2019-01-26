@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RCXC
+namespace XDEDZL
 {
     /// <summary>
     /// 封装所有画三角形的方法

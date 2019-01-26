@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using System;
+using System.IO.Compression;
 
 /// <summary>
 /// 使用工具类
@@ -67,32 +68,6 @@ public static class Utility
         return obj;
     }
 
-    ///<summary> 
-    /// 序列化 
-    /// </summary> 
-    /// <param name="data">要序列化的对象</param> 
-    /// <returns>返回存放序列化后的数据缓冲区</returns> 
-    public static byte[] Serialize(object data)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        MemoryStream rems = new MemoryStream();
-        formatter.Serialize(rems, data);
-        return rems.GetBuffer();
-    }
-
-    /// <summary> 
-    /// 反序列化 
-    /// </summary> 
-    /// <param name="data">数据缓冲区</param> 
-    /// <returns>对象</returns> 
-    public static object Deserialize(byte[] data)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        MemoryStream rems = new MemoryStream(data);
-        data = null;
-        return formatter.Deserialize(rems);
-    }
-
     /// <summary>
     /// 获取一组位置
     /// </summary>
@@ -138,27 +113,14 @@ public static class Utility
     }
 
     /// <summary>
-    /// 打开一个文件
-    /// </summary>
-    /// <param name="fllePath"></param>
-    public static void OpenFile(string filePath)
-    {
-        Debug.Log(filePath);
-        System.Diagnostics.Process process = new System.Diagnostics.Process();
-        process.StartInfo.FileName = filePath;
-        process.Start();
-        process.Dispose();
-    }
-
-    /// <summary>
     /// 执行一个方法并返回它的执行时间
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
     public static float DebugActionRunTime(Action action)
     {
-        float time =DateTime.Now.Millisecond + DateTime.Now.Second * 1000 + DateTime.Now.Minute * 60000;
+        float time = DateTime.Now.Millisecond + DateTime.Now.Second * 1000;
         action();
-        return DateTime.Now.Millisecond + DateTime.Now.Second * 1000 + DateTime.Now.Minute * 60000 - time;
+        return DateTime.Now.Millisecond + DateTime.Now.Second * 1000 - time;
     }
 }

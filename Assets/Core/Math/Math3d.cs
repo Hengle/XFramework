@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace RCXC.Mathematics
+namespace XDEDZL.Mathematics
 {
     /// <summary>
     /// 有关3D数学的计算

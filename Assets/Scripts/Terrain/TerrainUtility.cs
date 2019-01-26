@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RCXC.Mathematics;
 /** 
 * Terrain的HeightMap坐标原点在左下角
 *   z
@@ -48,31 +47,35 @@ public static class TerrainUtility
     private static Stack<TerrainCmdData> terrainDataStack = new Stack<TerrainCmdData>();
     private static Dictionary<Terrain, float[,]> terrainDataDic = new Dictionary<Terrain, float[,]>();
 
-    //private static Dictionary<int, RoadTerrainData> roadTerrainDataDic = new Dictionary<int, RoadTerrainData>();
-
     /// <summary>
     /// 静态构造函数
     /// </summary>
     static TerrainUtility()
     {
-        deltaHeight = 1 / Terrain.activeTerrain.terrainData.size.y;
-        terrainSize = Terrain.activeTerrain.terrainData.size;
-        heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
-        InitBrushs();
-        InitPrototype(false, false);
+        if (Terrain.activeTerrain != null)
+        {
+            deltaHeight = 1 / Terrain.activeTerrain.terrainData.size.y;
+            terrainSize = Terrain.activeTerrain.terrainData.size;
+            heightMapRes = Terrain.activeTerrain.terrainData.heightmapResolution;
+            InitBrushs();
+            InitPrototype(true, true, false);
 
-        pieceWidth = terrainSize.x / (heightMapRes - 1);
-        pieceHeight = terrainSize.z / (heightMapRes - 1);
+            pieceWidth = terrainSize.x / (heightMapRes - 1);
+            pieceHeight = terrainSize.z / (heightMapRes - 1);
+        }
     }
 
+    /// <summary>
+    /// 初始化原型模板
+    /// </summary>
     public static void InitPrototype(bool tree = false, bool detail = false, bool texture = false)
     {
         if (tree)
             InitTreePrototype();
         if (detail)
             InitDetailPrototype();
-        //if (texture)
-        //    InitTextures();
+        if (texture)
+            InitTextures();
     }
 
     #region 高度图相关
@@ -301,9 +304,24 @@ public static class TerrainUtility
     {
         Vector3 leftDown = new Vector3(center.x - radius, 0, center.z - radius);
         // 左下方Terrain
-        Terrain terrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
-        // 左下至少有一个方向没有Terrain
-        if (terrain != null)
+        Terrain centerTerrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+        Terrain leftDownTerrain = Utility.SendRayDown(leftDown, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
+        arg = default(HMArg);
+        if (leftDownTerrain != null)
+        {
+            // 获取相关参数
+            arg.mapRadiusX = (int)(heightMapRes / terrainSize.x * radius);
+            arg.mapRadiusZ = (int)(heightMapRes / terrainSize.z * radius);
+            arg.mapRadiusX = arg.mapRadiusX < 1 ? 1 : arg.mapRadiusX;
+            arg.mapRadiusZ = arg.mapRadiusZ < 1 ? 1 : arg.mapRadiusZ;
+            arg.startMapIndex = GetHeightmapIndex(leftDownTerrain, leftDown);
+            arg.centerMapIndex = new Vector2Int(arg.startMapIndex.x + arg.mapRadiusX, arg.startMapIndex.y + arg.mapRadiusZ);
+            arg.heightMap = GetHeightMap(leftDownTerrain, arg.startMapIndex.x, arg.startMapIndex.y, 2 * arg.mapRadiusX, 2 * arg.mapRadiusZ);
+            arg.limit = 0/*heightMap[mapRadius, mapRadius]*/;
+            return leftDownTerrain;
+        }
+        // 左下至少有一个方向没有Terrain,大多数情况下不会进入，如果删掉地图的左边界和下边界无法编辑，影响不大，其实我很想删掉
+        else if (centerTerrain != null)
         {
             // 获取相关参数
             arg.mapRadiusX = (int)(heightMapRes / terrainSize.x * radius);
@@ -311,35 +329,52 @@ public static class TerrainUtility
             arg.mapRadiusX = arg.mapRadiusX < 1 ? 1 : arg.mapRadiusX;
             arg.mapRadiusZ = arg.mapRadiusZ < 1 ? 1 : arg.mapRadiusZ;
 
-            arg.centerMapIndex = GetHeightmapIndex(terrain, center);
+            arg.centerMapIndex = GetHeightmapIndex(centerTerrain, center);
             arg.startMapIndex = new Vector2Int(arg.centerMapIndex.x - arg.mapRadiusX, arg.centerMapIndex.y - arg.mapRadiusZ);
 
             int width = 2 * arg.mapRadiusX, height = 2 * arg.mapRadiusZ;
-            if (arg.startMapIndex.x < 0)
+
+            if (arg.startMapIndex.x < 0 && arg.startMapIndex.y < 0)
+            {
+                if (centerTerrain.Left() != null)
+                {
+                    height += arg.startMapIndex.y;
+                    arg.startMapIndex.y = 0;
+                    arg.startMapIndex.x += heightMapRes;
+
+                    centerTerrain = centerTerrain.Left();
+                }
+                else if (centerTerrain.Bottom() != null)
+                {
+                    width += arg.startMapIndex.x;
+                    arg.startMapIndex.x = 0;
+                    arg.startMapIndex.y += heightMapRes;
+
+                    centerTerrain = centerTerrain.Bottom();
+                }
+                else
+                {
+                    width += arg.startMapIndex.x;
+                    arg.startMapIndex.x = 0;
+                    height += arg.startMapIndex.y;
+                    arg.startMapIndex.y = 0;
+                }
+            }
+            else if (arg.startMapIndex.x < 0)
             {
                 width += arg.startMapIndex.x;
                 arg.startMapIndex.x = 0;
             }
-            if (arg.startMapIndex.y < 0)
+            else if (arg.startMapIndex.y < 0)
             {
                 height += arg.startMapIndex.y;
                 arg.startMapIndex.y = 0;
             }
-            arg.startMapIndex.y = arg.startMapIndex.y < 0 ? 0 : arg.startMapIndex.y;
 
-            arg.heightMap = GetHeightMap(terrain, arg.startMapIndex.x, arg.startMapIndex.y, width, height);
+            arg.heightMap = GetHeightMap(centerTerrain, arg.startMapIndex.x, arg.startMapIndex.y, width, height);
             arg.limit = 0/*heightMap[mapRadius, mapRadius]*/;
         }
-        else
-        {
-            terrain = Utility.SendRayDown(center, LayerMask.GetMask("Terrain")).collider?.GetComponent<Terrain>();
-            if (terrain != null)
-            {
-                arg.centerMapIndex = new Vector2Int(0, 0);
-            }
-            arg = default(HMArg);
-        }
-        return terrain;
+        return centerTerrain;
     }
 
     /// <summary>
@@ -525,12 +560,12 @@ public static class TerrainUtility
 
     #region 道路系统
 
-    ///// <summary>
-    ///// 压平路面
-    ///// </summary>
-    ///// <param name="point_0">线段起点</param>
-    ///// <param name="point_1">线段末点</param>
-    ///// <param name="halfLength"></param>
+    /// <summary>
+    /// 压平路面
+    /// </summary>
+    /// <param name="point_0">线段起点</param>
+    /// <param name="point_1">线段末点</param>
+    /// <param name="halfLength"></param>
     //public static void FlattenRoad(Vector3 pos_0, Vector3 pos_1, Vector3 pos_2, Vector3 pos_3, RoadsOrBridges road)
     //{
     //    Vector3 point_0 = (pos_0 + pos_1) / 2;
@@ -645,17 +680,27 @@ public static class TerrainUtility
     #region 树木
 
     /// <summary>
-    /// 初始化树木原型组
+    /// 创建树木原型并返回
     /// </summary>
-    private static void InitTreePrototype()
+    /// <returns></returns>
+    public static TreePrototype[] CreatTreePrototype()
     {
-        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree");
+        GameObject[] objs = Resources.LoadAll<GameObject>("Terrain/SpeedTree/Trees");
         TreePrototype[] trees = new TreePrototype[objs.Length];
         for (int i = 0, length = objs.Length; i < length; i++)
         {
             trees[i] = new TreePrototype();
             trees[i].prefab = objs[i];
         }
+        return trees;
+    }
+
+    /// <summary>
+    /// 初始化树木原型组
+    /// </summary>
+    private static void InitTreePrototype()
+    {
+        TreePrototype[] trees = CreatTreePrototype();
         Terrain[] terrains = Terrain.activeTerrains;
         for (int i = 0, length = terrains.Length; i < length; i++)
         {
@@ -743,9 +788,10 @@ public static class TerrainUtility
     #region 细节纹理 草
 
     /// <summary>
-    /// 初始化细节原型组
+    /// 创建细节原型并返回
     /// </summary>
-    private static void InitDetailPrototype()
+    /// <returns></returns>
+    public static DetailPrototype[] CreateDetailPrototype()
     {
         Texture2D[] textures = Resources.LoadAll<Texture2D>("Terrain/Details");
         DetailPrototype[] details = new DetailPrototype[textures.Length];
@@ -763,6 +809,16 @@ public static class TerrainUtility
             details[i].dryColor = Color.green;
             details[i].renderMode = DetailRenderMode.GrassBillboard;
         }
+
+        return details;
+    }
+
+    /// <summary>
+    /// 初始化细节原型组
+    /// </summary>
+    private static void InitDetailPrototype()
+    {
+        DetailPrototype[] details = CreateDetailPrototype();
 
         Terrain[] terrains = Terrain.activeTerrains;
         for (int i = 0, length = terrains.Length; i < length; i++)
@@ -986,25 +1042,78 @@ public static class TerrainUtility
 
     #region 贴图
 
+#if UNITY_2018
+    public static TerrainLayer[] CreateSplatPrototype()
+#else
+    public static SplatPrototype[] CreateSplatPrototype()
+#endif
+    {
+        Texture2D[] texturesRes = Resources.LoadAll<Texture2D>("Terrain/Textures");
+        //Queue<Texture2D> textures = new Queue<Texture2D>();
+        //Queue<Texture2D> normalMaps = new Queue<Texture2D>();
+        //bool lastTypeIsNmp = true;
+        //for (int i = 0; i < texturesRes.Length; i++)
+        //{
+        //    string[] strs = texturesRes[i].name.Split('_');
+        //    if (strs.Length == 1)
+        //    {
+        //        if (lastTypeIsNmp == false)
+        //        {
+        //            normalMaps.Enqueue(null);
+        //        }
+        //        textures.Enqueue(texturesRes[i]);
+        //        lastTypeIsNmp = false;
+        //    }
+        //    else if (strs.Length == 2)
+        //    {
+        //        normalMaps.Enqueue(texturesRes[i]);
+        //        lastTypeIsNmp = true;
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("格式错误");
+        //    }
+        //}
+#if UNITY_2018
+        TerrainLayer[] splats = new TerrainLayer[texturesRes.Length];
+
+        for (int i = 0, length = splats.Length; i < length; i++)
+        {
+            TerrainLayer splat = new TerrainLayer
+            {
+                diffuseTexture = texturesRes[i],
+                //normalMapTexture = normalMaps.Dequeue()
+            };
+            splats[i] = splat;
+        }
+        return splats;
+#else 
+        SplatPrototype[] splats = new SplatPrototype[texturesRes.Length];
+        for (int i = 0, length = splats.Length; i < length; i++)
+        {
+            SplatPrototype splat = new SplatPrototype
+            {
+                texture = texturesRes[i],
+                
+            };
+            //if (normalMaps.Count > 0)
+            //{
+            //    splat.normalMap = normalMaps.Dequeue();
+            //}
+            
+            splats[i] = splat;
+        }
+        return splats;
+#endif
+    }
+
     /// <summary>
     /// 初始化贴图原型
     /// </summary>
     private static void InitTextures()
     {
 #if UNITY_2018
-        Texture2D[] textures = Resources.LoadAll<Texture2D>("Terrain/Textures");
-        TerrainLayer[] splats = new TerrainLayer[textures.Length / 2];
-
-        for (int i = 0, length = splats.Length; i < length; i++)
-        {
-            TerrainLayer splat = new TerrainLayer
-            {
-                diffuseTexture = textures[2 * i],
-                normalMapTexture = textures[2 * i + 1]
-            };
-            splats[i] = splat;
-        }
-
+        TerrainLayer[] splats = CreateSplatPrototype();
         Terrain[] terrains = Terrain.activeTerrains;
         for (int i = 0, length = terrains.Length; i < length; i++)
         {
@@ -1012,18 +1121,7 @@ public static class TerrainUtility
         }
 #else
 
-        Texture2D[] textures = Resources.LoadAll<Texture2D>("Terrain/Textures");
-        SplatPrototype[] splats = new SplatPrototype[textures.Length / 2];
-
-        for (int i = 0, length = splats.Length; i < length; i++)
-        {
-            SplatPrototype splat = new SplatPrototype
-            {
-                texture = textures[2 * i],
-                normalMap = textures[2 * i + 1]
-            };
-            splats[i] = splat;
-        }
+        SplatPrototype[] splats = CreateSplatPrototype();
 
         Terrain[] terrains = Terrain.activeTerrains;
         for (int i = 0, length = terrains.Length; i < length; i++)

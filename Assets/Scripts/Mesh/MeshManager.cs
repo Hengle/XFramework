@@ -7,10 +7,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RCXC;
 using System.Linq;
 
-namespace RCXC
+namespace XDEDZL
 {
     /// <summary>
     /// 所有的MeshPrefab 的管理类, 单例

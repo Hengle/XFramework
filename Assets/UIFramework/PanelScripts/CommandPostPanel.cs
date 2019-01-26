@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using DG.Tweening;
-using RCXC;
 
 public class CommandPostPanel : BasePanel {
 
