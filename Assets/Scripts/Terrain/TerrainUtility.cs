@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 /// </summary>
 public static class TerrainUtility
 {
+    #region 成员变量及初始化
+
     /// <summary>
     /// 用于修改高度的单位高度
     /// </summary>
@@ -78,7 +80,15 @@ public static class TerrainUtility
             InitTextures();
     }
 
+    #endregion
+
     #region 高度图相关
+    /*
+     * 高度编辑的过程
+     * 1.InitHMArg初始化所需要的数据，高度图会在这里获取到
+     * 2.对得到的高度图按需处理
+     * 3.SetHeightsMap对地形高度图重新赋值
+     */
 
     /// <summary>
     /// 初始化笔刷
@@ -93,7 +103,7 @@ public static class TerrainUtility
             Color[] colors = textures[i].GetPixels();
             // terrainData.GetHeightMap得到的二维数组是[y,x]
             float[,] alphas = new float[textures[i].height, textures[i].width];
-
+            // 设置笔刷数据
             for (int j = 0, length0 = textures[i].height, index = 0; j < length0; j++)
             {
                 for (int k = 0, length1 = textures[i].width; k < length1; k++)
@@ -147,7 +157,7 @@ public static class TerrainUtility
     /// 场景中有多块地图时不要直接调用terrainData.getheights
     /// 这个方法会解决跨多块地形的问题
     /// </summary>
-    /// <param name="terrain">Terrain</param>
+    /// <param name="terrain">目标地形</param>
     /// <param name="xBase">检索HeightMap时的X索引起点</param>
     /// <param name="yBase">检索HeightMap时的Y索引起点</param>
     /// <param name="width">在X轴上的检索长度</param>
@@ -165,6 +175,7 @@ public static class TerrainUtility
         int differX = xBase + width - (terrainData.heightmapResolution - 1);   // 右溢出量级
         int differY = yBase + height - (terrainData.heightmapResolution - 1);  // 上溢出量级
 
+        // 根据数据溢出情况做处理
         float[,] ret;
         if (differX <= 0 && differY <= 0)  // 无溢出
         {
@@ -206,8 +217,8 @@ public static class TerrainUtility
     /// 有不只一块地形的场景不要直接调用terrainData.SetHeights
     /// 这个方法会解决跨多块地形的问题
     /// </summary>
-    /// <param name="terrain">Terrain</param>
-    /// <param name="heights">HeightMap</param>
+    /// <param name="terrain">目标地形</param>
+    /// <param name="heights">高度图</param>
     /// <param name="xBase">X起点</param>
     /// <param name="yBase">Y起点</param>
     /// <param name="immediate">是否立即刷新地图</param>
@@ -220,6 +231,7 @@ public static class TerrainUtility
         int differX = xBase + length_1 - (terrainData.heightmapResolution - 1);
         int differY = yBase + length_0 - (terrainData.heightmapResolution - 1);
 
+        // 根据溢出情况对数据做处理
         if (differX <= 0 && differY <= 0) // 无溢出
         {
             terrain.SetSingleHeightMap(xBase, yBase, heights, immediate);
@@ -246,7 +258,7 @@ public static class TerrainUtility
     /// <summary>
     /// 设置单块地图的高度图
     /// </summary>
-    /// <param name="immediate"></param>
+    /// <param name="immediate">是否立即刷新LOD</param>
     private static void SetSingleHeightMap(this Terrain terrain, int xBase, int yBase, float[,] heights, bool immediate = true)
     {
         if (!terrainDataDic.ContainsKey(terrain))
@@ -254,9 +266,9 @@ public static class TerrainUtility
 
 
         if (immediate)
-            terrain.terrainData.SetHeights(xBase, yBase, heights);
+            terrain.terrainData.SetHeights(xBase, yBase, heights);      // 会立即刷新整个地形LOD,不适合实时编辑
         else
-            SetSingleHeightMapDelayLOD(terrain, xBase, yBase, heights);
+            SetSingleHeightMapDelayLOD(terrain, xBase, yBase, heights); // 仅仅改变高度，如果用这种模式，实时编辑会更很快，但需要在合适的时候调用Refresh
     }
 
     /// <summary>
@@ -274,10 +286,10 @@ public static class TerrainUtility
     /// <summary>
     /// 快速设置高度图，之后调用Refresh设置LOD
     /// </summary>
-    /// <param name="terrain"></param>
-    /// <param name="xBase"></param>
-    /// <param name="yBase"></param>
-    /// <param name="heights"></param>
+    /// <param name="terrain">目标地形</param>
+    /// <param name="xBase">x轴的起始索引</param>
+    /// <param name="yBase">z轴的起始索引</param>
+    /// <param name="heights">目标高度图</param>
     private static void SetSingleHeightMapDelayLOD(Terrain terrain, int xBase, int yBase, float[,] heights)
     {
         if (!terrainList.Contains(terrain))
@@ -320,7 +332,7 @@ public static class TerrainUtility
             arg.limit = 0/*heightMap[mapRadius, mapRadius]*/;
             return leftDownTerrain;
         }
-        // 左下至少有一个方向没有Terrain,大多数情况下不会进入，如果删掉地图的左边界和下边界无法编辑，影响不大，其实我很想删掉
+        // 左下至少有一个方向没有Terrain,大多数情况下不会进入，如果删掉地图的左边界和下边界无法编辑，影响不大，其实我很想删掉，所以注释什么的就去TM的吧
         else if (centerTerrain != null)
         {
             // 获取相关参数
@@ -380,10 +392,11 @@ public static class TerrainUtility
     /// <summary>
     /// 改变地形高度
     /// </summary>
-    /// <param name="center"></param>
-    /// <param name="radius"></param>
-    /// <param name="opacity"></param>
-    /// <param name="amass"></param>
+    /// <param name="center">中心点</param>
+    /// <param name="radius">半径</param>
+    /// <param name="opacity">力度</param>
+    /// <param name="isRise">抬高还是降低</param>
+    /// <param name="amass">是否累加高度</param>
     public static void ChangeHeight(Vector3 center, float radius, float opacity, bool isRise = true, bool amass = true)
     {
         HMArg arg;
@@ -424,7 +437,11 @@ public static class TerrainUtility
     /// <summary>
     /// 通过自定义笔刷编辑地形
     /// </summary>
-    /// <param name="terrain"></param>
+    /// <param name="center">中心点</param>
+    /// <param name="radius">半径</param>
+    /// <param name="opacity">力度</param>
+    /// <param name="brushIndex">笔刷索引</param>
+    /// <param name="isRise">抬高还是降低</param>
     public static async void ChangeHeightWithBrush(Vector3 center, float radius, float opacity, int brushIndex = 0, bool isRise = true)
     {
         HMArg arg;
@@ -453,10 +470,10 @@ public static class TerrainUtility
     /// <summary>
     /// 平滑地形
     /// </summary>
-    /// <param name="center"></param>
-    /// <param name="radius"></param>
-    /// <param name="dev"></param>
-    /// <param name="level"></param>
+    /// <param name="center">中心点</param>
+    /// <param name="radius">半径</param>
+    /// <param name="dev">这是高斯模糊的一个参数，会影响平滑的程度</param>
+    /// <param name="level">构建高斯核的半径</param>
     public static void Smooth(Vector3 center, float radius, float dev, int level = 3)
     {
         center.x -= terrainSize.x / (heightMapRes - 1) * level;
@@ -465,6 +482,7 @@ public static class TerrainUtility
         HMArg arg;
         Terrain terrain = InitHMArg(center, radius, out arg);
         if (terrain == null) return;
+        // 利用高斯模糊做平滑处理
         Math2d.GaussianBlur(arg.heightMap, dev, level, false);
         SetHeightMap(terrain, arg.heightMap, arg.startMapIndex.x, arg.startMapIndex.y, false);
     }
@@ -558,125 +576,6 @@ public static class TerrainUtility
 
     #endregion
 
-    #region 道路系统
-
-    /// <summary>
-    /// 压平路面
-    /// </summary>
-    /// <param name="point_0">线段起点</param>
-    /// <param name="point_1">线段末点</param>
-    /// <param name="halfLength"></param>
-    //public static void FlattenRoad(Vector3 pos_0, Vector3 pos_1, Vector3 pos_2, Vector3 pos_3, RoadsOrBridges road)
-    //{
-    //    Vector3 point_0 = (pos_0 + pos_1) / 2;
-    //    Vector3 point_1 = (pos_2 + pos_3) / 2;
-
-    //    float maxX = Mathf.Max(pos_0.x, pos_1.x, pos_2.x, pos_3.x);
-    //    float minX = Mathf.Min(pos_0.x, pos_1.x, pos_2.x, pos_3.x);
-    //    float maxZ = Mathf.Max(pos_0.z, pos_1.z, pos_2.z, pos_3.z);
-    //    float minZ = Mathf.Min(pos_0.z, pos_1.z, pos_2.z, pos_3.z);
-    //    Vector3 startPos = new Vector3(minX, 0, minZ);
-    //    Terrain terrain = GetTerrain(startPos);
-
-    //    int mapWidth = (int)((maxX - minX) / pieceWidth);
-    //    int mapHeight = (int)((maxZ - minZ) / pieceHeight);
-
-    //    if (terrain != null)
-    //    {
-    //        // 构造坐标系
-    //        GameCoordinate localCor = new GameCoordinate(pos_0, pos_1 - pos_0);
-    //        Vector3 localPos_0 = localCor.World2Loacal3(pos_0);
-    //        Vector3 localPos_1 = localCor.World2Loacal3(pos_1);
-    //        Vector3 localPos_2 = localCor.World2Loacal3(pos_2);
-    //        Vector3 localPos_3 = localCor.World2Loacal3(pos_3);
-    //        float maxLX = Mathf.Max(localPos_0.x, localPos_1.x, localPos_2.x, localPos_3.x);
-    //        float minLX = Mathf.Min(localPos_0.x, localPos_1.x, localPos_2.x, localPos_3.x);
-    //        float maxLZ = Mathf.Max(localPos_0.z, localPos_1.z, localPos_2.z, localPos_3.z);
-    //        float minLZ = Mathf.Min(localPos_0.z, localPos_1.z, localPos_2.z, localPos_3.z)/* - localPos_3.y / 2*/;
-
-    //        Vector2Int mapIndex = GetHeightmapIndex(terrain, startPos);
-    //        startPos = GetPositionInWorild(terrain, mapIndex.x, mapIndex.y);
-    //        startPos.y = 0;
-
-    //        float[,] heightMap = GetHeightMap(terrain, mapIndex.x, mapIndex.y, mapWidth + 1, mapHeight + 1);
-
-    //        for (int i = 0; i < heightMap.GetLength(0); i++)
-    //        {
-    //            for (int j = 0; j < heightMap.GetLength(1); j++)
-    //            {
-    //                Vector2Int newMapIndex = new Vector2Int(mapIndex.x + j, mapIndex.y + i);
-    //                if (newMapIndex.x > (heightMapRes - 1))
-    //                {
-    //                    terrain = terrain.Right() ?? terrain;
-    //                    newMapIndex.x -= heightMapRes;
-    //                }
-    //                if (newMapIndex.y > (heightMapRes - 1))
-    //                {
-    //                    terrain = terrain.Top() ?? terrain;
-    //                    newMapIndex.y -= heightMapRes;
-    //                }
-    //                Vector3 worldPos = GetPositionInWorild(terrain, newMapIndex.x, newMapIndex.y);
-    //                Vector3 loacalPos = localCor.World2Loacal3(worldPos);
-    //                if (loacalPos.x < minLX || loacalPos.x > maxLX || loacalPos.z < minLZ || loacalPos.z > maxLZ)
-    //                {
-    //                    //continue;
-    //                }
-
-    //                Vector3 pos = startPos + new Vector3(j * pieceWidth, 0, i * pieceHeight);
-    //                Vector3 intersection;
-    //                // 判断相交
-    //                if (Math3d.LineLineIntersection(out intersection, point_0, point_1 - point_0, pos, pos_3 - pos_2))
-    //                {
-    //                    // 存储路面撤回相关的数据
-    //                    if (!road.terrains.Contains(terrain))
-    //                    {
-    //                        float[,] oldHM = GetHeightMap(terrain);
-    //                        road.terrains.Add(terrain);
-    //                        road.oldHeigtMaps.Add(oldHM);
-    //                        road.isChanges.Add(new bool[heightMapRes, heightMapRes]);
-    //                    }
-
-    //                    road.isChanges[road.terrains.IndexOf(terrain)][newMapIndex.y, newMapIndex.x] = true;
-
-    //                    // 修改HeightMap
-    //                    heightMap[i, j] = GetPointHeight(GetTerrain(intersection), intersection) * deltaHeight;
-    //                }
-    //            }
-    //        }
-
-    //        SetHeightMap(terrain, heightMap, mapIndex.x, mapIndex.y, false);
-    //    }
-    //}
-
-    ///// <summary>
-    ///// 删除路的时候调用
-    ///// </summary>
-    ///// <param name="roadId"></param>
-    //public static void RecoverRoadTerrainData(RoadsOrBridges road)
-    //{
-    //    if (road != null)
-    //    {
-    //        for (int i = 0, lenghth = road.terrains.Count; i < lenghth; i++)
-    //        {
-    //            bool[,] isChange = road.isChanges[i];
-    //            float[,] HM = GetHeightMap(road.terrains[i]);
-    //            float[,] oldHM = road.oldHeigtMaps[i];
-    //            for (int j = 0; j < HM.GetLength(0); j++)
-    //            {
-    //                for (int k = 0; k < HM.GetLength(1); k++)
-    //                {
-    //                    if (isChange[j, k])
-    //                        HM[j, k] = oldHM[j, k];
-    //                }
-    //            }
-    //            SetSingleHeightMapDelayLOD(road.terrains[i], 0, 0, HM);
-    //        }
-    //        Refresh();
-    //    }
-    //}
-
-    #endregion
-
     #region 树木
 
     /// <summary>
@@ -731,14 +630,9 @@ public static class TerrainUtility
                 continue;
             }
 
-            // 设置新添加的树的参数
-            TreeInstance instance = new TreeInstance();
-            instance.prototypeIndex = index;
-            instance.color = Color.white;
-            instance.lightmapColor = Color.white;
-            instance.widthScale = 1;
-            instance.heightScale = 1;
+            TreeInstance instance = GetTreeInstance(index);
 
+            // 对跨地形做处理
             Vector3 p = new Vector3(relativePosition.x / terrainData.size.x, 0, relativePosition.z / terrainData.size.z);
             if (p.x > 1 || p.z > 1)
             {
@@ -781,6 +675,23 @@ public static class TerrainUtility
         v2.y /= Terrain.activeTerrain.terrainData.size.z;
 
         terrain.Invoke("RemoveTrees", v2, radius / Terrain.activeTerrain.terrainData.size.x, index);
+    }
+
+    /// <summary>
+    /// 获取一个树的实例
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public static TreeInstance GetTreeInstance(int index)
+    {
+        // 设置新添加的树的参数
+        TreeInstance instance = new TreeInstance();
+        instance.prototypeIndex = index;
+        instance.color = Color.white;
+        instance.lightmapColor = Color.white;
+        instance.widthScale = 1;
+        instance.heightScale = 1;
+        return instance;
     }
 
     #endregion
@@ -1042,6 +953,10 @@ public static class TerrainUtility
 
     #region 贴图
 
+    /// <summary>
+    /// 创建贴图原型并返回
+    /// </summary>
+    /// <returns></returns>
 #if UNITY_2018
     public static TerrainLayer[] CreateSplatPrototype()
 #else
@@ -1182,7 +1097,6 @@ public static class TerrainUtility
     /// <summary>
     /// 添加一个记录点
     /// </summary>
-    /// <param name="terrain"></param>
     public static void AddOldData()
     {
         terrainDataStack.Push(new TerrainCmdData(terrainDataDic));
@@ -1192,7 +1106,6 @@ public static class TerrainUtility
     /// <summary>
     /// 恢复一次数据
     /// </summary>
-    /// <param name="terrain"></param>
     public static void Recover()
     {
         if (!(terrainDataStack.Count > 0))
@@ -1276,6 +1189,11 @@ public static class TerrainUtility
 
     #endregion
 
+    #region Other Class
+
+    /// <summary>
+    /// 用于地形恢复的临时数据
+    /// </summary>
     struct TerrainCmdData
     {
         public Dictionary<Terrain, float[,]> terrainDataDic;
@@ -1310,4 +1228,6 @@ public static class TerrainUtility
         public float[,] heightMap;
         public float limit;
     }
+
+    #endregion
 }
