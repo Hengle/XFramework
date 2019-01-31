@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AssetBundleRes : MonoBehaviour
+public class AssetBundleRes : Singleton<AssetBundleRes>
 {
     public string name;
     AssetBundle ab;
@@ -11,17 +11,6 @@ public class AssetBundleRes : MonoBehaviour
     {
         ab = AssetBundle.LoadFromFile("AssetBundle/test.ab");
         ab.Unload(false);
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            GameObject obj = ab.LoadAsset(name) as GameObject;
-            Instantiate(obj);
-        }
         
     }
 }
