@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 public static class IOUtility
 {
@@ -79,5 +80,14 @@ public static class IOUtility
         process.StartInfo.FileName = filePath;
         process.Start();
         process.Dispose();
+    }
+
+    public static void Test()
+    {
+        string[] drives = System.Environment.GetLogicalDrives();
+        foreach (var item in drives)
+        {
+            Debug.Log(item);
+        }
     }
 }

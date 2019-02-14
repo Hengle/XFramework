@@ -29,7 +29,7 @@ public class GameObjectFactory : Singleton<GameObjectFactory>
     /// 读取并预处理指定模型
     /// </summary>
     /// <returns></returns>
-    public IEnumerator InitPool()
+    public void InitPool()
     {
         if (isLoad)
         {
@@ -46,15 +46,6 @@ public class GameObjectFactory : Singleton<GameObjectFactory>
             }
 
             isLoad = false;
-
-            yield return null;
-
-            // 创建对象池
-            foreach (var item in poolTemplateDic)
-            {
-                //CreatPool(item.Value);
-                yield return new WaitForFixedUpdate();
-            }
         }
     }
 

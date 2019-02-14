@@ -13,35 +13,7 @@ public class Test : MonoBehaviour
 
     void Start()
     {
-        Dictionary<int, int> aa = new Dictionary<int, int>();
-
-        List<int> aaa = new List<int>();
-        aaa.Add(0);
-
-        QQQ(in aaa);
-        Debug.Log(aaa[0]);
-
-        //int a = 1;
-        //int b = 1;
-        //float c = Utility.DebugActionRunTime(() =>
-        //{
-        //    for (float i = 0; i < 1000000000; i++)
-        //    {
-        //        a = 1;
-        //    }
-        //});
-        //float d = Utility.DebugActionRunTime(() =>
-        //{
-        //    for (float i = 0; i < 1000000000; i++)
-        //    {
-        //        if(a == b)
-        //        {
-
-        //        }
-        //    }
-        //});
-        //Debug.Log(c);
-        //Debug.Log(d);
+        IOUtility.Test();
     }
 
     // Update is called once per frame

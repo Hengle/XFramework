@@ -4,7 +4,13 @@
 /// </summary>
 public interface IPool<T>
 {
+    /// <summary>
+    /// 分配对象
+    /// </summary>
     T Allocate();
+    /// <summary>
+    /// 回收对象
+    /// </summary>
     bool Recycle(T obj);
 }
 
