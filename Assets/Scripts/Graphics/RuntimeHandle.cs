@@ -10,7 +10,7 @@ public class RuntimeHandle : MonoBehaviour
     public Transform target;
     private Material lineMaterial;
     private Material quadeMaterial;
-    private float handScale = 1;
+    private float handleScale = 1;
     private float quadScale = 0.2f;
     private float arrowScale = 1f;
     private Camera camera;
@@ -27,6 +27,17 @@ public class RuntimeHandle : MonoBehaviour
         }
 
         camera = GetComponent<Camera>();
+    }
+
+    private void Start()
+    {
+        // 创建一个矩阵，他可以将本地坐标转化为世界坐标
+        Matrix4x4 mat = Matrix4x4.TRS(Vector3.up, Quaternion.identity, Vector3.one);
+        //Debug.Log(mat.MultiplyPoint(Vector3.zero));
+
+        Matrix4x4 mat2 = GameObject.Find("C").transform.worldToLocalMatrix;
+        Debug.Log(mat2.MultiplyPoint(Vector3.zero)); 
+        //mat.mu
     }
 
     void OnPostRender()
@@ -49,9 +60,9 @@ public class RuntimeHandle : MonoBehaviour
         Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
 
         lineMaterial.SetPass(0);
-        Vector3 x = Vector3.right * handScale;
-        Vector3 y = Vector3.up * handScale;
-        Vector3 z = Vector3.forward * handScale;
+        Vector3 x = Vector3.right * handleScale;
+        Vector3 y = Vector3.up * handleScale;
+        Vector3 z = Vector3.forward * handleScale;
         Vector3 xy = x + y;
         Vector3 xz = x + z;
         Vector3 yz = y + z;
@@ -127,13 +138,14 @@ public class RuntimeHandle : MonoBehaviour
 
         GL.PopMatrix();
 
+        Vector3 euler = target.eulerAngles;
         // 画坐标轴的箭头
-        Mesh meshX = CreateConeMesh(Color.red, arrowScale * screenScale);
-        Graphics.DrawMeshNow(meshX,position + target.right * handScale * screenScale, Quaternion.LookRotation(target.right));
-        Mesh meshY = CreateConeMesh(Color.green, arrowScale * screenScale);
-        Graphics.DrawMeshNow(meshY, position + target.up * handScale * screenScale, Quaternion.LookRotation(target.up));
-        Mesh meshZ = CreateConeMesh(Color.blue, arrowScale * screenScale);
-        Graphics.DrawMeshNow(meshZ, position + target.forward * handScale * screenScale, Quaternion.LookRotation(target.forward));
+        Mesh meshX = CreateArrow(Color.red, arrowScale * screenScale);
+        Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, Quaternion.Euler(new Vector3(0, 0, -90) + euler));
+        Mesh meshY = CreateArrow(Color.green, arrowScale * screenScale);
+        Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, Quaternion.Euler(euler));
+        Mesh meshZ = CreateArrow(Color.blue, arrowScale * screenScale);
+        Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, Quaternion.Euler(new Vector3(90, 0, 0) + euler));
     }
 
     public float GetScreenScale(Vector3 position, Camera camera)
@@ -150,7 +162,7 @@ public class RuntimeHandle : MonoBehaviour
         return scale / h * 90; // 90为自定义系数
     }
 
-    public static Mesh CreateConeMesh(Color color, float scale)
+    public static Mesh CreateArrow(Color color, float scale)
     {
         int segmentsCount = 12;  // 侧面三角形数量
         float size = 1.0f / 5;
