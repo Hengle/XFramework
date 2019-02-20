@@ -2,9 +2,9 @@
 using System.Reflection;
 using UnityEngine;
 
-public class Test : MonoBehaviour
+public class Test : MonoSingleton<Test>
 {
-
+    public Mesh mesh;
     private void QQQ(in List<int> yyy)
     {
         yyy[0] = 100;
@@ -13,7 +13,7 @@ public class Test : MonoBehaviour
 
     void Start()
     {
-        IOUtility.Test();
+        //IOUtility.Test();
     }
 
     // Update is called once per frame
