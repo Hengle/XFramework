@@ -8,13 +8,28 @@ using UnityEngine;
 public class RuntimeHandle : MonoBehaviour
 {
     public Transform target;
+    private Camera camera;
     private Material lineMaterial;
     private Material quadeMaterial;
-    private float handleScale = 1;
-    private float quadScale = 0.2f;
-    private float arrowScale = 1f;
-    private Camera camera;
 
+    private float handleScale = 1;
+    private float quadScale = 0.2f;    // 方块长度和轴长度的比例
+    private float arrowScale = 1f;
+    private float screenScale = 0;
+
+    private float colliderPixel = 10;  // 鼠标距离轴多少时算有碰撞（单位：像素）
+
+    private bool lockX = false;
+    private bool lockY = false;
+    private bool lockZ = false;
+
+    private RuntimeHandleAxis selectedAxis = RuntimeHandleAxis.None; // 当前有碰撞的轴
+
+    private Color selectedColor = Color.yellow;
+    private Color selectedColorA = new Color(1, 0.92f, 0.016f, 0.2f);
+    private Color redA = new Color(1, 0, 0, 0.2f);
+    private Color greenA = new Color(0, 1, 0, 0.2f);
+    private Color blueA = new Color(0, 0, 1, 0.2f);
 
     private void Awake()
     {
@@ -29,17 +44,6 @@ public class RuntimeHandle : MonoBehaviour
         camera = GetComponent<Camera>();
     }
 
-    private void Start()
-    {
-        // 创建一个矩阵，他可以将本地坐标转化为世界坐标
-        Matrix4x4 mat = Matrix4x4.TRS(Vector3.up, Quaternion.identity, Vector3.one);
-        //Debug.Log(mat.MultiplyPoint(Vector3.zero));
-
-        Matrix4x4 mat2 = GameObject.Find("C").transform.worldToLocalMatrix;
-        Debug.Log(mat2.MultiplyPoint(Vector3.zero)); 
-        //mat.mu
-    }
-
     void OnPostRender()
     {
         if (target)
@@ -50,13 +54,22 @@ public class RuntimeHandle : MonoBehaviour
 
     private void Update()
     {
+        if (target)
+        {
+            selectedAxis = SelectedAxis();
 
+            // TODO: 手柄控制目标的行为
+
+        }
     }
 
+    /// <summary>
+    /// 绘制手柄
+    /// </summary>
     private void DrawCoordinate(Transform target)
     {
         Vector3 position = target.position;
-        float screenScale = GetScreenScale(target.position, camera);
+        screenScale = GetScreenScale(target.position, camera);
         Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
 
         lineMaterial.SetPass(0);
@@ -73,13 +86,13 @@ public class RuntimeHandle : MonoBehaviour
 
         // 画三个坐标轴线段
         GL.Begin(GL.LINES);
-        GL.Color(Color.red);
+        GL.Color(selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red);
         GL.Vertex(o);
         GL.Vertex(x);
-        GL.Color(Color.green);
+        GL.Color(selectedAxis == RuntimeHandleAxis.Y ? selectedColor : Color.green);
         GL.Vertex(o);
         GL.Vertex(y);
-        GL.Color(Color.blue);
+        GL.Color(selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue);
         GL.Vertex(o);
         GL.Vertex(z);
 
@@ -119,17 +132,17 @@ public class RuntimeHandle : MonoBehaviour
 
         // 画三个小方块
         GL.Begin(GL.QUADS);
-        GL.Color(new Color(1, 0, 0, 0.2f));
+        GL.Color(selectedAxis == RuntimeHandleAxis.YZ ? selectedColorA : redA);
         GL.Vertex(o * quadScale);
         GL.Vertex(y * quadScale);
         GL.Vertex((y + z) * quadScale);
         GL.Vertex(z * quadScale);
-        GL.Color(new Color(0, 1, 0, 0.2f));
+        GL.Color(selectedAxis == RuntimeHandleAxis.XZ ? selectedColorA : greenA);
         GL.Vertex(o * quadScale);
         GL.Vertex(x * quadScale);
         GL.Vertex((x + z) * quadScale);
         GL.Vertex(z * quadScale);
-        GL.Color(new Color(0, 0, 1, 0.2f));
+        GL.Color(selectedAxis == RuntimeHandleAxis.XY ? selectedColorA : blueA);
         GL.Vertex(o * quadScale);
         GL.Vertex(x * quadScale); 
         GL.Vertex((x + y) * quadScale);
@@ -140,29 +153,18 @@ public class RuntimeHandle : MonoBehaviour
 
         Vector3 euler = target.eulerAngles;
         // 画坐标轴的箭头
-        Mesh meshX = CreateArrow(Color.red, arrowScale * screenScale);
+        Mesh meshX = CreateArrow(selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red, arrowScale * screenScale);
         Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, Quaternion.Euler(new Vector3(0, 0, -90) + euler));
-        Mesh meshY = CreateArrow(Color.green, arrowScale * screenScale);
+        Mesh meshY = CreateArrow(selectedAxis == RuntimeHandleAxis.Y ? selectedColor : Color.green, arrowScale * screenScale);
         Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, Quaternion.Euler(euler));
-        Mesh meshZ = CreateArrow(Color.blue, arrowScale * screenScale);
+        Mesh meshZ = CreateArrow(selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue, arrowScale * screenScale);
         Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, Quaternion.Euler(new Vector3(90, 0, 0) + euler));
     }
 
-    public float GetScreenScale(Vector3 position, Camera camera)
-    {
-        float h = camera.pixelHeight;
-        if (camera.orthographic)
-        {
-            return camera.orthographicSize * 2f / h * 90;
-        }
-
-        Transform transform = camera.transform;
-        float distance = Vector3.Dot(position - transform.position, transform.forward);       // Position位置的深度距离
-        float scale = 2.0f * distance * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad); // 在Position的深度上，每个像素点对应的y轴距离
-        return scale / h * 90; // 90为自定义系数
-    }
-
-    public static Mesh CreateArrow(Color color, float scale)
+    /// <summary>
+    /// 创建一个轴的箭头网格
+    /// </summary>
+    private Mesh CreateArrow(Color color, float scale)
     {
         int segmentsCount = 12;  // 侧面三角形数量
         float size = 1.0f / 5;
@@ -219,4 +221,243 @@ public class RuntimeHandle : MonoBehaviour
 
         return cone;
     }
+
+    /// <summary>
+    /// 创建一个方块网格 
+    /// </summary>
+    public Mesh CreateCubeMesh(Color color, Vector3 center, float scale, float cubeLength = 1, float cubeWidth = 1, float cubeHeight = 1)
+    {
+        cubeHeight *= scale;
+        cubeWidth *= scale;
+        cubeLength *= scale;
+
+        Vector3 vertice_0 = center + new Vector3(-cubeLength * .5f, -cubeWidth * .5f, cubeHeight * .5f);
+        Vector3 vertice_1 = center + new Vector3(cubeLength * .5f, -cubeWidth * .5f, cubeHeight * .5f);
+        Vector3 vertice_2 = center + new Vector3(cubeLength * .5f, -cubeWidth * .5f, -cubeHeight * .5f);
+        Vector3 vertice_3 = center + new Vector3(-cubeLength * .5f, -cubeWidth * .5f, -cubeHeight * .5f);
+        Vector3 vertice_4 = center + new Vector3(-cubeLength * .5f, cubeWidth * .5f, cubeHeight * .5f);
+        Vector3 vertice_5 = center + new Vector3(cubeLength * .5f, cubeWidth * .5f, cubeHeight * .5f);
+        Vector3 vertice_6 = center + new Vector3(cubeLength * .5f, cubeWidth * .5f, -cubeHeight * .5f);
+        Vector3 vertice_7 = center + new Vector3(-cubeLength * .5f, cubeWidth * .5f, -cubeHeight * .5f);
+        Vector3[] vertices = new[]
+        {
+                // Bottom Polygon
+                vertice_0, vertice_1, vertice_2, vertice_3,
+                // Left Polygon
+                vertice_7, vertice_4, vertice_0, vertice_3,
+                // Front Polygon
+                vertice_4, vertice_5, vertice_1, vertice_0,
+                // Back Polygon
+                vertice_6, vertice_7, vertice_3, vertice_2,
+                // Right Polygon
+                vertice_5, vertice_6, vertice_2, vertice_1,
+                // Top Polygon
+                vertice_7, vertice_6, vertice_5, vertice_4
+            };
+
+        int[] triangles = new[]
+        {
+                // Cube Bottom Side Triangles
+                3, 1, 0,
+                3, 2, 1,    
+                // Cube Left Side Triangles
+                3 + 4 * 1, 1 + 4 * 1, 0 + 4 * 1,
+                3 + 4 * 1, 2 + 4 * 1, 1 + 4 * 1,
+                // Cube Front Side Triangles
+                3 + 4 * 2, 1 + 4 * 2, 0 + 4 * 2,
+                3 + 4 * 2, 2 + 4 * 2, 1 + 4 * 2,
+                // Cube Back Side Triangles
+                3 + 4 * 3, 1 + 4 * 3, 0 + 4 * 3,
+                3 + 4 * 3, 2 + 4 * 3, 1 + 4 * 3,
+                // Cube Rigth Side Triangles
+                3 + 4 * 4, 1 + 4 * 4, 0 + 4 * 4,
+                3 + 4 * 4, 2 + 4 * 4, 1 + 4 * 4,
+                // Cube Top Side Triangles
+                3 + 4 * 5, 1 + 4 * 5, 0 + 4 * 5,
+                3 + 4 * 5, 2 + 4 * 5, 1 + 4 * 5,
+            };
+
+        Color[] colors = new Color[vertices.Length];
+        for (int i = 0; i < colors.Length; ++i)
+        {
+            colors[i] = color;
+        }
+
+        Mesh cubeMesh = new Mesh();
+        cubeMesh.name = "cube";
+        cubeMesh.vertices = vertices;
+        cubeMesh.triangles = triangles;
+        cubeMesh.colors = colors;
+        cubeMesh.RecalculateNormals();
+        return cubeMesh;
+    }
+
+    /// <summary>
+    /// 返回鼠标和手柄的碰撞信息
+    /// </summary>
+    private RuntimeHandleAxis SelectedAxis()
+    {
+        Matrix4x4 mat = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
+        bool hit = HitAxis(Vector3.right, mat, out float distanceX);
+        hit |= HitAxis(Vector3.up, mat, out float distanceY);
+        hit |= HitAxis(Vector3.forward, mat, out float distanceZ);
+
+        if (hit)
+        {
+            if (distanceX < distanceY && distanceX < distanceZ)
+            {
+                return RuntimeHandleAxis.X;
+            }
+            else if (distanceY < distanceZ)
+            {
+                return RuntimeHandleAxis.Y;
+            }
+            else
+            {
+                return RuntimeHandleAxis.Z;
+            }
+        }
+
+        return RuntimeHandleAxis.None;
+    }
+
+    /// <summary>
+    /// 是否和手柄有碰撞
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="matrix">手柄坐标系转换矩阵</param>
+    /// <param name="distanceAxis"></param>
+    /// <returns></returns>
+    private bool HitAxis(Vector3 axis, Matrix4x4 matrix, out float distanceToAxis)
+    {
+        // 把坐标轴本地坐标转为世界坐标
+        axis = matrix.MultiplyPoint(axis);
+
+        // 坐标轴转屏幕坐标(有问题)
+        Vector2 screenVectorBegin = camera.WorldToScreenPoint(target.position);
+        Vector2 screenVectorEnd = camera.WorldToScreenPoint(axis);
+        Vector2 screenVector = screenVectorEnd - screenVectorBegin;
+        float screenVectorMag = screenVector.magnitude;
+        screenVector.Normalize();
+
+        if (screenVector != Vector2.zero) 
+        {
+            Vector2 perp = PerpendicularClockwise(screenVector).normalized;
+            Vector2 mousePosition = Input.mousePosition;
+            Vector2 relMousePositon = mousePosition - screenVectorBegin;    // 鼠标相对轴远点位置
+            distanceToAxis = Mathf.Abs(Vector2.Dot(perp, relMousePositon)); // 在屏幕坐标系中，鼠标到轴的距离
+
+            Vector2 hitPoint = (relMousePositon - perp * distanceToAxis);
+            float vectorSpaceCoord = Vector2.Dot(screenVector, hitPoint);
+
+            bool result = vectorSpaceCoord >= 0 && hitPoint.magnitude <= screenVectorMag && distanceToAxis < colliderPixel;
+            return result;
+        }
+        else  // 坐标轴正对屏幕
+        {
+            Vector2 mousePosition = Input.mousePosition;
+
+            distanceToAxis = (screenVectorBegin - mousePosition).magnitude;
+            bool result = distanceToAxis <= colliderPixel;
+            if (!result)
+            {
+                distanceToAxis = float.PositiveInfinity;
+            }
+            else
+            {
+                distanceToAxis = 0.0f;
+            }
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// 是否和小方块有碰撞
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="matrix"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    private bool HitQuad(Vector3 axis, Matrix4x4 matrix, float size)
+    {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new Plane(matrix.MultiplyVector(axis).normalized, matrix.MultiplyPoint(Vector3.zero));
+
+        if (!plane.Raycast(ray, out float distance))
+        {
+            return false;
+        }
+
+        Vector3 point = ray.GetPoint(distance);
+        point = matrix.inverse.MultiplyPoint(point);
+
+        Vector3 toCam = matrix.inverse.MultiplyVector(camera.transform.position/* - HandlePosition*/);
+
+        float fx = Mathf.Sign(Vector3.Dot(toCam, Vector3.right));
+        float fy = Mathf.Sign(Vector3.Dot(toCam, Vector3.up));
+        float fz = Mathf.Sign(Vector3.Dot(toCam, Vector3.forward));
+
+        point.x *= fx;
+        point.y *= fy;
+        point.z *= fz;
+
+        float lowBound = -0.01f;
+
+        bool result = point.x >= lowBound && point.x <= size && point.y >= lowBound && point.y <= size && point.z >= lowBound && point.z <= size;
+
+        if (result)
+        {
+            //DragPlane = GetDragPlane(matrix, axis);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 控制目标
+    /// </summary>
+    private void ControlTarget()
+    {
+
+    }
+
+
+
+    // ------------- Tools -------------- //
+
+    /// <summary>
+    /// 获取顺时针的垂直向量
+    /// </summary>
+    private Vector2 PerpendicularClockwise(Vector2 vector2)
+    {
+        return new Vector2(-vector2.y, vector2.x);
+    }
+
+    /// <summary>
+    /// 通过一个世界左边和相机获取比例
+    /// </summary>
+    private float GetScreenScale(Vector3 position, Camera camera)
+    {
+        float h = camera.pixelHeight;
+        if (camera.orthographic)
+        {
+            return camera.orthographicSize * 2f / h * 90;
+        }
+
+        Transform transform = camera.transform;
+        float distance = Vector3.Dot(position - transform.position, transform.forward);       // Position位置的深度距离
+        float scale = 2.0f * distance * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad); // 在Position的深度上，每个像素点对应的y轴距离
+        return scale / h * 90; // 90为自定义系数
+    }
+}
+
+public enum RuntimeHandleAxis
+{
+    None,
+    X,
+    Y,
+    Z,
+    XY,
+    XZ,
+    YZ,
 }
