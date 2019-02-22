@@ -9,21 +9,28 @@ public class RuntimeHandle : MonoBehaviour
 {
     public Transform target;
     private Camera camera;
-    private Material lineMaterial;
-    private Material quadeMaterial;
 
     private float handleScale = 1;
     private float quadScale = 0.2f;    // 方块长度和轴长度的比例
     private float arrowScale = 1f;
     private float screenScale = 0;
+    private float cubeScale = 0.15f;
+    private float circleRadius = 0.6f;
 
-    private float colliderPixel = 10;  // 鼠标距离轴多少时算有碰撞（单位：像素）
+    public static Vector3 quadDir = Vector3.one;
 
-    private bool lockX = false;
-    private bool lockY = false;
-    private bool lockZ = false;
+    public bool lockX = false;
+    public bool lockY = false;
+    public bool lockZ = false;
+    private bool mouseDonw = false;
 
     private RuntimeHandleAxis selectedAxis = RuntimeHandleAxis.None; // 当前有碰撞的轴
+    private TransformMode transformMode = TransformMode.Position;
+    private BaseHandle currentHandle;
+
+    private readonly PositionHandle positionHandle = new PositionHandle();
+    private readonly RotationHandle rotationHandle = new RotationHandle();
+    private readonly ScaleHandle scaleHandle = new ScaleHandle();
 
     private Color selectedColor = Color.yellow;
     private Color selectedColorA = new Color(1, 0.92f, 0.016f, 0.2f);
@@ -31,45 +38,137 @@ public class RuntimeHandle : MonoBehaviour
     private Color greenA = new Color(0, 1, 0, 0.2f);
     private Color blueA = new Color(0, 0, 1, 0.2f);
 
+    private Material lineMaterial;
+    private Material quadeMaterial;
+    private Material shapesMaterial;
+
+    private Matrix4x4 targetMatrix;
+
+    private static RuntimeHandle instance;
+
+    private bool boolTest = false;
+
     private void Awake()
     {
-        if (!lineMaterial)
+        if (instance = null)
         {
-            lineMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColor"));
-            lineMaterial.color = Color.white;
-            quadeMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColor"));
-            quadeMaterial.color = Color.white;
+            instance = this;
         }
+
+        lineMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColor"));
+        lineMaterial.color = Color.white;
+        quadeMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColor"));
+        quadeMaterial.color = Color.white;
+        shapesMaterial = new Material(Shader.Find("Battlehub/RTHandles/Shape"));
+        shapesMaterial.color = Color.white;
 
         camera = GetComponent<Camera>();
-    }
-
-    void OnPostRender()
-    {
-        if (target)
-        {
-            DrawCoordinate(target);
-        }
+        currentHandle = positionHandle;
     }
 
     private void Update()
     {
         if (target)
         {
-            selectedAxis = SelectedAxis();
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                currentHandle = positionHandle;
+                transformMode = TransformMode.Position;
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                currentHandle = rotationHandle;
+                transformMode = TransformMode.Rotation;
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                currentHandle = scaleHandle;
+                transformMode = TransformMode.Scale;
+            }
 
-            // TODO: 手柄控制目标的行为
+            if (!mouseDonw)
+                selectedAxis = currentHandle.SelectedAxis(target, camera, screenScale);
 
+            ControlTarget();
+        }
+    }
+
+    void OnPostRender()
+    {
+        if (target)
+        {
+            screenScale = GetScreenScale(target.position, camera);
+            DrawHandle(target);
         }
     }
 
     /// <summary>
-    /// 绘制手柄
+    /// 根据变换模式绘制不同的手柄
     /// </summary>
-    private void DrawCoordinate(Transform target)
+    private void DrawHandle(Transform target)
+    {
+        switch (transformMode)
+        {
+            case TransformMode.Position:
+                DoPosition(target);
+                break;
+            case TransformMode.Rotation:
+                DoRotation(target);
+                break;
+            case TransformMode.Scale:
+                DoSacle(target);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 绘制位移手柄
+    /// </summary>
+    private void DoPosition(Transform target)
+    {
+        DrawCoordinate(target, true);
+        DrawCoordinateArrow(target);
+    }
+
+    /// <summary>
+    /// 绘制旋转手柄
+    /// </summary>
+    /// <param name="target"></param>
+    private void DoRotation(Transform target)
+    {
+        Debug.Log("ShowRotationHandle");
+        Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
+
+        lineMaterial.SetPass(0);
+        GL.PushMatrix();
+        GL.MultMatrix(transform);
+        GL.Begin(GL.LINES);
+
+        DrawCircle(target, Vector3.right, circleRadius, Color.red);
+        DrawCircle(target, Vector3.up, circleRadius, Color.green);
+        DrawCircle(target, Vector3.forward, circleRadius, Color.blue);
+
+        GL.End();
+        GL.PopMatrix();
+    }
+
+    /// <summary>
+    /// 绘制比例手柄
+    /// </summary>
+    private void DoSacle(Transform target)
+    {
+        DrawCoordinate(target, false);
+        DrawCoordinateCube(target);
+    }
+
+    /// <summary>
+    /// 绘制坐标系
+    /// </summary>
+    private void DrawCoordinate(Transform target, bool hasQuad)
     {
         Vector3 position = target.position;
-        screenScale = GetScreenScale(target.position, camera);
         Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
 
         lineMaterial.SetPass(0);
@@ -95,62 +194,117 @@ public class RuntimeHandle : MonoBehaviour
         GL.Color(selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue);
         GL.Vertex(o);
         GL.Vertex(z);
+        GL.End();
 
         Vector3 dir = position - camera.transform.position;
         float angleX = Vector3.Angle(target.right, dir);
         float angleY = Vector3.Angle(target.up, dir);
         float angleZ = Vector3.Angle(target.forward, dir);
 
-
         bool signX = angleX >= 90 && angleX < 270;
         bool signY = angleY >= 90 && angleY < 270;
         bool signZ = angleZ >= 90 && angleZ < 270;
+
+        quadDir = Vector3.one;
         if (!signX)
+        {
             x = -x;
+            quadDir.x = -1;
+        }
         if (!signY)
+        {
             y = -y;
+            quadDir.y = -1;
+        }
         if (!signZ)
+        {
             z = -z;
+            quadDir.z = -1;
+        }
 
         // 画方块的边框线
-        GL.Color(Color.red);
-        GL.Vertex(y * quadScale);
-        GL.Vertex((y + z) * quadScale);
-        GL.Vertex((y + z) * quadScale);
-        GL.Vertex(z * quadScale);
-        GL.Color(Color.green);
-        GL.Vertex(x * quadScale);
-        GL.Vertex((x + z) * quadScale);
-        GL.Vertex((x + z) * quadScale);
-        GL.Vertex(z * quadScale);
-        GL.Color(Color.blue);
-        GL.Vertex(x * quadScale);
-        GL.Vertex((x + y) * quadScale);
-        GL.Vertex((x + y) * quadScale);
-        GL.Vertex(y * quadScale);
-        GL.End();
+        if (hasQuad)
+        {
+            GL.Begin(GL.LINES);
+            GL.Color(Color.red);
+            GL.Vertex(y * quadScale);
+            GL.Vertex((y + z) * quadScale);
+            GL.Vertex((y + z) * quadScale);
+            GL.Vertex(z * quadScale);
+            GL.Color(Color.green);
+            GL.Vertex(x * quadScale);
+            GL.Vertex((x + z) * quadScale);
+            GL.Vertex((x + z) * quadScale);
+            GL.Vertex(z * quadScale);
+            GL.Color(Color.blue);
+            GL.Vertex(x * quadScale);
+            GL.Vertex((x + y) * quadScale);
+            GL.Vertex((x + y) * quadScale);
+            GL.Vertex(y * quadScale);
+            GL.End();
 
-        // 画三个小方块
-        GL.Begin(GL.QUADS);
-        GL.Color(selectedAxis == RuntimeHandleAxis.YZ ? selectedColorA : redA);
-        GL.Vertex(o * quadScale);
-        GL.Vertex(y * quadScale);
-        GL.Vertex((y + z) * quadScale);
-        GL.Vertex(z * quadScale);
-        GL.Color(selectedAxis == RuntimeHandleAxis.XZ ? selectedColorA : greenA);
-        GL.Vertex(o * quadScale);
-        GL.Vertex(x * quadScale);
-        GL.Vertex((x + z) * quadScale);
-        GL.Vertex(z * quadScale);
-        GL.Color(selectedAxis == RuntimeHandleAxis.XY ? selectedColorA : blueA);
-        GL.Vertex(o * quadScale);
-        GL.Vertex(x * quadScale); 
-        GL.Vertex((x + y) * quadScale);
-        GL.Vertex(y * quadScale);
-        GL.End();
+            // 画三个小方块
+            GL.Begin(GL.QUADS);
+            GL.Color(selectedAxis == RuntimeHandleAxis.YZ ? selectedColorA : redA);
+            GL.Vertex(o * quadScale);
+            GL.Vertex(y * quadScale);
+            GL.Vertex((y + z) * quadScale);
+            GL.Vertex(z * quadScale);
+            GL.Color(selectedAxis == RuntimeHandleAxis.XZ ? selectedColorA : greenA);
+            GL.Vertex(o * quadScale);
+            GL.Vertex(x * quadScale);
+            GL.Vertex((x + z) * quadScale);
+            GL.Vertex(z * quadScale);
+            GL.Color(selectedAxis == RuntimeHandleAxis.XY ? selectedColorA : blueA);
+            GL.Vertex(o * quadScale);
+            GL.Vertex(x * quadScale);
+            GL.Vertex((x + y) * quadScale);
+            GL.Vertex(y * quadScale);
+            GL.End();
+        }
 
         GL.PopMatrix();
+    }
 
+    /// <summary>
+    /// 画一个空心圆
+    /// </summary>
+    private void DrawCircle(Transform target, Vector3 axis, float radius, Color color)
+    {
+        float x;
+        float y;
+        GL.Color(color);
+
+        Vector3 start;
+        if (axis.x == 1)
+            start = Vector3.up * radius;
+        else
+            start = Vector3.right * radius;
+        GL.Vertex(start);
+        for (int i = 10; i < 360; i+=10)
+        {
+            x = Mathf.Cos(i * Mathf.Deg2Rad) * radius;
+            y = Mathf.Sin(i * Mathf.Deg2Rad) * radius;
+
+            Vector3 temp;
+            if (axis.x == 1)
+                temp = new Vector3(0, x, y);
+            else if (axis.y == 1)
+                temp = new Vector3(x, 0, y);
+            else
+                temp = new Vector3(x, y, 0);
+            GL.Vertex(temp);
+            GL.Vertex(temp);
+        }
+        GL.Vertex(start);
+    }
+
+    /// <summary>
+    /// 绘制坐标系箭头
+    /// </summary>
+    private void DrawCoordinateArrow(Transform target)
+    {
+        Vector3 position = target.position;
         Vector3 euler = target.eulerAngles;
         // 画坐标轴的箭头
         Mesh meshX = CreateArrow(selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red, arrowScale * screenScale);
@@ -220,6 +374,26 @@ public class RuntimeHandle : MonoBehaviour
         };
 
         return cone;
+    }
+
+    /// <summary>
+    /// 绘制坐标系小正方体
+    /// </summary>
+    private void DrawCoordinateCube(Transform target)
+    {
+        Vector3 position = target.position;
+        Vector3 euler = target.eulerAngles;
+        // 画坐标轴的小方块
+        shapesMaterial.SetPass(0);
+        Mesh meshX = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red, Vector3.zero, cubeScale * screenScale);
+        Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, Quaternion.identity);
+        Mesh meshY = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.Y ? selectedColor : Color.green, Vector3.zero, cubeScale * screenScale);
+        Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, Quaternion.identity);
+        Mesh meshZ = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue, Vector3.zero, cubeScale * screenScale);
+        Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, Quaternion.identity);
+
+        Mesh meshO = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.XYZ ? selectedColor : Color.white, Vector3.zero, cubeScale * screenScale);
+        Graphics.DrawMeshNow(meshO, position, Quaternion.identity);
     }
 
     /// <summary>
@@ -293,145 +467,80 @@ public class RuntimeHandle : MonoBehaviour
     }
 
     /// <summary>
-    /// 返回鼠标和手柄的碰撞信息
-    /// </summary>
-    private RuntimeHandleAxis SelectedAxis()
-    {
-        Matrix4x4 mat = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
-        bool hit = HitAxis(Vector3.right, mat, out float distanceX);
-        hit |= HitAxis(Vector3.up, mat, out float distanceY);
-        hit |= HitAxis(Vector3.forward, mat, out float distanceZ);
-
-        if (hit)
-        {
-            if (distanceX < distanceY && distanceX < distanceZ)
-            {
-                return RuntimeHandleAxis.X;
-            }
-            else if (distanceY < distanceZ)
-            {
-                return RuntimeHandleAxis.Y;
-            }
-            else
-            {
-                return RuntimeHandleAxis.Z;
-            }
-        }
-
-        return RuntimeHandleAxis.None;
-    }
-
-    /// <summary>
-    /// 是否和手柄有碰撞
-    /// </summary>
-    /// <param name="axis"></param>
-    /// <param name="matrix">手柄坐标系转换矩阵</param>
-    /// <param name="distanceAxis"></param>
-    /// <returns></returns>
-    private bool HitAxis(Vector3 axis, Matrix4x4 matrix, out float distanceToAxis)
-    {
-        // 把坐标轴本地坐标转为世界坐标
-        axis = matrix.MultiplyPoint(axis);
-
-        // 坐标轴转屏幕坐标(有问题)
-        Vector2 screenVectorBegin = camera.WorldToScreenPoint(target.position);
-        Vector2 screenVectorEnd = camera.WorldToScreenPoint(axis);
-        Vector2 screenVector = screenVectorEnd - screenVectorBegin;
-        float screenVectorMag = screenVector.magnitude;
-        screenVector.Normalize();
-
-        if (screenVector != Vector2.zero) 
-        {
-            Vector2 perp = PerpendicularClockwise(screenVector).normalized;
-            Vector2 mousePosition = Input.mousePosition;
-            Vector2 relMousePositon = mousePosition - screenVectorBegin;    // 鼠标相对轴远点位置
-            distanceToAxis = Mathf.Abs(Vector2.Dot(perp, relMousePositon)); // 在屏幕坐标系中，鼠标到轴的距离
-
-            Vector2 hitPoint = (relMousePositon - perp * distanceToAxis);
-            float vectorSpaceCoord = Vector2.Dot(screenVector, hitPoint);
-
-            bool result = vectorSpaceCoord >= 0 && hitPoint.magnitude <= screenVectorMag && distanceToAxis < colliderPixel;
-            return result;
-        }
-        else  // 坐标轴正对屏幕
-        {
-            Vector2 mousePosition = Input.mousePosition;
-
-            distanceToAxis = (screenVectorBegin - mousePosition).magnitude;
-            bool result = distanceToAxis <= colliderPixel;
-            if (!result)
-            {
-                distanceToAxis = float.PositiveInfinity;
-            }
-            else
-            {
-                distanceToAxis = 0.0f;
-            }
-            return result;
-        }
-    }
-
-    /// <summary>
-    /// 是否和小方块有碰撞
-    /// </summary>
-    /// <param name="axis"></param>
-    /// <param name="matrix"></param>
-    /// <param name="size"></param>
-    /// <returns></returns>
-    private bool HitQuad(Vector3 axis, Matrix4x4 matrix, float size)
-    {
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new Plane(matrix.MultiplyVector(axis).normalized, matrix.MultiplyPoint(Vector3.zero));
-
-        if (!plane.Raycast(ray, out float distance))
-        {
-            return false;
-        }
-
-        Vector3 point = ray.GetPoint(distance);
-        point = matrix.inverse.MultiplyPoint(point);
-
-        Vector3 toCam = matrix.inverse.MultiplyVector(camera.transform.position/* - HandlePosition*/);
-
-        float fx = Mathf.Sign(Vector3.Dot(toCam, Vector3.right));
-        float fy = Mathf.Sign(Vector3.Dot(toCam, Vector3.up));
-        float fz = Mathf.Sign(Vector3.Dot(toCam, Vector3.forward));
-
-        point.x *= fx;
-        point.y *= fy;
-        point.z *= fz;
-
-        float lowBound = -0.01f;
-
-        bool result = point.x >= lowBound && point.x <= size && point.y >= lowBound && point.y <= size && point.z >= lowBound && point.z <= size;
-
-        if (result)
-        {
-            //DragPlane = GetDragPlane(matrix, axis);
-        }
-
-        return result;
-    }
-
-    /// <summary>
     /// 控制目标
     /// </summary>
     private void ControlTarget()
     {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            mouseDonw = true;
+        }
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            float inputX = Input.GetAxis("Mouse X");
+            float inputY = Input.GetAxis("Mouse Y");
 
+            float x = 0;
+            float y = 0;
+            float z = 0;
+
+            switch (selectedAxis)
+            {
+                case RuntimeHandleAxis.None:
+                    break;
+                case RuntimeHandleAxis.X:
+                    if (!lockX)
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                    break;
+                case RuntimeHandleAxis.Y:
+                    if (!lockY)
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                    break;
+                case RuntimeHandleAxis.Z:
+                    if (!lockZ)
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                    break;
+                case RuntimeHandleAxis.XY:
+                    if (!lockX)
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                    if (!lockY)
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                    break;
+                case RuntimeHandleAxis.XZ:
+                    if (!lockX)
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                    if (!lockZ)
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                    break;
+                case RuntimeHandleAxis.YZ:
+                    if (!lockY)
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                    if (!lockZ)
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                    break;
+                case RuntimeHandleAxis.XYZ:
+                    if (!lockX)
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                    if (!lockY)
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                    if (!lockZ)
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                    break;
+                default:
+                    break;
+            }
+
+            currentHandle.Transform(target, new Vector3(x, y, z) * screenScale);
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            mouseDonw = false;
+        }
     }
-
 
 
     // ------------- Tools -------------- //
 
-    /// <summary>
-    /// 获取顺时针的垂直向量
-    /// </summary>
-    private Vector2 PerpendicularClockwise(Vector2 vector2)
-    {
-        return new Vector2(-vector2.y, vector2.x);
-    }
 
     /// <summary>
     /// 通过一个世界左边和相机获取比例
@@ -449,6 +558,26 @@ public class RuntimeHandle : MonoBehaviour
         float scale = 2.0f * distance * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad); // 在Position的深度上，每个像素点对应的y轴距离
         return scale / h * 90; // 90为自定义系数
     }
+
+
+    // ---------------- 外部调用 ------------------- //
+
+    public void SetTarget(Transform _target)
+    {
+        target = _target;
+    }
+
+    public void ConfigFreeze(bool _lockX = false, bool _lockY = false, bool _locKZ = false)
+    {
+        lockX = _lockX;
+        lockY = _lockY;
+        lockZ = _locKZ;
+    }
+
+    public void Disable()
+    {
+        target = null;
+    }
 }
 
 public enum RuntimeHandleAxis
@@ -460,4 +589,12 @@ public enum RuntimeHandleAxis
     XY,
     XZ,
     YZ,
+    XYZ,
+}
+
+public enum TransformMode
+{
+    Position,
+    Rotation,
+    Scale,
 }

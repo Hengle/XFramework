@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Test : MonoSingleton<Test>
 {
+    private bool boolTest = true;
     public Mesh mesh;
     private void QQQ(in List<int> yyy)
     {
@@ -14,6 +15,11 @@ public class Test : MonoSingleton<Test>
     void Start()
     {
         //IOUtility.Test();
+    }
+
+    private void OnPostRender()
+    {
+
     }
 
     // Update is called once per frame
