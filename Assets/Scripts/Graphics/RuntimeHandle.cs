@@ -7,21 +7,17 @@ using UnityEngine;
 /// </summary>
 public class RuntimeHandle : MonoBehaviour
 {
-    public Transform target;
-    private Camera camera;
-
     private float handleScale = 1;
     private float quadScale = 0.2f;    // 方块长度和轴长度的比例
     private float arrowScale = 1f;
-    private float screenScale = 0;
     private float cubeScale = 0.15f;
     private float circleRadius = 0.6f;
 
     public static Vector3 quadDir = Vector3.one;
 
-    public bool lockX = false;
-    public bool lockY = false;
-    public bool lockZ = false;
+    private static bool lockX = false;
+    private static bool lockY = false;
+    private static bool lockZ = false;
     private bool mouseDonw = false;
 
     public static Vector3[] circlePosX;
@@ -46,11 +42,11 @@ public class RuntimeHandle : MonoBehaviour
     private Material quadeMaterial;
     private Material shapesMaterial;
 
-    private Matrix4x4 targetMatrix;
-
     public static RuntimeHandle instance;
-
-    private bool boolTest = false;
+    public static Matrix4x4 localToWorld { get; private set; }
+    public static float screenScale { get; private set; }
+    public static Transform target { get; private set; }
+    public static Camera camera { get; private set; }
 
     private void Awake()
     {
@@ -68,6 +64,8 @@ public class RuntimeHandle : MonoBehaviour
 
         camera = GetComponent<Camera>();
         currentHandle = positionHandle;
+
+        SetTarget(GameObject.Find("Cube").transform);
     }
 
     private void Update()
@@ -91,7 +89,7 @@ public class RuntimeHandle : MonoBehaviour
             }
 
             if (!mouseDonw)
-                selectedAxis = currentHandle.SelectedAxis(target, camera, screenScale);
+                selectedAxis = currentHandle.SelectedAxis();
 
             ControlTarget();
         }
@@ -102,6 +100,7 @@ public class RuntimeHandle : MonoBehaviour
         if (target)
         {
             screenScale = GetScreenScale(target.position, camera);
+            localToWorld = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
             DrawHandle(target);
         }
     }
@@ -507,33 +506,33 @@ public class RuntimeHandle : MonoBehaviour
                     break;
                 case RuntimeHandleAxis.X:
                     if (!lockX)
-                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right);
                     break;
                 case RuntimeHandleAxis.Y:
                     if (!lockY)
-                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up);
                     break;
                 case RuntimeHandleAxis.Z:
                     if (!lockZ)
-                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward);
                     break;
                 case RuntimeHandleAxis.XY:
                     if (!lockX)
-                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right);
                     if (!lockY)
-                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up);
                     break;
                 case RuntimeHandleAxis.XZ:
                     if (!lockX)
-                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
+                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right);
                     if (!lockZ)
-                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward);
                     break;
                 case RuntimeHandleAxis.YZ:
                     if (!lockY)
-                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
+                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up);
                     if (!lockZ)
-                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward);
                     break;
                 case RuntimeHandleAxis.XYZ:
                     x = y = z = inputX;
@@ -548,7 +547,7 @@ public class RuntimeHandle : MonoBehaviour
                     break;
             }
 
-            currentHandle.Transform(target, new Vector3(x, y, z) * screenScale);
+            currentHandle.Transform(new Vector3(x, y, z) * screenScale);
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
@@ -580,19 +579,19 @@ public class RuntimeHandle : MonoBehaviour
 
     // ---------------- 外部调用 ------------------- //
 
-    public void SetTarget(Transform _target)
+    public static void SetTarget(Transform _target)
     {
         target = _target;
     }
 
-    public void ConfigFreeze(bool _lockX = false, bool _lockY = false, bool _locKZ = false)
+    public static void ConfigFreeze(bool _lockX = false, bool _lockY = false, bool _locKZ = false)
     {
         lockX = _lockX;
         lockY = _lockY;
         lockZ = _locKZ;
     }
 
-    public void Disable()
+    public static void Disable()
     {
         target = null;
     }

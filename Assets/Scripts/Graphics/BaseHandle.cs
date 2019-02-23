@@ -7,21 +7,25 @@ using UnityEngine;
 /// </summary>
 public class BaseHandle
 {
-    private float colliderPixel = 10;  // 鼠标距离轴多少时算有碰撞（单位：像素）
+    protected Camera camera { get { return RuntimeHandle.camera; } }
+    protected Transform target { get { return RuntimeHandle.target; } }
+    protected float screenScale{ get { return RuntimeHandle.screenScale; } }
+    protected Matrix4x4 localToWorld { get { return RuntimeHandle.localToWorld; } }
 
-    public virtual float GetTransformAxis(Vector2 inputDir, Vector3 axis, Transform target, Camera camera) { return 0; }
-    public virtual void Transform(Transform target, Vector3 value) { }
+    protected float colliderPixel = 10;  // 鼠标距离轴多少时算有碰撞（单位：像素）
+
+    public virtual float GetTransformAxis(Vector2 inputDir, Vector3 axis) { return 0; }
+    public virtual void Transform(Vector3 value) { }
 
     /// <summary>
     /// 最基本的碰撞选择
     /// </summary>
-    public virtual RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
+    public virtual RuntimeHandleAxis SelectedAxis()
     {
         float distanceX, distanceY, distanceZ;
-        Matrix4x4 mat = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
-        bool hit = HitAxis(Vector3.right, mat, out distanceX, camera, target);
-        hit |= HitAxis(Vector3.up, mat, out distanceY, camera, target);
-        hit |= HitAxis(Vector3.forward, mat, out distanceZ, camera, target);
+        bool hit = HitAxis(Vector3.right, out distanceX);
+        hit |= HitAxis(Vector3.up, out distanceY);
+        hit |= HitAxis(Vector3.forward, out distanceZ);
 
         if (hit)
         {
@@ -46,13 +50,13 @@ public class BaseHandle
     /// 是否和手柄有碰撞
     /// </summary>
     /// <param name="axis"></param>
-    /// <param name="matrix">手柄坐标系转换矩阵</param>
+    /// <param name="localToWorlad">手柄坐标系转换矩阵</param>
     /// <param name="distanceAxis"></param>
     /// <returns></returns>
-    public bool HitAxis(Vector3 axis, Matrix4x4 matrix, out float distanceToAxis,Camera camera,Transform target)
+    public bool HitAxis(Vector3 axis, out float distanceToAxis)
     {
         // 把坐标轴本地坐标转为世界坐标
-        axis = matrix.MultiplyPoint(axis);
+        axis = localToWorld.MultiplyPoint(axis);
 
         // 坐标轴转屏幕坐标(有问题)
         Vector2 screenVectorBegin = camera.WorldToScreenPoint(target.position);
@@ -110,7 +114,7 @@ public class PositionHandle : BaseHandle
     /// <summary>
     /// 返回鼠标和手柄的碰撞信息
     /// </summary>
-    public override RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
+    public override RuntimeHandleAxis SelectedAxis()
     {
         float scale = screenScale/* * 0.2f*/;
         // TODO 方块的位置是会变化的
@@ -127,10 +131,10 @@ public class PositionHandle : BaseHandle
             return RuntimeHandleAxis.YZ;
         }
 
-        return base.SelectedAxis(target, camera, screenScale);
+        return base.SelectedAxis();
     }
 
-    public override float GetTransformAxis(Vector2 inputDir, Vector3 axis, Transform target, Camera camera)
+    public override float GetTransformAxis(Vector2 inputDir, Vector3 axis)
     {
         Vector2 screenStart = camera.WorldToScreenPoint(target.position);
         Vector2 screenEnd = camera.WorldToScreenPoint(target.position + axis);
@@ -139,7 +143,7 @@ public class PositionHandle : BaseHandle
         return Vector2.Dot(screenDir, inputDir);
     }
 
-    public override void Transform(Transform target, Vector3 value)
+    public override void Transform(Vector3 value)
     {
         target.Translate(value * Time.deltaTime * 20, Space.Self);
     }
@@ -175,14 +179,13 @@ public class PositionHandle : BaseHandle
 /// </summary>
 public class RotationHandle : BaseHandle
 {
-    public override RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
+    public override RuntimeHandleAxis SelectedAxis()
     {
         float distanceX, distanceY, distanceZ;
         Vector2 mousePos = Input.mousePosition;
-        Matrix4x4 mat = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
-        bool hit = HitCircle(RuntimeHandle.circlePosX, mat, mousePos, camera, out distanceX);
-        hit |= HitCircle(RuntimeHandle.circlePosY, mat, mousePos, camera, out distanceY);
-        hit |= HitCircle(RuntimeHandle.circlePosZ, mat, mousePos, camera, out distanceZ);
+        bool hit = HitCircle(RuntimeHandle.circlePosX, mousePos, out distanceX);
+        hit |= HitCircle(RuntimeHandle.circlePosY, mousePos, out distanceY);
+        hit |= HitCircle(RuntimeHandle.circlePosZ, mousePos, out distanceZ);
 
         if (hit)
         {
@@ -203,7 +206,7 @@ public class RotationHandle : BaseHandle
         return RuntimeHandleAxis.None;
     }
 
-    public override float GetTransformAxis(Vector2 inputDir, Vector3 axis, Transform target, Camera camera)
+    public override float GetTransformAxis(Vector2 inputDir, Vector3 axis)
     {
         Vector2 screenStart = camera.WorldToScreenPoint(target.position);
         Vector2 screenEnd = camera.WorldToScreenPoint(target.position + axis);
@@ -212,19 +215,19 @@ public class RotationHandle : BaseHandle
         return Vector2.Dot(screenDir, inputDir);
     }
 
-    public override void Transform(Transform target, Vector3 value)
+    public override void Transform(Vector3 value)
     {
         target.Rotate(value, Space.Self);
     }
 
-    private bool HitCircle(Vector3[] circlePos,Matrix4x4 transform, Vector2 mousePos, Camera camera, out float distance)
+    private bool HitCircle(Vector3[] circlePos, Vector2 mousePos, out float distance)
     {
         distance = 1000;
         if (circlePos == null)
             return false;
         for (int i = 0,length = circlePos.Length; i < length; i++)
         {
-            Vector3 worldPos = transform.MultiplyPoint(circlePos[i]);
+            Vector3 worldPos = localToWorld.MultiplyPoint(circlePos[i]);
             Vector2 screenPos = camera.WorldToScreenPoint(worldPos);
             float tempDis = Vector2.Distance(mousePos, screenPos);
             if (tempDis < distance)
@@ -242,15 +245,15 @@ public class RotationHandle : BaseHandle
 /// </summary>
 public class ScaleHandle : BaseHandle
 {
-    public override RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
+    public override RuntimeHandleAxis SelectedAxis()
     {
         if (HitCube(target.position, camera))
             return RuntimeHandleAxis.XYZ;
 
-        return base.SelectedAxis(target, camera, screenScale);
+        return base.SelectedAxis();
     }
 
-    public override float GetTransformAxis(Vector2 inputDir, Vector3 axis, Transform target, Camera camera)
+    public override float GetTransformAxis(Vector2 inputDir, Vector3 axis)
     {
         Vector2 screenStart = camera.WorldToScreenPoint(target.position);
         Vector2 screenEnd = camera.WorldToScreenPoint(target.position + axis);
@@ -259,7 +262,7 @@ public class ScaleHandle : BaseHandle
         return Vector2.Dot(screenDir, inputDir);
     }
 
-    public override void Transform(Transform target, Vector3 value)
+    public override void Transform(Vector3 value)
     {
         target.localScale += value * Time.deltaTime;
     }
