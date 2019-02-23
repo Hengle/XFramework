@@ -141,7 +141,7 @@ public class PositionHandle : BaseHandle
 
     public override void Transform(Transform target, Vector3 value)
     {
-        target.Translate(value * Time.deltaTime * 10, Space.Self);
+        target.Translate(value * Time.deltaTime * 20, Space.Self);
     }
 
     /// <summary>
@@ -153,16 +153,12 @@ public class PositionHandle : BaseHandle
     /// <returns></returns>
     private bool HitQuad(Vector3 origin, Vector3 offset, Camera camera)
     {
+        offset.x *= RuntimeHandle.quadDir.x;
+        offset.y *= RuntimeHandle.quadDir.y;
+        offset.z *= RuntimeHandle.quadDir.z;
         Vector2 mousePos = Input.mousePosition;
         Vector2 screenOrigin = camera.WorldToScreenPoint(origin);
         Vector2 screenOffset = camera.WorldToScreenPoint(origin + offset);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log(mousePos);
-            Debug.Log(screenOrigin);
-            Debug.Log(screenOffset);
-        }
 
         if (mousePos.x > Mathf.Max(screenOrigin.x, screenOffset.x) ||
             mousePos.x < Mathf.Min(screenOrigin.x, screenOffset.x) ||
@@ -179,19 +175,65 @@ public class PositionHandle : BaseHandle
 /// </summary>
 public class RotationHandle : BaseHandle
 {
-    //public override RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
-    //{
+    public override RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
+    {
+        float distanceX, distanceY, distanceZ;
+        Vector2 mousePos = Input.mousePosition;
+        Matrix4x4 mat = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
+        bool hit = HitCircle(RuntimeHandle.circlePosX, mat, mousePos, camera, out distanceX);
+        hit |= HitCircle(RuntimeHandle.circlePosY, mat, mousePos, camera, out distanceY);
+        hit |= HitCircle(RuntimeHandle.circlePosZ, mat, mousePos, camera, out distanceZ);
 
-    //}
+        if (hit)
+        {
+            if (distanceX < distanceY && distanceX < distanceZ)
+            {
+                return RuntimeHandleAxis.X;
+            }
+            else if (distanceY < distanceZ)
+            {
+                return RuntimeHandleAxis.Y;
+            }
+            else
+            {
+                return RuntimeHandleAxis.Z;
+            }
+        }
+
+        return RuntimeHandleAxis.None;
+    }
 
     public override float GetTransformAxis(Vector2 inputDir, Vector3 axis, Transform target, Camera camera)
     {
-        return 0;
+        Vector2 screenStart = camera.WorldToScreenPoint(target.position);
+        Vector2 screenEnd = camera.WorldToScreenPoint(target.position + axis);
+        Vector2 screenDir = PerpendicularClockwise((screenEnd - screenStart)).normalized;
+
+        return Vector2.Dot(screenDir, inputDir);
     }
 
     public override void Transform(Transform target, Vector3 value)
     {
-        
+        target.Rotate(value, Space.Self);
+    }
+
+    private bool HitCircle(Vector3[] circlePos,Matrix4x4 transform, Vector2 mousePos, Camera camera, out float distance)
+    {
+        distance = 1000;
+        if (circlePos == null)
+            return false;
+        for (int i = 0,length = circlePos.Length; i < length; i++)
+        {
+            Vector3 worldPos = transform.MultiplyPoint(circlePos[i]);
+            Vector2 screenPos = camera.WorldToScreenPoint(worldPos);
+            float tempDis = Vector2.Distance(mousePos, screenPos);
+            if (tempDis < distance)
+                distance = tempDis;
+        }
+        if (distance < 10)
+            return true;
+        else
+            return false;
     }
 }
 
@@ -202,8 +244,8 @@ public class ScaleHandle : BaseHandle
 {
     public override RuntimeHandleAxis SelectedAxis(Transform target, Camera camera, float screenScale)
     {
-        // TODO xyz的情况
-
+        if (HitCube(target.position, camera))
+            return RuntimeHandleAxis.XYZ;
 
         return base.SelectedAxis(target, camera, screenScale);
     }
@@ -220,5 +262,24 @@ public class ScaleHandle : BaseHandle
     public override void Transform(Transform target, Vector3 value)
     {
         target.localScale += value * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// 与中心方块的碰撞
+    /// 不需要很精确，只要鼠标位置和方块位置在一定的像素差之内就算碰撞到了
+    /// </summary>
+    private bool HitCube(Vector3 position, Camera camera)
+    {
+        Vector2 mousePos = Input.mousePosition;
+        Vector2 screenPos = camera.WorldToScreenPoint(position);
+
+        if (Mathf.Abs((mousePos.x - screenPos.x) * (mousePos.y - screenPos.y)) < 10)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

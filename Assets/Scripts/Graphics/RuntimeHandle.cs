@@ -24,6 +24,10 @@ public class RuntimeHandle : MonoBehaviour
     public bool lockZ = false;
     private bool mouseDonw = false;
 
+    public static Vector3[] circlePosX;
+    public static Vector3[] circlePosY;
+    public static Vector3[] circlePosZ;
+
     private RuntimeHandleAxis selectedAxis = RuntimeHandleAxis.None; // 当前有碰撞的轴
     private TransformMode transformMode = TransformMode.Position;
     private BaseHandle currentHandle;
@@ -44,7 +48,7 @@ public class RuntimeHandle : MonoBehaviour
 
     private Matrix4x4 targetMatrix;
 
-    private static RuntimeHandle instance;
+    public static RuntimeHandle instance;
 
     private bool boolTest = false;
 
@@ -138,7 +142,6 @@ public class RuntimeHandle : MonoBehaviour
     /// <param name="target"></param>
     private void DoRotation(Transform target)
     {
-        Debug.Log("ShowRotationHandle");
         Matrix4x4 transform = Matrix4x4.TRS(target.position, target.rotation, Vector3.one * screenScale);
 
         lineMaterial.SetPass(0);
@@ -146,9 +149,9 @@ public class RuntimeHandle : MonoBehaviour
         GL.MultMatrix(transform);
         GL.Begin(GL.LINES);
 
-        DrawCircle(target, Vector3.right, circleRadius, Color.red);
-        DrawCircle(target, Vector3.up, circleRadius, Color.green);
-        DrawCircle(target, Vector3.forward, circleRadius, Color.blue);
+        DrawCircle(target, Vector3.right, circleRadius, selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red);
+        DrawCircle(target, Vector3.up, circleRadius, selectedAxis == RuntimeHandleAxis.Y ? selectedColor : Color.green);
+        DrawCircle(target, Vector3.forward, circleRadius, selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue);
 
         GL.End();
         GL.PopMatrix();
@@ -271,6 +274,7 @@ public class RuntimeHandle : MonoBehaviour
     /// </summary>
     private void DrawCircle(Transform target, Vector3 axis, float radius, Color color)
     {
+        int detlaAngle = 10;
         float x;
         float y;
         GL.Color(color);
@@ -280,11 +284,16 @@ public class RuntimeHandle : MonoBehaviour
             start = Vector3.up * radius;
         else
             start = Vector3.right * radius;
+        Vector3[] circlePos;
+
+        circlePos = new Vector3[360 / detlaAngle];
+        
         GL.Vertex(start);
-        for (int i = 10; i < 360; i+=10)
+        circlePos[0] = start;
+        for (int i = 1; i < 360 / detlaAngle; i++)
         {
-            x = Mathf.Cos(i * Mathf.Deg2Rad) * radius;
-            y = Mathf.Sin(i * Mathf.Deg2Rad) * radius;
+            x = Mathf.Cos(i * detlaAngle * Mathf.Deg2Rad) * radius;
+            y = Mathf.Sin(i * detlaAngle * Mathf.Deg2Rad) * radius;
 
             Vector3 temp;
             if (axis.x == 1)
@@ -295,8 +304,16 @@ public class RuntimeHandle : MonoBehaviour
                 temp = new Vector3(x, y, 0);
             GL.Vertex(temp);
             GL.Vertex(temp);
+            circlePos[i] = temp;
         }
         GL.Vertex(start);
+
+        if (axis.x == 1)
+            circlePosX = circlePos;
+        else if (axis.y == 1)
+            circlePosY = circlePos;
+        else
+            circlePosZ = circlePos;
     }
 
     /// <summary>
@@ -519,12 +536,13 @@ public class RuntimeHandle : MonoBehaviour
                         z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
                     break;
                 case RuntimeHandleAxis.XYZ:
-                    if (!lockX)
-                        x = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.right, target, camera);
-                    if (!lockY)
-                        y = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.up, target, camera);
-                    if (!lockZ)
-                        z = currentHandle.GetTransformAxis(new Vector2(inputX, inputY), target.forward, target, camera);
+                    x = y = z = inputX;
+                    if (lockX)
+                        x = 0;
+                    if (lockY)
+                        y = 0;
+                    if (lockZ)
+                        z = 0;
                     break;
                 default:
                     break;

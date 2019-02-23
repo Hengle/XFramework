@@ -14,7 +14,9 @@ public class Test : MonoSingleton<Test>
 
     void Start()
     {
-        //IOUtility.Test();
+        Debug.Log(transform.rotation);
+        Debug.Log(Quaternion.LookRotation(transform.forward));
+        Debug.Log(Quaternion.Euler(transform.eulerAngles));
     }
 
     private void OnPostRender()
