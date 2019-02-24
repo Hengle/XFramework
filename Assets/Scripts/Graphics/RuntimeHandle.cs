@@ -18,14 +18,10 @@ public class RuntimeHandle : MonoBehaviour
     private static bool lockX = false;
     private static bool lockY = false;
     private static bool lockZ = false;
-    private bool mouseDonw = false;
-
-    public static Vector3[] circlePosX;
-    public static Vector3[] circlePosY;
-    public static Vector3[] circlePosZ;
+    private bool mouseDonw = false;    // 鼠标左键是否按下
 
     private RuntimeHandleAxis selectedAxis = RuntimeHandleAxis.None; // 当前有碰撞的轴
-    private TransformMode transformMode = TransformMode.Position;
+    private TransformMode transformMode = TransformMode.Position;    // 当前控制类型
     private BaseHandle currentHandle;
 
     private readonly PositionHandle positionHandle = new PositionHandle();
@@ -42,29 +38,29 @@ public class RuntimeHandle : MonoBehaviour
     private Material quadeMaterial;
     private Material shapesMaterial;
 
-    public static RuntimeHandle instance;
     public static Matrix4x4 localToWorld { get; private set; }
     public static float screenScale { get; private set; }
     public static Transform target { get; private set; }
     public static Camera camera { get; private set; }
 
+    public static Vector3[] circlePosX;
+    public static Vector3[] circlePosY;
+    public static Vector3[] circlePosZ;
+
     private void Awake()
     {
-        if (instance = null)
-        {
-            instance = this;
-        }
 
-        lineMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColor"));
+        lineMaterial = new Material(Shader.Find("RunTimeHandles/VertexColor"));
         lineMaterial.color = Color.white;
-        quadeMaterial = new Material(Shader.Find("Battlehub/RTHandles/VertexColor"));
+        quadeMaterial = new Material(Shader.Find("RunTimeHandles/VertexColor"));
         quadeMaterial.color = Color.white;
-        shapesMaterial = new Material(Shader.Find("Battlehub/RTHandles/Shape"));
+        shapesMaterial = new Material(Shader.Find("RunTimeHandles/Shape"));
         shapesMaterial.color = Color.white;
 
         camera = GetComponent<Camera>();
         currentHandle = positionHandle;
 
+        // 测试用
         SetTarget(GameObject.Find("Cube").transform);
     }
 
@@ -560,7 +556,7 @@ public class RuntimeHandle : MonoBehaviour
 
 
     /// <summary>
-    /// 通过一个世界左边和相机获取比例
+    /// 通过一个世界坐标和相机获取比例
     /// </summary>
     private float GetScreenScale(Vector3 position, Camera camera)
     {
@@ -597,6 +593,9 @@ public class RuntimeHandle : MonoBehaviour
     }
 }
 
+/// <summary>
+/// 鼠标选择轴的类型
+/// </summary>
 public enum RuntimeHandleAxis
 {
     None,
@@ -609,6 +608,9 @@ public enum RuntimeHandleAxis
     XYZ,
 }
 
+/// <summary>
+/// 控制模式
+/// </summary>
 public enum TransformMode
 {
     Position,

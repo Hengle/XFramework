@@ -1,4 +1,4 @@
-﻿Shader "Battlehub/RTHandles/VertexColorBillboard"
+﻿Shader "RunTimeHandles/VertexColorBillboard"
 {
 	Properties{
 	}

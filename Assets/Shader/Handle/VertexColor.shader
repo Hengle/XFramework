@@ -1,6 +1,5 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Battlehub/RTHandles/VertexColor" {
+﻿
+Shader "RunTimeHandles/VertexColor" {
 	Properties
 	{
 		_ZWrite("ZWrite", Float) = 0.0

@@ -1,6 +1,5 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Battlehub/RTHandles/Shape" {
+﻿
+Shader "RunTimeHandles/Shape" {
 	Properties
 	{
 		_Color("Color", Color) = (1,1,1,0.1)
