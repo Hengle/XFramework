@@ -7,15 +7,15 @@ using UnityEngine.UI;
 public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 {
 
-    private ScrollRect rect;                        //滑动组件    
-    private float targethorizontal = 0;             //滑动的起始坐标    
-    private bool isDrag = false;                    //是否拖拽结束  true表示正在拖拽  
-    private List<float> posList = new List<float>();            //求出每页的临界角，页索引从0开始    
+    private ScrollRect rect;                        // 滑动组件    
+    private float targethorizontal = 0;             // 滑动的起始坐标    
+    private bool isDrag = false;                    // 是否拖拽结束  true表示正在拖拽  
+    private List<float> posList = new List<float>();            // 求出每页的临界角，页索引从0开始    
     private int currentPageIndex = -1;
     public Action<int> OnPageChanged;
     public RectTransform content;
     private bool stopMove = true;
-    public float smooting = 4;      //滑动速度    
+    public float smooting = 4;      // 滑动速度    
     public float sensitivity = 0;
     private float startTime;
 
@@ -29,7 +29,7 @@ public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         var tempWidth = ((float)content.transform.childCount * _rectWidth.rect.width);
         Debug.Log(tempWidth);
         content.sizeDelta = new Vector2(tempWidth, _rectWidth.rect.height);
-        //未显示的长度  
+        // 未显示的长度  
         float horizontalLength = content.rect.width - _rectWidth.rect.width;
         for (int i = 0; i < rect.content.transform.childCount; i++)
         {
@@ -47,10 +47,9 @@ public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             if (t >= 1)
                 stopMove = true;
         }
-        //Debug.Log(rect.horizontalNormalizedPosition);  
     }
 
-    public void pageTo(int index)
+    public void PageTo(int index)
     {
         if (index >= 0 && index < posList.Count)
         {
@@ -64,8 +63,7 @@ public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         if (currentPageIndex != index)
         {
             currentPageIndex = index;
-            if (OnPageChanged != null)
-                OnPageChanged(index);
+            OnPageChanged?.Invoke(index);
         }
     }
 
@@ -85,32 +83,27 @@ public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         int index = 0;
 
         float offset = Mathf.Abs(posList[index] - posX);
-        //Debug.Log("offset " + offset);  
-
 
         for (int i = 1; i < posList.Count; i++)
         {
             float temp = Mathf.Abs(posList[i] - posX);
-            //Debug.Log("temp " + temp);  
-            //Debug.Log("i" + i);  
             if (temp < offset)
             {
                 index = i;
                 offset = temp;
             }
-            //Debug.Log("index " + index);  
         }
-        //Debug.Log(index);  
+
         SetPageIndex(index);
         SetIndex(index);
-        targethorizontal = posList[index]; //设置当前坐标，更新函数进行插值    
+        targethorizontal = posList[index]; // 设置当前坐标，更新函数进行插值    
         isDrag = false;
         startTime = 0;
         stopMove = false;
 
     }
 
-    //设置toggleList
+    // 设置toggleList
     public void SetIndex(int index)
     {
         var toogle = toggleList.GetChild(index).GetComponent<Toggle>();

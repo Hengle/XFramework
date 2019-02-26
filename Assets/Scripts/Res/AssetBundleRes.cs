@@ -6,6 +6,7 @@ public class AssetBundleRes : Singleton<AssetBundleRes>
 {
     public string name;
     AssetBundle ab;
+
     // Start is called before the first frame update
     void Start()
     {

@@ -5,7 +5,6 @@ using Unity.Entities;
 using Unity.Collections;
 using Unity.Transforms;
 using Unity.Mathematics;
-using Unity.Rendering;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -104,7 +103,6 @@ public class GameManager : MonoBehaviour
         // ---------------------------------- //
 
         count += amount;
-        Debug.Log(count);
 
     }
 

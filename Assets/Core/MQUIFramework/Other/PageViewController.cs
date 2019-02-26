@@ -26,7 +26,7 @@ public class PageViewController : MonoBehaviour
         try
         {
             int idnex = int.Parse(inputField.text);
-            pageView.pageTo(idnex - 1);
+            pageView.PageTo(idnex - 1);
         }
         catch (Exception ex)
         {

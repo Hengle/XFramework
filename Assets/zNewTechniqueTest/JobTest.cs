@@ -4,15 +4,36 @@ using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
 using UnityEngine.Jobs;
+using System.Threading;
 
 public class JobTest : MonoBehaviour
 {
+    TransformAccessArray accessArray;
+
     private void Start()
     {
-        // 创建单个浮点数的本地数组（NativeArray）来存储结果。为了更好说明功能，该示例会等待作业完成。
+        accessArray = new TransformAccessArray(transform.GetComponentsInChildren<Transform>());
+    }
+
+    private void Update()
+    {
+        //if (Input.GetKeyDown(KeyCode.J))
+        {
+            TestTransformJob();
+        }
+    }
+
+    private void OnDisable()
+    {
+        accessArray.Dispose();
+    }
+
+    private void TestJob()
+    {
+        // 1.创建副本
         NativeArray<float> result = new NativeArray<float>(1, Allocator.TempJob);
 
-        // 设置作业数据
+        // 2.初始化Job数据
         MyJob jobData = new MyJob()
         {
             a = 10,
@@ -20,39 +41,88 @@ public class JobTest : MonoBehaviour
             result = result,
         };
 
-        // 调度作业
+        // 3.调度作业
         JobHandle handle = jobData.Schedule();
 
-        // 等待作业完成
+        // 4.等待作业完成（如果Job没有依赖关系，每一个都要执行Complete，如果有依赖关系，只有一群有依赖关系的中的最后一个job需要执行）
         handle.Complete();
 
-        //NativeArray的所有副本都指向相同内存，你可以在NativeArray的副本中访问结果。
-        float aPlusB = result[0];
-        Debug.Log(aPlusB);
-
-        // 释放结果数组分配的内存
+        // 5.释放内存
         result.Dispose();
+    }
+
+    private void TestParalleJob()
+    {
+        NativeArray<Vector3> wayPoints = new NativeArray<Vector3>(3, Allocator.TempJob);
+
+        MyJobParallelFor myJobParallelFor = new MyJobParallelFor()
+        {
+            waypoints = wayPoints,
+        };
+
+        JobHandle handleParallelFor = myJobParallelFor.Schedule(3, 32);  // 依赖于handle，handle结束后才会开始工作
+        handleParallelFor.Complete();
+        wayPoints.Dispose();
+    }
+
+    private void TestTransformJob()
+    {
+        MyTransformJob myTransformJob = new MyTransformJob()
+        {
+            time = Time.time,
+        };
+        JobHandle handTransform = myTransformJob.Schedule(accessArray);
+        handTransform.Complete();
     }
 }
 
 public struct MyJob : IJob
 {
-
-    /*在作业中，需要定义所有用于执行作业和输出结果的数据
-    Unity会创建内置数组，它们大体上和普通数组差不多，但是需要自己处理分配和释放设置*/
-
-    public NativeArray<Vector3> waypoints;
-    public float offsetToAdd;
     public float a;
     public float b;
-    public float res;
     public NativeArray<float> result;
 
-    /*所有作业都需要Execute函数*/
+    // 实现接口
     public void Execute()
     {
-        /*该函数会保存行为。要执行的变量必须在该struct开头定义。*/
-        //waypoints[i] = waypoints[i] * offsetToAdd;
         result[0] = a + b;
+        Debug.Log(result[0]);
+    }
+}
+
+public struct MyJobParallelFor : IJobParallelFor
+{
+    public NativeArray<Vector3> waypoints;
+
+    public void Execute(int index)
+    {
+        Debug.Log(waypoints[index]);
+    }
+}
+
+public struct MyTransformJob : IJobParallelForTransform
+{
+    public float time;
+
+    public void Execute(int index, TransformAccess transform)
+    {
+        transform.position += new Vector3(0, 0, 0.01f);
+        Debug.Log(transform.position);
+    }
+}
+
+public struct MyBatchJob : IJobParallelForBatch
+{
+    public void Execute(int startIndex, int count)
+    {
+        throw new System.NotImplementedException();
+    }
+}
+
+public struct MyFilterJob : IJobParallelForFilter
+{
+    public bool Execute(int index)
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -150,6 +150,8 @@ public class RuntimeHandle : MonoBehaviour
 
         GL.End();
         GL.PopMatrix();
+
+        DrawScreenCircle(Color.white, target.position, 60);
     }
 
     /// <summary>
@@ -318,13 +320,13 @@ public class RuntimeHandle : MonoBehaviour
     {
         Vector3 position = target.position;
         Vector3 euler = target.eulerAngles;
-        // 画坐标轴的箭头
+        // 画坐标轴的箭头 (箭头的锥顶不是它自身坐标的forword)
         Mesh meshX = CreateArrow(selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red, arrowScale * screenScale);
-        Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, Quaternion.Euler(new Vector3(0, 0, -90) + euler));
+        Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, target.rotation * Quaternion.Euler(0, 0, -90));
         Mesh meshY = CreateArrow(selectedAxis == RuntimeHandleAxis.Y ? selectedColor : Color.green, arrowScale * screenScale);
-        Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, Quaternion.Euler(euler));
+        Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, target.rotation);
         Mesh meshZ = CreateArrow(selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue, arrowScale * screenScale);
-        Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, Quaternion.Euler(new Vector3(90, 0, 0) + euler));
+        Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, target.rotation * Quaternion.Euler(90, 0, 0));
     }
 
     /// <summary>
@@ -354,7 +356,7 @@ public class RuntimeHandle : MonoBehaviour
         vertices[vertices.Length - 1] = new Vector3(0, -height, 0); // 圆心点
         vertices[vertices.Length - 2] = Vector3.zero;               // 锥顶
 
-        // 地面圆上的点
+        // 底面圆上的点
         for (int i = 0; i < segmentsCount; i++)
         {
             float angle = i * deltaAngle;
@@ -398,14 +400,14 @@ public class RuntimeHandle : MonoBehaviour
         // 画坐标轴的小方块
         shapesMaterial.SetPass(0);
         Mesh meshX = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.X ? selectedColor : Color.red, Vector3.zero, cubeScale * screenScale);
-        Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, Quaternion.identity);
+        Graphics.DrawMeshNow(meshX, position + target.right * handleScale * screenScale, target.rotation * Quaternion.Euler(0, 0, -90));
         Mesh meshY = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.Y ? selectedColor : Color.green, Vector3.zero, cubeScale * screenScale);
-        Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, Quaternion.identity);
+        Graphics.DrawMeshNow(meshY, position + target.up * handleScale * screenScale, target.rotation);
         Mesh meshZ = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.Z ? selectedColor : Color.blue, Vector3.zero, cubeScale * screenScale);
-        Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, Quaternion.identity);
+        Graphics.DrawMeshNow(meshZ, position + target.forward * handleScale * screenScale, target.rotation * Quaternion.Euler(90, 0, 0));
 
         Mesh meshO = CreateCubeMesh(selectedAxis == RuntimeHandleAxis.XYZ ? selectedColor : Color.white, Vector3.zero, cubeScale * screenScale);
-        Graphics.DrawMeshNow(meshO, position, Quaternion.identity);
+        Graphics.DrawMeshNow(meshO, position, target.rotation);
     }
 
     /// <summary>
@@ -549,6 +551,79 @@ public class RuntimeHandle : MonoBehaviour
         {
             mouseDonw = false;
         }
+    }
+
+    private void DrawScreenCircle(Color color,Vector3 position,int pixel)
+    {
+        Vector2 temp = camera.WorldToScreenPoint(position);
+        Vector3 offset = new Vector3(temp.x, temp.y, 0);
+
+        lineMaterial.SetPass(0);
+        GL.PushMatrix();
+        GL.LoadPixelMatrix();
+        GL.Begin(GL.LINES);
+        GL.Color(color);
+
+        int detlaAngle = 10;
+        float x;
+        float y;
+
+        GL.Vertex(new Vector3(1, 0, 0) * pixel + offset);
+        for (int i = 1; i < 360 / detlaAngle; i++)
+        {
+            x = Mathf.Cos(i * detlaAngle * Mathf.Deg2Rad) * pixel;
+            y = Mathf.Sin(i * detlaAngle * Mathf.Deg2Rad) * pixel;
+
+            GL.Vertex(new Vector3(x, y, 0) + offset);
+            GL.Vertex(new Vector3(x, y, 0) + offset);
+        }
+        GL.Vertex(new Vector3(1, 0, 0) * pixel + offset);
+        GL.End();
+        GL.PopMatrix();
+
+    }
+
+    private void DoRotationNew()
+    {
+        Quaternion rotation = target.rotation;
+        Vector3 scale = new Vector3(screenScale, screenScale, screenScale);
+        Matrix4x4 xTranform = Matrix4x4.TRS(Vector3.zero, rotation * Quaternion.AngleAxis(-90, Vector3.up), Vector3.one);
+        Matrix4x4 yTranform = Matrix4x4.TRS(Vector3.zero, rotation * Quaternion.AngleAxis(90, Vector3.right), Vector3.one);
+        Matrix4x4 zTranform = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
+        Matrix4x4 objToWorld = Matrix4x4.TRS(target.position, Quaternion.identity, screenScale * Vector3.one);
+
+        lineMaterial.SetPass(0);
+        GL.PushMatrix();
+        GL.MultMatrix(objToWorld);
+        GL.Begin(GL.LINES);
+
+        DrawCircleNew(xTranform, Color.red, circleRadius);
+
+        GL.End();
+        GL.PopMatrix();
+    }
+
+    private void DrawCircleNew(Matrix4x4 transform,Color color,float radius)
+    {
+        int detlaAngle = 10;
+        float x;
+        float z;
+        GL.Color(color);
+
+        Vector3 start;
+        start = transform.MultiplyPoint(Vector3.right * radius);
+
+        GL.Vertex(start);
+        for (int i = 1; i < 180 / detlaAngle; i++)
+        {
+            x = Mathf.Cos(i * detlaAngle * Mathf.Deg2Rad) * radius;
+            z = Mathf.Sin(i * detlaAngle * Mathf.Deg2Rad) * radius;
+            Vector3 temp = transform.MultiplyPoint(new Vector3(x, 0, z));
+            GL.Vertex(temp);
+            GL.Vertex(temp);
+        }
+
+        GL.Vertex(transform.MultiplyPoint(Vector3.left * radius));
     }
 
 

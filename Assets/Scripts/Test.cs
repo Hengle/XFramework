@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Test : MonoSingleton<Test>
 {
-    private bool boolTest = true;
+    public bool boolTest = false;
     public Mesh mesh;
+    public GameObject target;
+
     private void QQQ(in List<int> yyy)
     {
         yyy[0] = 100;
@@ -21,16 +23,21 @@ public class Test : MonoSingleton<Test>
 
     private void OnPostRender()
     {
-
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J)) 
+        if (boolTest) 
         {
-
+            Quaternion rotation = transform.rotation;
+            Quaternion rotate = Quaternion.AngleAxis(1, Vector3.up);
+            transform.rotation = rotation * rotate;
         }
+
+        Debug.DrawLine(transform.position,transform.position + transform.up * 10);
+        Debug.DrawLine(transform.position, Camera.main.transform.position + Camera.main.transform.right * 0.1f);
     }
 
     void DirGraph()
@@ -93,12 +100,6 @@ public class Test : MonoSingleton<Test>
         {
             Debug.Log(a);
         });
-    }
-
-    private void HAKULAMATATA()
-    {
-        var a = typeof(BBB).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
-        BBB b = new BBB();
     }
 }
 

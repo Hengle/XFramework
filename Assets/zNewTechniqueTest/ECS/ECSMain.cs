@@ -5,7 +5,7 @@ using Unity.Entities;
 
 public class ECSMain : MonoBehaviour
 {
-    public GameObject rotatorObj;
+    public GameObject rotatorObj; 
 
     // Start is called before the first frame update
     void Start()

@@ -37,8 +37,8 @@ public class MyJobScheduler : MonoBehaviour
         //我们会初始化作业，提供需要的数据
         MyJob newJob = new MyJob
         {
-            waypoints = resultAndHandle.waypoints,
-            offsetToAdd = offsetForWaypoints,
+            //waypoints = resultAndHandle.waypoints,
+            //offsetToAdd = offsetForWaypoints,
         };
 
         //设置作业句柄并调度作业
