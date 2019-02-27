@@ -2,10 +2,10 @@
 using System;
 
 /// <summary>
-/// 无向图
-/// 采用邻接多重表存储
+/// 有向图
+/// 采用十字链表存储
 /// </summary>
-public class Graph<T>: IGraph<T>
+public class GraphDir<T> : IGraph<T>
 {
     /// <summary>
     /// 图的顶点数组
@@ -16,7 +16,7 @@ public class Graph<T>: IGraph<T>
     /// </summary>
     private int index;
 
-    public Graph(int capacity = 10, bool _isDirected = true)
+    public GraphDir(int capacity = 10, bool _isDirected = true)
     {
         vertexs = new VertexNode[capacity];
     }
@@ -44,25 +44,51 @@ public class Graph<T>: IGraph<T>
     /// <summary>
     /// 添加边
     /// </summary>
-    /// <param name="iIndex"></param>
-    /// <param name="jIndex"></param>
+    /// <param name="fromIndex"></param>
+    /// <param name="toIndex"></param>
     /// <param name="weight"></param>
-    public void AddEdge(int iIndex, int jIndex, int weight = 1)
+    public void AddEdge(int fromIndex, int toIndex, int weight = 1)
     {
-        if (iIndex > index || jIndex > index)
+        if (fromIndex > index || toIndex > index)
         {
             throw new System.Exception("添加临界点的索引超出范围");
         }
 
-        Edge newEdge = new Edge(iIndex, jIndex, weight);
+        Edge newEdge = new Edge(fromIndex, toIndex, weight);
 
-        Edge edge = vertexs[iIndex].firstEdge;
-        vertexs[iIndex].firstEdge = newEdge;
-        newEdge.iLink = edge;
+        // 添加邻接表元素
+        Edge edge = vertexs[fromIndex].firstOut;
+        if (edge == null)
+        {
+            vertexs[fromIndex].firstOut = newEdge;
+        }
+        else
+        {
+            while (edge.headLink != null)
+            {
+                // 重复添加的判断
+                if (edge.headIndex == newEdge.headIndex && edge.tailIndex == newEdge.tailIndex)
+                    return;
+                edge = edge.headLink;
+            }
+            edge.headLink = newEdge;
+        }
 
-        edge = vertexs[jIndex].firstEdge;
-        vertexs[jIndex].firstEdge = newEdge;
-        newEdge.jLink = edge;
+        // 添加逆邻接表元素
+        edge = vertexs[toIndex].firstIn;
+        if (edge == null)
+        {
+            vertexs[toIndex].firstIn = newEdge;
+        }
+        else
+        {
+            while (edge.tailLink != null)
+            {
+                // 重复添加的判断在邻接表中判断
+                edge = edge.tailLink;
+            }
+            edge.tailLink = newEdge;
+        }
     }
 
     /// <summary>
@@ -77,7 +103,7 @@ public class Graph<T>: IGraph<T>
             paths[i] = new Path();
             paths[i].length = int.MaxValue;
         }
-        Edge edge = vertexs[startIndex].firstEdge;
+        Edge edge = vertexs[startIndex].firstOut;
         paths[startIndex].length = 0;
         paths[startIndex].ensure = true;
         // 以startIndex为起点距离最短的边
@@ -85,12 +111,12 @@ public class Graph<T>: IGraph<T>
         // 给路径长度数组附初始值
         while (edge != null)
         {
-            paths[edge.jIndex].length = edge.weight;
+            paths[edge.tailIndex].length = edge.weight;
             if (edge.weight < shortLink.weight)
             {
                 shortLink = edge;
             }
-            edge = edge.iLink;
+            edge = edge.headLink;
         }
 
         // 已经确定了最短路径的顶点数量
@@ -109,14 +135,14 @@ public class Graph<T>: IGraph<T>
                 }
             }
 
-            Edge nextEdge = vertexs[tempIndex].firstEdge;
-            while (nextEdge != null)
+            Edge edgeIn = vertexs[tempIndex].firstIn;
+            while (edgeIn != null)
             {
-                if (paths[nextEdge.iIndex].length != int.MaxValue && paths[nextEdge.iIndex].length + nextEdge.weight < paths[tempIndex].length)
+                if (paths[edgeIn.headIndex].length != int.MaxValue && paths[edgeIn.headIndex].length + edgeIn.weight < paths[tempIndex].length)
                 {
-                    paths[tempIndex].length = paths[nextEdge.iIndex].length + nextEdge.weight;
+                    paths[tempIndex].length = paths[edgeIn.headIndex].length + edgeIn.weight;
                 }
-                nextEdge = nextEdge.jLink;
+                edgeIn = edgeIn.tailLink;
             }
             paths[tempIndex].ensure = true;
             count++;
@@ -144,11 +170,11 @@ public class Graph<T>: IGraph<T>
         }
         for (int i = 0; i < index; i++)
         {
-            Edge edge = vertexs[i].firstEdge;
+            Edge edge = vertexs[i].firstOut;
             while (edge != null)
             {
-                d[edge.iIndex, edge.jIndex] = edge.weight;
-                edge = edge.iLink;
+                d[edge.headIndex, edge.tailIndex] = edge.weight;
+                edge = edge.headLink;
             }
         }
 
@@ -172,27 +198,15 @@ public class Graph<T>: IGraph<T>
     public void Foreach(Action<Edge> action)
     {
         Edge edge;
-        List<Edge> edges = new List<Edge>();
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < vertexs.Length; i++)
         {
-            edge = vertexs[i].firstEdge;
+            edge = vertexs[i].firstOut;
             while (edge != null)
             {
-                if (edge.visited != true)
-                {
-                    action(edge);
-                    edge.visited = true;
-                }
-                if (edge.iIndex == i)
-                    edge = edge.iLink;
-                else
-                    edge = edge.jLink;
+                action(edge);
+                edge = edge.headLink;
             }
         }
-        edges.ForEach((a) =>
-        {
-            a.visited = false;
-        });
     }
 
     public VertexNode this[int i]
@@ -202,26 +216,26 @@ public class Graph<T>: IGraph<T>
 
     /// <summary>
     /// 边表结点
-    /// 当Graph为无向图时，head和tail没有首尾之分
+    /// 当Graph为有向图时,head和tail代表首尾，当Graph为无向图时，head和tail没有首尾之分
     /// </summary>
     public class Edge
     {
         /// <summary>
-        /// 无向图：无向边一个顶点对于的下标
+        /// 有向图：有向边起点对应的下标
         /// </summary>
-        public int iIndex;
+        public int headIndex;
         /// <summary>
-        /// 无向图：无向边另一个顶点对于的下标
+        /// 有向图：有向边尾点对应的下标
         /// </summary>
-        public int jIndex;
+        public int tailIndex;
         /// <summary>
-        /// 无向图：依附headIndex的下一条边
+        /// 有向图：指向起点相同的下一条边
         /// </summary>
-        public Edge iLink;
+        public Edge headLink;
         /// <summary>
-        /// 无向图：依附tailIndex的下一条边
+        /// 有向图：指向终点相同的下一条边
         /// </summary>
-        public Edge jLink;
+        public Edge tailLink;
         /// <summary>
         /// 存储权值
         /// </summary>
@@ -231,16 +245,16 @@ public class Graph<T>: IGraph<T>
         /// </summary>
         public bool visited;
 
-        public Edge(int _iIdnex, int _jIndex, int _weight = 1)
+        public Edge(int _headIdnex, int _tailIndex, int _weight = 1)
         {
-            iIndex = _iIdnex;
-            jIndex = _jIndex;
+            headIndex = _headIdnex;
+            tailIndex = _tailIndex;
             weight = _weight;
         }
 
         public override string ToString()
         {
-            return string.Format("{0}, {1}", iIndex, jIndex);
+            return string.Format("{0}, {1}", headIndex, tailIndex);
         }
     }
 
@@ -254,9 +268,13 @@ public class Graph<T>: IGraph<T>
         /// </summary>
         public T data;
         /// <summary>
-        /// 无向边：指向边表的第一条边
+        /// 有向边：指向出边表的第一条边，组成邻接表
         /// </summary>
-        public Edge firstEdge;
+        public Edge firstOut;
+        /// <summary>
+        /// 有向边：指向入边表的第一条边，组成逆邻接表
+        /// </summary>
+        public Edge firstIn;
         /// <summary>
         /// 访问标识符
         /// </summary>

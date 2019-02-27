@@ -98,8 +98,202 @@ public class ResMgr : MonoSingleton<ResMgr>
         {
             if(info.assetName == assetName)
             {
-
+                info.AddListener(listener);
+                return;
             }
         }
+
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.assetName = assetName;
+        requestInfo.AddListener(listener);
+        requestInfo.isKeepInMemory = isKeepInMemory;
+        requestInfo.type = type ?? typeof(GameObject);
+        mWaitting.Enqueue(requestInfo);
+    }
+
+    /// <summary>
+    /// 从资源字典中取得一个资源
+    /// </summary>
+    /// <param name="assetName"></param>
+    /// <returns></returns>
+    public AssetInfo GetAsset(string assetName)
+    {
+        AssetInfo info = null;
+        mDicAsset.TryGetValue(assetName, out info);
+        return info;
+    }
+
+    /// <summary>
+    /// 释放资源
+    /// </summary>
+    /// <param name="assetName"></param>
+    public void ReleaseAsset(string assetName)
+    {
+        AssetInfo info = null;
+        mDicAsset.TryGetValue(assetName, out info);
+
+        if (info != null && !info.isKeepInMemory)
+        {
+            mDicAsset.Remove(assetName);
+        }
+    }
+
+    /// <summary>
+    /// 修改资源是否常驻内存
+    /// </summary>
+    /// <param name="assetName"></param>
+    /// <param name="IsKeepInMemory"></param>
+    public void IsKeepInMemory(string assetName, bool IsKeepInMemory)
+    {
+        AssetInfo info = null;
+        mDicAsset.TryGetValue(assetName, out info);
+
+        if(info != null)
+        {
+            info.isKeepInMemory = IsKeepInMemory;
+        }
+    }
+
+    /// <summary>
+    /// 把资源压入顶层栈内
+    /// </summary>
+    /// <param name="assetName"></param>
+    public void AddAssetToName(string assetName)
+    {
+        if(mAssetStack.Count == 0)
+        {
+            mAssetStack.Push(new List<string>() { assetName });
+        }
+
+        List<string> list = mAssetStack.Peek();
+        list.Add(assetName);
+    }
+
+    /// <summary>
+    /// 开始让资源入栈
+    /// </summary>
+    public void PushAssetStack()
+    {
+        List<string> list = new List<string>();
+        foreach (var item in mDicAsset)
+        {
+            item.Value.stackCount++;
+            list.Add(item.Key);
+        }
+
+        mAssetStack.Push(list);
+    }
+
+    /// <summary>
+    /// 释放栈内资源
+    /// </summary>
+    public void PopAssetStack()
+    {
+        if (mAssetStack.Count == 0)
+            return;
+
+        List<string> list = mAssetStack.Pop();
+        List<string> removeList = new List<string>();
+        AssetInfo info = null;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if(mDicAsset.TryGetValue(list[i],out info))
+            {
+                info.stackCount--;
+                if(info.stackCount < 1 && !info.isKeepInMemory)
+                {
+                    removeList.Add(list[i]);
+                }
+            }
+        }
+
+        for (int i = 0; i < removeList.Count; i++)
+        {
+            if (mDicAsset.ContainsKey(removeList[i]))
+                mDicAsset.Remove(removeList[i]);
+        }
+
+        GC();
+    }
+
+    /// <summary>
+    /// 释放内存
+    /// </summary>
+    public void GC()
+    {
+        Resources.UnloadUnusedAssets();
+        System.GC.Collect();
+    }
+
+    private void Update()
+    {
+        if (mInLoads.Count > 0)
+        {
+            for (int i = mInLoads.Count - 1; i >= 0; i--)
+            {
+                if (mInLoads[i].IsDone)
+                {
+                    RequestInfo info = mInLoads[i];
+                    //SendEvent(EventDef.ResLoadFinish, info);
+                    mInLoads.RemoveAt(i);
+                }
+            }
+        }
+
+        while (mInLoads.Count < mProcessorCount && mWaitting.Count > 0)
+        {
+            RequestInfo info = mWaitting.Dequeue();
+            mInLoads.Add(info);
+            info.LoadAsync();
+        }
+    }
+
+    public bool HandleEvent(int id, object param1, object param2)
+    {
+        switch (id)
+        {
+            case /*EventDef.ResLoadFinish*/1:
+                RequestInfo info = param1 as RequestInfo;
+                if (info != null)
+                {
+                    if (info.Asset != null)
+                    {
+                        AssetInfo asset = new AssetInfo();
+                        asset.isKeepInMemory = info.isKeepInMemory;
+                        asset.asset = info.Asset;
+                        if (!mDicAsset.ContainsKey(info.assetName))
+                        {
+                            mDicAsset.Add(info.assetName, asset);
+                        }
+
+                        for (int i = 0; i < info.listeners.Count; i++)
+                        {
+                            if (info.listeners[i] != null)
+                            {
+                                info.listeners[i].Finish(info.Asset);
+                            }
+                        }
+                        AddAssetToName(info.assetName);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < info.listeners.Count; i++)
+                    {
+                        if (info.listeners[i] != null)
+                        {
+                            info.listeners[i].Failure();
+                        }
+                    }
+                }
+                return false;
+        }
+        return false;
+    }
+
+    public int EventPriority()
+    {
+        return 0;
+        Dictionary<int, int> a = new Dictionary<int, int>();
     }
 }

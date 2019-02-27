@@ -19,6 +19,9 @@ public class Test : MonoSingleton<Test>
         Debug.Log(transform.rotation);
         Debug.Log(Quaternion.LookRotation(transform.forward));
         Debug.Log(Quaternion.Euler(transform.eulerAngles));
+
+        Mesh mesh = new Mesh();
+        transform.GetComponent<MeshFilter>().mesh = mesh;
     }
 
     private void OnPostRender()

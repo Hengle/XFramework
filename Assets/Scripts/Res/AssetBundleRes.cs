@@ -12,6 +12,5 @@ public class AssetBundleRes : Singleton<AssetBundleRes>
     {
         ab = AssetBundle.LoadFromFile("AssetBundle/test.ab");
         ab.Unload(false);
-        
     }
 }

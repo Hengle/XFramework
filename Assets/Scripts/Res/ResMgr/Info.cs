@@ -71,6 +71,20 @@ public class RequestInfo
     /// </summary>
     public Type type;
 
+    /// <summary>
+    /// 资源是否加载完成
+    /// </summary>
+    public bool IsDone
+    {
+        get
+        {
+            return (request != null && request.isDone);
+        }
+    }
+
+    /// <summary>
+    /// 加载到的资源
+    /// </summary>
     public object Asset
     {
         get
@@ -82,5 +96,6 @@ public class RequestInfo
     public void LoadAsync()
     {
         request = Resources.LoadAsync(assetFullName, type);
+        
     }
 }
