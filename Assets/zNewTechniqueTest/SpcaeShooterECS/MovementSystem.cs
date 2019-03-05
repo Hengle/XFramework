@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class MovementSystem : JobComponentSystem
 {
-    //[ComputeJobOptimization]
     [BurstCompile]
     struct MovementJob : IJobProcessComponentData<Position, Rotation, MoveSpeed>
     {
@@ -43,7 +42,6 @@ public class MovementSystem : JobComponentSystem
             deltaTime = Time.deltaTime,
         };
 
-        //JobHandle moveHandle = moveJob.Schedule(this,64, inputDeps);
         JobHandle moveHandle = moveJob.Schedule(this, inputDeps);
         return moveHandle;
     }

@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
+using Unity.Rendering;
 
 public class GameManager : MonoBehaviour
 {
@@ -82,27 +83,27 @@ public class GameManager : MonoBehaviour
         // ---------------------------------- //
 
 
-        //EntityArchetype Cube;
-        //Cube = manager.CreateArchetype(typeof(Position), typeof(Rotation), typeof(MoveSpeed), typeof(MeshInstanceRenderer));
+       //EntityArchetype Cube;
+       //Cube = manager.CreateArchetype(typeof(Position), typeof(Rotation), typeof(MoveSpeed), typeof(MeshInstanceRenderer));
 
-        //MeshInstanceRenderer MSI = new MeshInstanceRenderer();
-        //MSI.material = mat;
-        //MSI.mesh = mesh;
+       //MeshInstanceRenderer MSI = new MeshInstanceRenderer();
+       //MSI.material = mat;
+       //MSI.mesh = mesh;
 
-        //for (int i = 0; i < amount; i++)
-        //{
-        //    float xVal = Random.Range(leftBound, rightBound);
-        //    float zVal = Random.Range(0f, 10f);
-        //    Entity cubeEnity = manager.CreateEntity(Cube);
-        //    manager.SetComponentData(cubeEnity, new Position { Value = new float3(xVal, 0f, topBound + zVal) });
-        //    manager.SetComponentData(cubeEnity, new Rotation { Value = new quaternion(0, 1, 0, 0) });
-        //    manager.SetComponentData(cubeEnity, new MoveSpeed { Value = enemySpeed });
-        //    manager.SetSharedComponentData(cubeEnity, MSI);
-        //}
+       //for (int i = 0; i < amount; i++)
+       //{
+       //    float xVal = Random.Range(leftBound, rightBound);
+       //    float zVal = Random.Range(0f, 10f);
+       //    Entity cubeEnity = manager.CreateEntity(Cube);
+       //    manager.SetComponentData(cubeEnity, new Position { Value = new float3(xVal, 0f, topBound + zVal) });
+       //    manager.SetComponentData(cubeEnity, new Rotation { Value = new quaternion(0, 1, 0, 0) });
+       //    manager.SetComponentData(cubeEnity, new MoveSpeed { Value = enemySpeed });
+       //    manager.SetSharedComponentData(cubeEnity, MSI);
+       //}
 
-        // ---------------------------------- //
+       // ---------------------------------- //
 
-        count += amount;
+       count += amount;
 
     }
 

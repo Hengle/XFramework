@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2043331843927116887}
   - component: {fileID: 2043331843927116886}
-  - component: {fileID: 2043331843927116882}
   - component: {fileID: 8005409507818859183}
   - component: {fileID: 5480452957664164073}
-  - component: {fileID: 8158447001269860936}
+  - component: {fileID: 7098280027267927605}
+  - component: {fileID: 9024731571426830950}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -47,20 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bf10cdea1344482e91a4f2b58506b77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2043331843927116882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2043331843927116883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a4d76750e145604b808be1ab364a6ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedData:
-    Value: 0
 --- !u!114 &8005409507818859183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,7 +83,21 @@ MonoBehaviour:
         y: 0
         z: 0
         w: 1
---- !u!114 &8158447001269860936
+--- !u!114 &7098280027267927605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043331843927116883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d76750e145604b808be1ab364a6ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedData:
+    Value: 0
+--- !u!114 &9024731571426830950
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,7 +111,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedData:
     mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    material: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+    material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
     subMesh: 0
+    layer: 0
     castShadows: 0
     receiveShadows: 0
