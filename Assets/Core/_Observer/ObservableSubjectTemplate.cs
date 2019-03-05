@@ -15,6 +15,7 @@ namespace XDEDZL
         public void Attach(Action<T1, T2, T3> call)
         {
             // Delegate = (YGDelegateAction<T>)System.Delegate.Combine(Delegate, call); 不要用这个, 这个可以添加重复的
+            // 先减后加，防止重复添加
             m_delegate -= call;
             m_delegate += call;
         }

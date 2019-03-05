@@ -5,11 +5,14 @@ namespace XDEDZL
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// 数据主题管理类
+    /// </summary>
     public class DataSubjectManager : Singleton<DataSubjectManager> //改模板应改使用XDEDZL内的 方便以后移植,暂时这样写
     {
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         {
-            //主题，这么写应该只是为了方便看，否则把ObservableSubjectTemplate直接写成嵌套类会很乱
+            // 继承泛型类定义一个非泛型主题模板
         }
 
         /// <summary>

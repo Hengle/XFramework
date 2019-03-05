@@ -1,57 +1,58 @@
 ﻿using UnityEngine;
 using XDEDZL;
 
+/*
+ * 以战斗系统
+ */
+
+
 /// <summary>
 /// 数据观察者运用示例
 /// </summary>
 public class zObserverExample : MonoBehaviour
 {
-    BattleOb bat;
-    TestOb test;
+    BattleSystem bat;
+    PlayerDataMgr pd;
 
     void Start()
     {
-        bat = new BattleOb();
-        test = new TestOb();
+        // 正常使用时观察者和被观察者都不应当是直接New
+        bat = new BattleSystem();
+        pd = new PlayerDataMgr();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.W))
         {
-            DataSubjectManager.Instance.Notify(DataSubjectManager.GetData<BattleData>(), (int)BattleDataType.Win);
+            bat.BattleWin();
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            bat.BattleLose();
         }
     } 
 }
 
 
-public class BattleOb : IObserver
+public class BattleSystem
 {
-    // 此类可能是要继承Mono的，如果是，则在start中注册
-    public BattleOb()
+
+    BattleData btData = new BattleData();
+
+    public void BattleWin()
     {
-        DataSubjectManager.Instance.AddOnChangedCallback(DataType.BATTLE, this);
+        // 通知所有观察者并传递数据
+        DataSubjectManager.Instance.Notify(btData, (int)BattleDataType.Win);
     }
 
-    public void OnDataChange(BaseData eventData, int type, object obj)
+    public void BattleLose()
     {
-        switch (eventData.dataType)
-        {
-            case DataType.BATTLE:
-                switch (type)
-                {
-                    case (int)BattleDataType.Win:
-                        Debug.Log("BattleDataType.Win");
-                        break;
-                    case (int)BattleDataType.Lose:
-                        Debug.Log("BattleDataType.Lose");
-                        break;
-                    default:
-                        break;
-                }
-                break;
-        }
+        DataSubjectManager.Instance.Notify(btData, (int)BattleDataType.Lose);
     }
+
+
 }
 
 public class BattleData : BaseData
@@ -83,11 +84,18 @@ public enum BattleDataType
 }
 
 
-public class TestOb : IObserver
+public class PlayerDataMgr : IObserver
 {
-    public TestOb()
+    // 此类可能是要继承Mono的，如果是，则在start中注册
+    public PlayerDataMgr()
     {
         DataSubjectManager.Instance.AddOnChangedCallback(DataType.BATTLE, this);
+    }
+
+    // 在合适的时候移除观察者
+    ~PlayerDataMgr()
+    {
+        DataSubjectManager.Instance.RemoveOnChangedCallback(DataType.BATTLE, this);
     }
 
     public void OnDataChange(BaseData eventData, int type, object obj)
@@ -95,15 +103,14 @@ public class TestOb : IObserver
         switch (eventData.dataType)
         {
             case DataType.BATTLE:
+                BattleData data = eventData as BattleData;
                 switch (type)
                 {
                     case (int)BattleDataType.Win:
-                        BattleData data = eventData as BattleData;
                         Debug.Log("total" + data.battleCount + "   win" + data.winCount);
-                        
                         break;
                     case (int)BattleDataType.Lose:
-                        Debug.Log("Test在BattleLose时做的事");
+                        Debug.Log("total" + data.battleCount + "   lose" + data.loseCount);
                         break;
                     default:
                         break;
