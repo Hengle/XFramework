@@ -8,11 +8,14 @@ namespace XDEDZL
     /// <summary>
     /// 数据主题管理类
     /// </summary>
-    public class DataSubjectManager : Singleton<DataSubjectManager> //改模板应改使用XDEDZL内的 方便以后移植,暂时这样写
+    public class DataSubjectManager : Singleton<DataSubjectManager>
     {
+        /// <summary>
+        /// 每一个Subject都是一个被观察的对象
+        /// </summary>
         protected class Subject : ObservableSubjectTemplate<BaseData, int, object>
         {
-            // 继承泛型类定义一个非泛型主题模板
+            // 继承泛型模板定义一个非泛型主题模板
         }
 
         /// <summary>
@@ -21,31 +24,17 @@ namespace XDEDZL
         private Dictionary<DataType, Subject> m_subjectDic = new Dictionary<DataType, Subject>();
 
         /// <summary>
-        /// 把subject做一层封装，加入dataType参数以便识别,但本蟑螂觉得暂时没什么必要，所有去掉了
-        /// </summary>
-        //private class Entry
-        //{
-        //    public DataType dataType;
-        //    public Subject subject = new Subject();
-
-        //    public Entry(DataType type)
-        //    {
-        //        dataType = type;
-        //    }
-        //}
-
-        /// <summary>
         /// 增加数据监听
         /// </summary>
         /// <param name="dataType">数据类型</param>
         /// <param name="observer">监听这个数据的观察者</param>
-        public void AddOnChangedCallback(DataType dataType, IObserver observer)
+        public void AddListener(DataType dataType, IObserver observer)
         {
-            Subject en = null;
+            Subject subject = null;
             if (!m_subjectDic.ContainsKey(dataType))
             {
-                en = new Subject();
-                m_subjectDic[dataType] = en;
+                subject = new Subject();
+                m_subjectDic[dataType] = subject;
             }
             m_subjectDic[dataType].Attach(observer.OnDataChange);
         }
@@ -55,7 +44,7 @@ namespace XDEDZL
         /// </summary>
         /// <param name="dataType">数据类型</param>
         /// <param name="observer">监听这个数据的观察者</param>
-        public void RemoveOnChangedCallback(DataType dataType, IObserver observer)
+        public void RemoverListener(DataType dataType, IObserver observer)
         {
             if (m_subjectDic.ContainsKey(dataType))
             {
@@ -73,14 +62,6 @@ namespace XDEDZL
         {
             if (m_subjectDic.ContainsKey(data.dataType))
                 m_subjectDic[data.dataType].Notify(data, type, obj);
-        }
-
-        /// <summary>
-        /// 返回一个BaseData的派生类
-        /// </summary>
-        public static T GetData<T>() where T : BaseData, new()
-        {
-            return BaseData.GetData<T>();
         }
     }
 }
