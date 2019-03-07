@@ -10,4 +10,4 @@ public struct MoveSpeed : IComponentData
     public float Value; 
 }
 
-public class MoveSpeedComponent : ComponentDataProxy<MoveSpeed> { }
+//public class MoveSpeedComponent : ComponentDataProxy<MoveSpeed> { }
