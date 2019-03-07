@@ -15,4 +15,20 @@ public class BehaviorNode
     /// 父节点
     /// </summary>
     private BehaviorNode parentNode;
+
+    protected virtual BehaviorState OnUpdate()
+    {
+        return BehaviorState.Suncced;
+    }
+
+    public void AddBehavior(BehaviorNode node)
+    {
+        node.parentNode = this;
+        childNodes.Add(node);
+    }
+
+    public void RemoveBehavior(BehaviorNode node)
+    {
+        childNodes.Remove(node);
+    }
 }
