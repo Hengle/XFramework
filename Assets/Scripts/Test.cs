@@ -1,32 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 
 public class Test : MonoSingleton<Test>
 {
     public bool boolTest = false;
-    public Mesh mesh;
-    public GameObject target;
-
-    private void QQQ(in List<int> yyy)
-    {
-        yyy[0] = 100;
-        Debug.Log(yyy[0]);
-    }
 
     void Start()
     {
-        Debug.Log(transform.rotation);
-        Debug.Log(Quaternion.LookRotation(transform.forward));
-        Debug.Log(Quaternion.Euler(transform.eulerAngles));
-
-        Mesh mesh = new Mesh();
-        transform.GetComponent<MeshFilter>().mesh = mesh;
-    }
-
-    private void OnPostRender()
-    {
-        
+        string a = File.ReadAllText(Application.dataPath + "/Resources/aaa.csv");
+        CSVReader reader = new CSVReader(a);
+        while (reader.ReadLine())
+        {
+            Debug.Log(reader.GetString("ID"));
+            Debug.Log(reader.GetString("Num"));
+        }
     }
 
     // Update is called once per frame
