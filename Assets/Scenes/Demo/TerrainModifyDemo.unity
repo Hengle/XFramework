@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!154 &96669125
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -375,7 +375,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!154 &185627249
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -975,7 +975,7 @@ PrefabInstance:
     - target: {fileID: 224233422278331736, guid: 0b05a7159beecc042ac70b7ee58045de,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0.6711685
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b05a7159beecc042ac70b7ee58045de, type: 3}
@@ -996,7 +996,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!154 &1393489604
 TerrainCollider:
   m_ObjectHideFlags: 0

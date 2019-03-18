@@ -16,5 +16,6 @@ public class TerrainTest : MonoBehaviour
     {
         UIManager.Instance.PushPanel(UIPanelType.TerrainModifier);
         MouseEvent.Instance.ChangeState(MouseStateType.TerrainModifier);
+        TerrainUtility.ConfigActiveTerrains();
     }
 }

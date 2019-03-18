@@ -1573,6 +1573,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: "\u5EFA\u7B51\u7269"
       m_Image: {fileID: 0}
+    - m_Text: "\u8D34\u56FE"
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2652,7 +2654,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224233422278331736}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.6711685
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

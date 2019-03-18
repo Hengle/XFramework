@@ -177,12 +177,13 @@ public class TerrainModifierPanel : BasePanel
 
     public enum ModifierType
     {
-        Up,          // 上升高度
-        Down,        // 降低高度
-        Smooth,      // 平滑地面 
-        AddTree,     // 种树
-        AddDetial,   // 种草
-        AddBuilding, // 添加建筑物 
+        Up,           // 上升高度
+        Down,         // 降低高度
+        Smooth,       // 平滑地面 
+        AddTree,      // 种树
+        AddDetial,    // 种草
+        AddBuilding,  // 添加建筑物 
+        AttachTexture,// 附加贴图
     }
 
     /// <summary>
@@ -310,6 +311,12 @@ public class MouseTerrainModifierState : MouseState
                         TerrainUtility.AddDetial(terrain, hitInfo.point, Panel.rangeMix.Value, (int)(Panel.opticalMix.Value), Panel.PrototypeIndex);
                     else
                         TerrainUtility.RemoveDetial(terrain, hitInfo.point, Panel.rangeMix.Value, Panel.PrototypeIndex);
+                }
+                break;
+            case TerrainModifierPanel.ModifierType.AttachTexture:
+                if (MouseEvent.Instance.MouseMove)
+                {
+                    TerrainUtility.SetTexture(hitInfo.point, 1, 1);
                 }
                 break;
             default:
