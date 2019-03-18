@@ -6,7 +6,7 @@ using Unity.Collections;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
-using Unity.Rendering;
+//using Unity.Rendering;
 
 public class GameManager : MonoBehaviour
 {

@@ -2,35 +2,53 @@
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using System.Text;
+using System;
 
 public class Test : MonoSingleton<Test>
 {
-    public bool boolTest = false;
+    private short filter = 255;
+    public List<byte> buf = new List<byte>();
+
+    private int academyId = 1001;
 
     void Start()
     {
-        string a = File.ReadAllText(Application.dataPath + "/Resources/aaa.csv");
-        CSVReader reader = new CSVReader(a);
-        while (reader.ReadLine())
-        {
-            Debug.Log(reader.GetString("ID"));
-            Debug.Log(reader.GetString("Num"));
-        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (boolTest) 
+        if (Input.GetKeyDown(KeyCode.J))
         {
-            Quaternion rotation = transform.rotation;
-            Quaternion rotate = Quaternion.AngleAxis(1, Vector3.up);
-            transform.rotation = rotation * rotate;
+            Debug.Log(Utility.DebugActionRunTime(() =>
+            {
+                for (int i = 0; i < 100000; i++)
+                {
+                    buf.Add((byte)(academyId & (short)filter));
+                    buf.Add((byte)((academyId >> 8) & (short)filter));
+                    buf.Add((byte)((academyId >> 16) & (short)filter));
+                    buf.Add((byte)((academyId >> 24) & (short)filter));
+                }
+            }));
+
+            Debug.Log(Utility.DebugActionRunTime(() =>
+            {
+                for (int i = 0; i < 100000; i++)
+                {
+                    BitConverter.GetBytes(academyId);
+                }
+            }));
         }
 
-        Debug.DrawLine(transform.position,transform.position + transform.up * 10);
-        Debug.DrawLine(transform.position, Camera.main.transform.position + Camera.main.transform.right * 0.1f);
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            
+        }
     }
+
+    #region Graph Test
 
     void DirGraph()
     {
@@ -93,24 +111,6 @@ public class Test : MonoSingleton<Test>
             Debug.Log(a);
         });
     }
-}
 
-public class AAA
-{
-    
-    protected AAA()
-    {
-        Debug.Log("AAA午餐");
-        
-    }
-
-    public AAA(int a)
-    {
-        Debug.Log("AAAwan餐");
-    }
-}
-
-public class BBB : AAA
-{
-
+    #endregion
 }

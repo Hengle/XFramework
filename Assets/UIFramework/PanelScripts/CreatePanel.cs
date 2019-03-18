@@ -5,9 +5,6 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Threading.Tasks;
 using System;
-using static UIText;
-using static UIText.UIDes;
-
 /// <summary>
 /// 创建单位按钮
 /// </summary>
@@ -42,11 +39,6 @@ public class CreatePanel : BasePanel {
         groupBtn.onClick.AddListener(() => { OnClick(UIPanelType.Group); });
         teamBtn.onClick.AddListener(() => { OnClick(UIPanelType.Team); });
         commandPostBtn.onClick.AddListener(() => { OnClick(UIPanelType.CommandPost); });
-
-        // 注册鼠标悬停事件，显示描述文字
-        groupBtn.AddHightLighted(() => { InButton(groupRect, GetUIDes(GroupDes)[0], GetUIDes(GroupDes)[1]); });
-        teamBtn.AddHightLighted(() => { InButton(teamRect, GetUIDes(TeamDes)[0], GetUIDes(TeamDes)[1]); });
-        commandPostBtn.AddHightLighted(() => { InButton(comandPostRect, GetUIDes(CommandDes)[0], GetUIDes(CommandDes)[1]); });
 
         groupBtn.AddNormal(OutButton);
         teamBtn.AddNormal(OutButton);
