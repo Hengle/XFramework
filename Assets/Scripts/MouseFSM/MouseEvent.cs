@@ -126,7 +126,6 @@ public class MouseEvent : Singleton<MouseEvent>
         stateDic = new Dictionary<MouseStateType, MouseState>
         {
             { MouseStateType.DefaultState, new MouseDefaultState() },
-            { MouseStateType.TerrainModifier, new MouseTerrainModifierState() },
         };
     }
 }
