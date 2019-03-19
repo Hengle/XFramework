@@ -1,21 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// 鼠标事件
+/// </summary>
 public class MouseEvent : Singleton<MouseEvent>
 {
     /// <summary>
     /// 当前鼠标状态
     /// </summary>
     public MouseState CurrentState { get; private set; }
-
     /// <summary>
-    /// 存储状态枚举和状态类对应关系的字典
+    /// 当前模块的默认鼠标状态
     /// </summary>
-    private Dictionary<MouseStateType, MouseState> stateDic;
-
-    public MouseStateType CurrentStateType { get; private set; }
+    private MouseState DefaultState;
 
     /// <summary>
     /// 鼠标在上一帧的位置
@@ -28,8 +27,6 @@ public class MouseEvent : Singleton<MouseEvent>
 
     public MouseEvent()
     {
-        InitDic();
-        CurrentState = stateDic[MouseStateType.DefaultState];
         MonoEvent.Instance.UPDATE += Update;
     }
 
@@ -86,46 +83,21 @@ public class MouseEvent : Singleton<MouseEvent>
     /// <summary>
     /// 改变当前鼠标状态(带参数: 实体单位)
     /// </summary>
-    /// <param name="_type"></param>
+    /// <param name="state"></param>
     /// <param name="para"></param>
-    public void ChangeState(MouseStateType _type, object para = null, params object[] args)
+    public void ChangeState(MouseState state, object para = null, params object[] args)
     {
         // 状态未改变
-        if (CurrentStateType == _type)
+        if (CurrentState == state)
         {
-            CurrentState.OnActive(para, args);
+            CurrentState.OnEnable(para, args);
             return;
         }
 
-        CurrentState.OnDisactive();
-        CurrentState = stateDic[_type];          // 更新状态
+        CurrentState.OnDisable();
 
         if (!CurrentState.isInited)
             CurrentState.OnInit();
-        CurrentState.OnActive(para, args);
-        CurrentStateType = _type;                // 赋值当前状态类型
-    }
-
-    /// <summary>
-    /// 获取特定类型的状态
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    public T GetState<T>(MouseStateType type) where T : MouseState
-    {
-        return (T)stateDic[type];
-    }
-
-    /// <summary>
-    /// 初始化字典
-    /// </summary>
-    /// TODO:派生类无法解耦，没法打成程序集，想办法改掉
-    private void InitDic()
-    {
-        stateDic = new Dictionary<MouseStateType, MouseState>
-        {
-            { MouseStateType.DefaultState, new MouseDefaultState() },
-        };
+        CurrentState.OnEnable(para, args);
     }
 }

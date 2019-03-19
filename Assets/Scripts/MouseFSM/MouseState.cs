@@ -1,20 +1,4 @@
-﻿#define Unit
-
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum MouseStateType
-{
-    /// <summary>
-    /// 默认空状态
-    /// </summary>
-    DefaultState,
-    /// <summary>
-    /// 地形编辑
-    /// </summary>
-    TerrainModifier,
-}
+﻿using UnityEngine;
 
 public class MouseState
 {
@@ -36,11 +20,11 @@ public class MouseState
     /// 状态激活时
     /// </summary>
     /// <param name="para"></param>
-    public virtual void OnActive(object para = null, params object[] args) { }
+    public virtual void OnEnable(object para = null, params object[] args) { }
     /// <summary>
     /// 状态结束时
     /// </summary>
-    public virtual void OnDisactive() { }
+    public virtual void OnDisable() { }
     /// <summary>
     /// 左键按下
     /// </summary>
@@ -50,10 +34,6 @@ public class MouseState
     /// </summary>
     public virtual void OnLeftButtonHold() { }
     /// <summary>
-    /// 右键保持按下状态
-    /// </summary>
-    public virtual void OnRightButtonHold() { }
-    /// <summary>
     /// 左键抬起
     /// </summary>
     public virtual void OnLeftButtonUp() { }
@@ -61,6 +41,10 @@ public class MouseState
     /// 右键按下
     /// </summary>
     public virtual void OnRightButtonDown() { }
+    /// <summary>
+    /// 右键保持按下状态
+    /// </summary>
+    public virtual void OnRightButtonHold() { }
     /// <summary>
     /// 右键抬起
     /// </summary>
@@ -87,8 +71,3 @@ public class MouseState
         }
     }
 }
-
-/// <summary>
-/// 默认鼠标状态
-/// </summary>
-public class MouseDefaultState : MouseState { }

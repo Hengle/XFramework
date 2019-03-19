@@ -22,24 +22,7 @@ public class Test : MonoSingleton<Test>
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
-            Debug.Log(Utility.DebugActionRunTime(() =>
-            {
-                for (int i = 0; i < 100000; i++)
-                {
-                    buf.Add((byte)(academyId & (short)filter));
-                    buf.Add((byte)((academyId >> 8) & (short)filter));
-                    buf.Add((byte)((academyId >> 16) & (short)filter));
-                    buf.Add((byte)((academyId >> 24) & (short)filter));
-                }
-            }));
 
-            Debug.Log(Utility.DebugActionRunTime(() =>
-            {
-                for (int i = 0; i < 100000; i++)
-                {
-                    BitConverter.GetBytes(academyId);
-                }
-            }));
         }
 
         if (Input.GetKeyDown(KeyCode.K))
