@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+
 /// <summary>
 /// 继承自Graphic的组件都可以添加此效果
 /// </summary>
@@ -17,6 +18,7 @@ public class GradientColor : BaseMeshEffect
     public Color colorBottom = Color.white;
     public Color colorLeft = Color.white;
     public Color colorRight = Color.white;
+
     public override void ModifyMesh(VertexHelper vh)
     {
         if (!IsActive())

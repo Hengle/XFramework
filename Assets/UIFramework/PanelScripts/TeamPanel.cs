@@ -52,7 +52,5 @@ public class TeamPanel : BasePanel {
     {
         rect.DOSizeDelta(new Vector2(rectSize.x, 1.5f), 0.3f); // 退出动画
         canvasGroup.interactable = false;
-
-
     }
 }

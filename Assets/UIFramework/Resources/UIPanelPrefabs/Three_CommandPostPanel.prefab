@@ -140,7 +140,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -149,6 +150,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!1 &4528504841938628035
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +180,7 @@ RectTransform:
   m_GameObject: {fileID: 4528504841938628035}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 9195338109751545147}
   m_Father: {fileID: 0}
@@ -187,7 +189,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 387, y: -252.10004}
-  m_SizeDelta: {x: 138.51, y: 128.45}
+  m_SizeDelta: {x: 100, y: 128.45}
   m_Pivot: {x: 0.5, y: 1.0000001}
 --- !u!114 &4591504377399550886
 MonoBehaviour:
@@ -219,7 +221,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!222 &8336489602959345725
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -317,7 +320,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 3e7944982b078bf458cc88bb982c7416, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -326,6 +330,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!114 &174113475803352385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,7 +358,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 41f5feca4fa8c1f4c8161a4f3a55c128, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 41f5feca4fa8c1f4c8161a4f3a55c128,
+      type: 3}
     m_PressedSprite: {fileID: 21300000, guid: bcce606606b1ceb4dbf02320d2e20e12, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -366,7 +372,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &5066209880476563590
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,7 +438,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 3e7944982b078bf458cc88bb982c7416, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -440,6 +448,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!114 &125515050159449193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,7 +476,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: a85d2b2ccd207784887549efd90156bb, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: a85d2b2ccd207784887549efd90156bb,
+      type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 5e533449ca5b2a148a12c068a85ed1db, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -480,7 +490,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &5469604913066508636
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,7 +556,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 3e7944982b078bf458cc88bb982c7416, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -554,6 +566,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!114 &4544303041133285760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -581,7 +594,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: ca676cf963ced044da7710d553fd90cd, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: ca676cf963ced044da7710d553fd90cd,
+      type: 3}
     m_PressedSprite: {fileID: 21300000, guid: d44ba2cd371ec2342b3d56c7c2a3ebca, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -594,4 +608,5 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null

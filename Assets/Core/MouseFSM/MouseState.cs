@@ -20,7 +20,7 @@ public class MouseState
     /// 状态激活时
     /// </summary>
     /// <param name="para"></param>
-    public virtual void OnEnable(object para = null, params object[] args) { }
+    public virtual void OnEnable() { }
     /// <summary>
     /// 状态结束时
     /// </summary>

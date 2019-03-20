@@ -25,11 +25,6 @@ public class MouseEvent : Singleton<MouseEvent>
     /// </summary>
     public bool MouseMove { get; private set; }
 
-    public MouseEvent()
-    {
-        MonoEvent.Instance.UPDATE += Update;
-    }
-
     void Update()
     {
         //处理鼠标事件 当点击UI面板时不处理
@@ -39,31 +34,26 @@ public class MouseEvent : Singleton<MouseEvent>
             {
                 CurrentState.OnLeftButtonDown();
             }
-            if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0))
             {
                 CurrentState.OnLeftButtonHold();
             }
-            if (Input.GetMouseButton(1))
-            {
-                CurrentState.OnRightButtonHold();
-            }
-            if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0))
             {
                 CurrentState.OnLeftButtonUp();
             }
 
-            if (Input.GetMouseButtonDown(1))
+            else if (Input.GetMouseButtonDown(1))
             {
                 CurrentState.OnRightButtonDown();
             }
-            if (Input.GetMouseButtonUp(1))
+            else if (Input.GetMouseButton(1))
+            {
+                CurrentState.OnRightButtonHold();
+            }
+            else if (Input.GetMouseButtonUp(1))
             {
                 CurrentState.OnRightButtonUp();
-            }
-
-            if (Input.GetMouseButtonDown(2))
-            {
-                //OnMouseRollDown();
             }
         }
 
@@ -81,16 +71,15 @@ public class MouseEvent : Singleton<MouseEvent>
     }
 
     /// <summary>
-    /// 改变当前鼠标状态(带参数: 实体单位)
+    /// 改变当前鼠标状态
     /// </summary>
     /// <param name="state"></param>
-    /// <param name="para"></param>
-    public void ChangeState(MouseState state, object para = null, params object[] args)
+    public void ChangeState(MouseState state, params object[] args)
     {
         // 状态未改变
         if (CurrentState == state)
         {
-            CurrentState.OnEnable(para, args);
+            CurrentState.OnEnable();
             return;
         }
 
@@ -98,6 +87,20 @@ public class MouseEvent : Singleton<MouseEvent>
 
         if (!CurrentState.isInited)
             CurrentState.OnInit();
-        CurrentState.OnEnable(para, args);
+        CurrentState.OnEnable();
+    }
+
+    /// <summary>
+    /// 激活/注销
+    /// </summary>
+    public void SetActive(bool isActive)
+    {
+        if (isActive)
+        {
+            MonoEvent.Instance.UPDATE -= Update;
+            MonoEvent.Instance.UPDATE += Update;
+        }
+        else
+            MonoEvent.Instance.UPDATE -= Update;
     }
 }

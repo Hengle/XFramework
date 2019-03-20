@@ -34,7 +34,7 @@ public class BasePanel : MonoBehaviour {
     public virtual void Init()
     {
         Vector3 rectSize = rect.localScale;
-        rectSize.y = 0;
+        //rectSize.y = 0;
         rect.localScale = rectSize;
     }
 

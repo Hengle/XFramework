@@ -106,7 +106,7 @@ public class RoadTest : MonoBehaviour
         // 刷新地图
         if (Input.GetKeyDown(KeyCode.L))
         {
-            TerrainUtility.Refresh();
+            //TerrainUtility.Refresh();
         }
     }
 
