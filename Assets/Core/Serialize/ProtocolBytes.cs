@@ -1,20 +1,16 @@
 // ==========================================
 // 描述： 
-// 作者： LYG
+// 作者： HAK
 // 时间： 2018-11-13 08:38:23
 // 版本： V 1.0
 // ==========================================
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using UnityEngine;
 
 /// <summary>
 /// 提供了一种基于字节流的协议
-/// 字节流协议是一种最基本的协议。它把所有参数放入byte[]结构中，客户端和服务端按照约定的数据类型和顺序解析各个参数。本字节流协议支持int、float和string三种数据类型。
-/// 不用Array.concat的原因是当数据量太大时，不断的执行concat会非常慢
 public class ProtocolBytes
 {
     private byte[] bytes;     //传输的字节流
@@ -155,6 +151,20 @@ public class ProtocolBytes
 
     #endregion
 
+    #region 添加获取布尔值
+
+    public void AddBoolen(bool value)
+    {
+        byteList.Add((byte)(value ? 1 : 0));
+    }
+
+    public bool GetBoolen()
+    {
+        return (bytes[index++] == 1);
+    }
+
+    #endregion
+
     #region 添加获取Vector3
 
     public void AddVector3(Vector3 v)
@@ -191,9 +201,9 @@ public class ProtocolBytes
         AddInt32(array.GetLength(0));
         AddInt32(array.GetLength(1));
 
-        for (int i = 0,length_0 = array.GetLength(0); i < length_0; i++)
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
         {
-            for (int j = 0,length_1 = array.GetLength(1); j < length_1; j++)
+            for (int j = 0, length_1 = array.GetLength(1); j < length_1; j++)
             {
                 AddFloat(array[i, j]);
             }
@@ -226,7 +236,7 @@ public class ProtocolBytes
         float[] array = new float[length_0];
         for (int i = 0; i < length_0; i++)
         {
-            AddFloat(array[i]);
+            array[i] = GetFloat();
         }
 
         return array;
@@ -242,7 +252,7 @@ public class ProtocolBytes
         {
             for (int j = 0; j < length_1; j++)
             {
-                AddFloat(array[i, j]);
+                array[i, j] = GetFloat();
             }
         }
 
@@ -262,7 +272,7 @@ public class ProtocolBytes
             {
                 for (int k = 0; k < length_2; k++)
                 {
-                    AddFloat(array[i, j, k]);
+                    array[i, j, k] = GetFloat();
                 }
             }
         }
@@ -277,7 +287,7 @@ public class ProtocolBytes
 
         for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
         {
-            AddFloat(array[i]);
+            AddInt32(array[i]);
         }
     }
 
@@ -290,7 +300,7 @@ public class ProtocolBytes
         {
             for (int j = 0, length_1 = array.GetLength(1); j < length_1; j++)
             {
-                AddFloat(array[i, j]);
+                AddInt32(array[i, j]);
             }
         }
     }
@@ -307,7 +317,7 @@ public class ProtocolBytes
             {
                 for (int k = 0, length_2 = array.GetLength(2); k < length_2; k++)
                 {
-                    AddFloat(array[i, j, k]);
+                    AddInt32(array[i, j, k]);
                 }
             }
         }
@@ -321,7 +331,7 @@ public class ProtocolBytes
         int[] array = new int[length_0];
         for (int i = 0; i < length_0; i++)
         {
-            AddFloat(array[i]);
+            array[i] = GetInt32();
         }
 
         return array;
@@ -337,7 +347,7 @@ public class ProtocolBytes
         {
             for (int j = 0; j < length_1; j++)
             {
-                AddFloat(array[i, j]);
+                array[i, j] = GetInt32();
             }
         }
 
@@ -357,7 +367,7 @@ public class ProtocolBytes
             {
                 for (int k = 0; k < length_2; k++)
                 {
-                    AddFloat(array[i, j, k]);
+                    array[i, j, k] = GetInt32();
                 }
             }
         }
@@ -381,7 +391,7 @@ public class ProtocolBytes
     /// <summary>
     /// 添加帧同步
     /// </summary>
-    public void AddFrameSynInfo(int id,Transform tran)
+    public void AddFrameSynInfo(int id, Transform tran)
     {
         AddInt32(id);
         AddVector3(tran.position);
