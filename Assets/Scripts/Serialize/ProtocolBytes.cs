@@ -17,12 +17,9 @@ using UnityEngine;
 /// 不用Array.concat的原因是当数据量太大时，不断的执行concat会非常慢
 public class ProtocolBytes
 {
-    private static byte filter = 255;
-
     private byte[] bytes;     //传输的字节流
     private List<byte> byteList;
-
-    public int index { get;private set; }
+    private int index;
 
     public ProtocolBytes()
     {
@@ -105,28 +102,25 @@ public class ProtocolBytes
     /// 将Int32转化成字节数组加入字节流
     /// </summary>
     /// <param name="num">要转化的Int32</param>
-    public void AddInt(int num)
+    public void AddInt32(int num)
     {
-        byteList.Add((byte)(num & filter));
-        byteList.Add((byte)((num >> 8) & filter));
-        byteList.Add((byte)((num >> 16) & filter));
-        byteList.Add((byte)((num >> 24) & filter));
+        byteList.Add((byte)num);
+        byteList.Add((byte)(num >> 8));
+        byteList.Add((byte)(num >> 16));
+        byteList.Add((byte)(num >> 24));
     }
 
     /// <summary>
     /// 将字节数组转化成Int32
     /// </summary>
-    /// <param name="index">索引起点</param>
-    /// <param name="end">为下一个转换提供索引起点</param>
-    /// <returns></returns>
-    public int GetInt()
+    public int GetInt32()
     {
         if (bytes == null)
             return 0;
-        if (bytes.Length < index + sizeof(int))
+        if (bytes.Length < index + 4)
             return 0;
 
-        return (bytes[index++]) + (bytes[index++] << 8) + (bytes[index++] << 16) + (bytes[index++] << 24);
+        return (int)(bytes[index++] | bytes[index++] << 8 | bytes[index++] << 16 | bytes[index++] << 24);
     }
 
     #endregion
@@ -137,27 +131,26 @@ public class ProtocolBytes
     /// 将float转化成字节数组加入字节流
     /// </summary>
     /// <param name="num">要转化的float</param>
-    public void AddFloat(float num)
+    public unsafe void AddFloat(float num)
     {
-        byte[] numBytes = BitConverter.GetBytes(num);
-        byteList.AddRange(numBytes);
+        uint temp = *(uint*)&num;
+        byteList.Add((byte)temp);
+        byteList.Add((byte)(temp >> 8));
+        byteList.Add((byte)(temp >> 16));
+        byteList.Add((byte)(temp >> 24));
     }
 
     /// <summary>
     /// 将字节数组转化成float
     /// </summary>
-    /// <param name="index">索引起点</param>
-    /// <param name="end">为下一个转换提供索引起点</param>
-    /// <returns></returns>
-    public float GetFloat()
+    public unsafe float GetFloat()
     {
         if (bytes == null)
             return -1;
         if (bytes.Length < index + sizeof(float))
             return -1;
-        float value = BitConverter.ToSingle(bytes, index);
-        index = index + sizeof(float);
-        return value;
+        uint temp = (uint)(bytes[index++] | bytes[index++] << 8 | bytes[index++] << 16 | bytes[index++] << 24);
+        return *((float*)&temp);
     }
 
     #endregion
@@ -181,12 +174,216 @@ public class ProtocolBytes
 
     #endregion
 
+    #region 添加获取数组
+
+    public void AddFloatArray1(float[] array)
+    {
+        AddInt32(array.GetLength(0));
+
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            AddFloat(array[i]);
+        }
+    }
+
+    public void AddFloatArray2(float[,] array)
+    {
+        AddInt32(array.GetLength(0));
+        AddInt32(array.GetLength(1));
+
+        for (int i = 0,length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            for (int j = 0,length_1 = array.GetLength(1); j < length_1; j++)
+            {
+                AddFloat(array[i, j]);
+            }
+        }
+    }
+
+    public void AddFloatArray3(float[,,] array)
+    {
+        AddInt32(array.GetLength(0));
+        AddInt32(array.GetLength(1));
+        AddInt32(array.GetLength(2));
+
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            for (int j = 0, length_1 = array.GetLength(1); j < length_1; j++)
+            {
+                for (int k = 0, length_2 = array.GetLength(2); k < length_2; k++)
+                {
+                    AddFloat(array[i, j, k]);
+                }
+            }
+        }
+    }
+
+
+    public float[] GetFloatArray1()
+    {
+        int length_0 = GetInt32();
+
+        float[] array = new float[length_0];
+        for (int i = 0; i < length_0; i++)
+        {
+            AddFloat(array[i]);
+        }
+
+        return array;
+    }
+
+    public float[,] GetFloatArray2()
+    {
+        int length_0 = GetInt32();
+        int length_1 = GetInt32();
+
+        float[,] array = new float[length_0, length_1];
+        for (int i = 0; i < length_0; i++)
+        {
+            for (int j = 0; j < length_1; j++)
+            {
+                AddFloat(array[i, j]);
+            }
+        }
+
+        return array;
+    }
+
+    public float[,,] GetFloatArray3()
+    {
+        int length_0 = GetInt32();
+        int length_1 = GetInt32();
+        int length_2 = GetInt32();
+
+        float[,,] array = new float[length_0, length_1, length_2];
+        for (int i = 0; i < length_0; i++)
+        {
+            for (int j = 0; j < length_1; j++)
+            {
+                for (int k = 0; k < length_2; k++)
+                {
+                    AddFloat(array[i, j, k]);
+                }
+            }
+        }
+
+        return array;
+    }
+
+
+    public void AddIntArray1(int[] array)
+    {
+        AddInt32(array.GetLength(0));
+
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            AddFloat(array[i]);
+        }
+    }
+
+    public void AddIntArray2(int[,] array)
+    {
+        AddInt32(array.GetLength(0));
+        AddInt32(array.GetLength(1));
+
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            for (int j = 0, length_1 = array.GetLength(1); j < length_1; j++)
+            {
+                AddFloat(array[i, j]);
+            }
+        }
+    }
+
+    public void AddIntArray3(int[,,] array)
+    {
+        AddInt32(array.GetLength(0));
+        AddInt32(array.GetLength(1));
+        AddInt32(array.GetLength(2));
+
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            for (int j = 0, length_1 = array.GetLength(1); j < length_1; j++)
+            {
+                for (int k = 0, length_2 = array.GetLength(2); k < length_2; k++)
+                {
+                    AddFloat(array[i, j, k]);
+                }
+            }
+        }
+    }
+
+
+    public int[] GetIntArray1()
+    {
+        int length_0 = GetInt32();
+
+        int[] array = new int[length_0];
+        for (int i = 0; i < length_0; i++)
+        {
+            AddFloat(array[i]);
+        }
+
+        return array;
+    }
+
+    public int[,] GetIntArray2()
+    {
+        int length_0 = GetInt32();
+        int length_1 = GetInt32();
+
+        int[,] array = new int[length_0, length_1];
+        for (int i = 0; i < length_0; i++)
+        {
+            for (int j = 0; j < length_1; j++)
+            {
+                AddFloat(array[i, j]);
+            }
+        }
+
+        return array;
+    }
+
+    public int[,,] GetIntArray3()
+    {
+        int length_0 = GetInt32();
+        int length_1 = GetInt32();
+        int length_2 = GetInt32();
+
+        int[,,] array = new int[length_0, length_1, length_2];
+        for (int i = 0; i < length_0; i++)
+        {
+            for (int j = 0; j < length_1; j++)
+            {
+                for (int k = 0; k < length_2; k++)
+                {
+                    AddFloat(array[i, j, k]);
+                }
+            }
+        }
+
+        return array;
+    }
+
+    public void AddVectorArray1(float[] array)
+    {
+        AddInt32(array.GetLength(0));
+
+        for (int i = 0, length_0 = array.GetLength(0); i < length_0; i++)
+        {
+            AddFloat(array[i]);
+        }
+    }
+
+    #endregion
+
+
     /// <summary>
     /// 添加帧同步
     /// </summary>
     public void AddFrameSynInfo(int id,Transform tran)
     {
-        AddInt(id);
+        AddInt32(id);
         AddVector3(tran.position);
         AddVector3(tran.localEulerAngles);
     }
