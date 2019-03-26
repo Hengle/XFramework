@@ -602,7 +602,6 @@ GameObject:
   - component: {fileID: 1092161756002157795}
   - component: {fileID: 6856084845508654948}
   - component: {fileID: 5190352925298110979}
-  - component: {fileID: 1241922236959536293}
   m_Layer: 5
   m_Name: Three_TeamPanel
   m_TagString: Untagged
@@ -682,19 +681,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &1241922236959536293
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2338852093180938378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2792160d59b5b8b40ad5925d4ef8ffa6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: 0
 --- !u!1 &3144075660193897148
 GameObject:
   m_ObjectHideFlags: 0

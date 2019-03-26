@@ -9,7 +9,8 @@ public enum UILevel
     Ten,
 }
 
-public class BasePanel : MonoBehaviour {
+public class BasePanel
+{
 
     /// <summary>
     /// UI层级
@@ -21,20 +22,20 @@ public class BasePanel : MonoBehaviour {
 
     private Dictionary<string, BaseGUI> mUIDic;
 
-    protected virtual void Awake()
-    {
-        InitGUIDic();
-        canvasGroup = GetComponent<CanvasGroup>();
-        rect = GetComponent<RectTransform>();
-    }
+    protected Transform transform;
+    protected GameObject gameObject;
 
     /// <summary>
     /// 面板初始化，只会执行一次，在Awake后start前执行
     /// </summary>
-    public virtual void Init()
+    public virtual void Init(GameObject _gameObject)
     {
+        gameObject = _gameObject;
+        transform = _gameObject.transform;
+        InitGUIDic();
+        canvasGroup = transform.GetComponent<CanvasGroup>();
+        rect = transform.GetComponent<RectTransform>();
         Vector3 rectSize = rect.localScale;
-        //rectSize.y = 0;
         rect.localScale = rectSize;
     }
 
@@ -45,6 +46,11 @@ public class BasePanel : MonoBehaviour {
     {
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
+    }
+
+    public virtual void OnUpdate()
+    {
+
     }
 
     /// <summary>

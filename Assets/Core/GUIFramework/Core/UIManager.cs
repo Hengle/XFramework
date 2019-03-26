@@ -1,43 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 对应面板的枚举
+/// 对应面板的固定名称
 /// </summary>
-public enum UIPanelType
+public class UIName
 {
-    Main,            // 主界面
-    Create,          
-    Group,           
-    Team,            
-    CommandPost,     
-    ShowPower,       
-    AdjustPosture,   
-    Setting,         
-    TerrainModifier, // 地形编辑
-    Verify,          // 确认面板
+    public const string Main = "Main";                       // 主界面
+    public const string Create = "Create";
+    public const string Group = "Group";
+    public const string Team = "Team";
+    public const string CommandPost = "CommandPost";
+    public const string ShowPower = "ShowPower";
+    public const string Adjust = "Adjust";
+    public const string Setting = "Setting";
+    public const string Verify = "Verify";                   // 确认面板
 }
 
 
 /// <summary>
 /// 单例UI管理类
 /// </summary>
-public class UIManager
+public class UIManager : Singleton<UIManager>
 {
-    // ----- 单例，正式项目中应继承单例模板,这里没用模板是为了将UI框架与其余模块分开 ----- //
-    private static UIManager instance;
-    public static UIManager Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = new UIManager();
-            return instance;
-        }
-    }
-
     private Transform canvasTransform;
     private Transform CanvasTransform
     {
@@ -53,33 +41,15 @@ public class UIManager
     /// <summary>
     /// 存储所有面板Prefab的路径
     /// </summary>
-    private Dictionary<UIPanelType, string> panelPathDict;
+    private Dictionary<string, string> panelPathDict;
     /// <summary>
     /// 保存所有实例化面板的游戏物体身上的BasePanel组件
     /// </summary>
-    private Dictionary<UIPanelType, BasePanel> panelDict;
+    private Dictionary<string, BasePanel> panelDict;
     /// <summary>
     /// 存储面板的栈
     /// </summary>
     private Stack<BasePanel> panelStack;
-
-    /// <summary>
-    /// 描述面板
-    /// </summary>
-    private RectTransform describeRect;
-    /// <summary>
-    /// 描述面板底图
-    /// </summary>
-    private Image describeImage;
-    /// <summary>
-    /// 描述面板头文字
-    /// </summary>
-    private Text headText;
-    /// <summary>
-    /// 描述内容
-    /// </summary>
-    private Text describeText;
-    private Color32 headTextCol = new Color32(255, 170, 0, 255);
 
     /// <summary>
     /// 提示
@@ -102,12 +72,21 @@ public class UIManager
     public UIManager()
     {
         InitPathDic();
+        MonoEvent.Instance.UPDATE += OnUpdate;
+    }
+
+    private void OnUpdate()
+    {
+        foreach (var item in panelStack)
+        {
+            item.OnUpdate();
+        }
     }
 
     /// <summary>
     /// 把某个页面入栈，  把某个页面显示在界面上
     /// </summary>
-    public void PushPanel(UIPanelType panelType)
+    public void PushPanel(string panelType)
     {
         if (panelStack == null)
             panelStack = new Stack<BasePanel>();
@@ -167,31 +146,37 @@ public class UIManager
     /// 根据面板类型 得到实例化的面板
     /// </summary>
     /// <returns></returns>
-    public BasePanel GetPanel(UIPanelType panelType)
+    public BasePanel GetPanel(string uiname)
     {
         if (panelDict == null)
         {
-            panelDict = new Dictionary<UIPanelType, BasePanel>();
+            panelDict = new Dictionary<string, BasePanel>();
         }
 
         BasePanel panel;
-        panelDict.TryGetValue(panelType, out panel);
+        panelDict.TryGetValue(uiname, out panel);
 
         if (panel == null)
         {
-            //如果找不到，那么就找这个面板的prefab的路径，然后去根据prefab去实例化面板
+            // 如果找不到，那么就找这个面板的prefab的路径，然后去根据prefab去实例化面板
             string path;
-            panelPathDict.TryGetValue(panelType, out path);
-
+            panelPathDict.TryGetValue(uiname, out path);
             GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
             instPanel.transform.SetParent(CanvasTransform, false);
-            BasePanel basePanel = instPanel.GetComponent<BasePanel>();
-            basePanel.Init();
+
+            // UICore与派生类不一定在一个程序集类，所以不能直接用Type.GetType  TODO : 根据不同平台规定路径
+            Assembly asmb;
+#if UNITY_EDITOR
+            asmb = Assembly.LoadFrom(System.Environment.CurrentDirectory + @"\Library\ScriptAssemblies\Assembly-CSharp.dll");
+#endif
+            Type type = asmb.GetType(uiname + "Panel");
+            BasePanel basePanel = (BasePanel)Activator.CreateInstance(type);
+            basePanel.Init(instPanel);
             if (basePanel == null)
             {
-                Debug.Log(instPanel.name + "没有挂载对应的basePanel派生");
+                throw new Exception("面板类名错误");
             }
-            panelDict.Add(panelType, basePanel);
+            panelDict.Add(uiname, basePanel);
             return basePanel;
         }
         else
@@ -202,7 +187,7 @@ public class UIManager
     /// <summary>
     /// 返回特定类型的panel
     /// </summary>
-    public T GetPanel<T>(UIPanelType panelType) where T : BasePanel
+    public T GetPanel<T>(string panelType) where T : BasePanel
     {
         return (T)GetPanel(panelType);
     }
@@ -212,7 +197,7 @@ public class UIManager
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public bool TopPanelEqual(UIPanelType type)
+    public bool TopPanelEqual(string type)
     {
         return TopPanel == GetPanel(type);
     }
@@ -256,32 +241,18 @@ public class UIManager
     /// </summary>
     private void InitPathDic()
     {
-        panelPathDict = new Dictionary<UIPanelType, string>
+        panelPathDict = new Dictionary<string, string>
         {
-            [UIPanelType.Main] = "UIPanelPrefabs/One_MainPanel",
-            [UIPanelType.Create] = "UIPanelPrefabs/Two_CreatePanel",
-            [UIPanelType.ShowPower] = "UIPanelPrefabs/Two_ShowPowerPanel",
-            [UIPanelType.AdjustPosture] = "UIPanelPrefabs/Two_AdjustPanel",
-            [UIPanelType.Group] = "UIPanelPrefabs/Three_GroupPanel",
-            [UIPanelType.Team] = "UIPanelPrefabs/Three_TeamPanel",
-            [UIPanelType.CommandPost] = "UIPanelPrefabs/Three_CommandPostPanel",
-            [UIPanelType.Setting] = "UIPanelPrefabs/Top_SettingPanel",
-            [UIPanelType.TerrainModifier] = "UIPanelPrefabs/TerrainModifierPanel",
-            [UIPanelType.Verify] = "UIPanelPrefabs/VerifyPanel",
+            [UIName.Main] = "UIPanelPrefabs/One_MainPanel",
+            [UIName.Create] = "UIPanelPrefabs/Two_CreatePanel",
+            [UIName.ShowPower] = "UIPanelPrefabs/Two_ShowPowerPanel",
+            [UIName.Adjust] = "UIPanelPrefabs/Two_AdjustPanel",
+            [UIName.Group] = "UIPanelPrefabs/Three_GroupPanel",
+            [UIName.Team] = "UIPanelPrefabs/Three_TeamPanel",
+            [UIName.CommandPost] = "UIPanelPrefabs/Three_CommandPostPanel",
+            [UIName.Setting] = "UIPanelPrefabs/Top_SettingPanel",
+            [UIName.Verify] = "UIPanelPrefabs/VerifyPanel",
         };
-    }
-
-    /// <summary>   
-    /// 初始化描述图片
-    /// </summary>
-    private void InitDescribe()
-    {
-        describeRect = CanvasTransform.Find("Describe").GetComponent<RectTransform>();
-        describeImage = CanvasTransform.Find("Describe").GetComponent<Image>();
-        headText = CanvasTransform.Find("Describe/HeadText").GetComponent<Text>();
-        describeText = CanvasTransform.Find("Describe/DescribeText").GetComponent<Text>();
-
-        CloseDescribe();
     }
 
     /// <summary>
@@ -291,23 +262,6 @@ public class UIManager
     {
         tipRect = canvasTransform.Find("Tip").GetComponent<RectTransform>();
         tipText = tipRect.GetComponent<Text>();
-    }
-
-    /// <summary>
-    /// 显示描述图片
-    /// </summary>
-    public void ShowDescribe(float y, string headStr, string describeStr)
-    {
-        return;
-
-    }
-
-    /// <summary>
-    /// 关闭描述图片
-    /// </summary>
-    public void CloseDescribe()
-    {
-        
     }
 
     /// <summary>
@@ -325,7 +279,6 @@ public class UIManager
     /// </summary>
     public void InitGamingUI()
     {
-        InitDescribe();
         InitTip();
     }
 

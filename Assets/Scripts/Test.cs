@@ -14,7 +14,7 @@ public class Test : MonoSingleton<Test>
 
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -22,12 +22,14 @@ public class Test : MonoSingleton<Test>
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
-
+            Debug.Log(Application.dataPath);
+            Debug.Log(System.Environment.CurrentDirectory);
+            Debug.Log(Assembly.GetExecutingAssembly().GetName().CodeBase);
         }
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            
+            Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/xdedzl/Library/ScriptAssemblies/Assembly-CSharp.dll");
         }
     }
 

@@ -14,7 +14,7 @@ public class RootButton : MonoBehaviour {
     public void OnClick()
     {
         // 显示主界面
-        UIManager.Instance.PushPanel(UIPanelType.Main);
+        UIManager.Instance.PushPanel(UIName.Main);
     }
 	
 }

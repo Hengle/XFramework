@@ -11,27 +11,13 @@ public class GroupPanel : BasePanel {
 
     private Vector2 rectSize;
 
-    protected override void Awake ()
+    public override void Init(GameObject _gameObject)
     {
-        base.Awake();
+        base.Init(_gameObject);
         level = UILevel.Three;
         rectSize = rect.sizeDelta;
-    }
-
-    /// <summary>
-    /// 鼠标点击事件
-    /// </summary>
-    /// <param name="modelName"> 名字 </param>
-    private void OnClick(string modelName)
-    {
-    }
-
-    /// <summary>
-    /// 初始化
-    /// </summary>
-    public override void Init()
-    {
-        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIPanelType.Create);
+        
+        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIName.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.groupBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.groupBtn.transform.GetSiblingIndex() + 1);
@@ -46,7 +32,7 @@ public class GroupPanel : BasePanel {
     public override void OnEnter()
     {
         if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup = transform.GetComponent<CanvasGroup>();
         rect.DOSizeDelta(rectSize, 0.3f); // 进场动画
         canvasGroup.interactable = true;
     }

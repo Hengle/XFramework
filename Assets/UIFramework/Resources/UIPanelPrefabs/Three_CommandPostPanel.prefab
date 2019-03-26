@@ -163,7 +163,6 @@ GameObject:
   - component: {fileID: 4591504377399550886}
   - component: {fileID: 8336489602959345725}
   - component: {fileID: 8035444188734369711}
-  - component: {fileID: 8935122528259891515}
   m_Layer: 5
   m_Name: Three_CommandPostPanel
   m_TagString: Untagged
@@ -243,19 +242,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &8935122528259891515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528504841938628035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80a7ab3c17625b247a74e75c2731e3db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: 0
 --- !u!1 &5058285595831898647
 GameObject:
   m_ObjectHideFlags: 0

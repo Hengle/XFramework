@@ -22,9 +22,9 @@ public class CreatePanel : BasePanel {
     private const float teamHeight = 533;
     private const float comandPosHeight = 336;
 
-    protected override void Awake()
+    public override void Init(GameObject _gameObject)
     {
-        base.Awake();
+        base.Init(_gameObject);
         level = UILevel.Two;
         // 按钮赋值
         groupBtn = transform.Find("Viewport/Content/GroupBtn").GetComponent<ButtonExt>();
@@ -36,9 +36,9 @@ public class CreatePanel : BasePanel {
         comandPostRect = commandPostBtn.GetComponent<RectTransform>();
 
         // 注册鼠标点击事件
-        groupBtn.onClick.AddListener(() => { OnClick(UIPanelType.Group); });
-        teamBtn.onClick.AddListener(() => { OnClick(UIPanelType.Team); });
-        commandPostBtn.onClick.AddListener(() => { OnClick(UIPanelType.CommandPost); });
+        groupBtn.onClick.AddListener(() => { OnClick(UIName.Group); });
+        teamBtn.onClick.AddListener(() => { OnClick(UIName.Team); });
+        commandPostBtn.onClick.AddListener(() => { OnClick(UIName.CommandPost); });
 
         groupBtn.AddNormal(OutButton);
         teamBtn.AddNormal(OutButton);
@@ -51,7 +51,7 @@ public class CreatePanel : BasePanel {
     public override void OnEnter()
     {
         if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup = transform.GetComponent<CanvasGroup>();
         rect.DOScaleY(1.0f, 0.1f);
         canvasGroup.interactable = true;
         transform.SetAsLastSibling();
@@ -70,7 +70,7 @@ public class CreatePanel : BasePanel {
     /// 点击事件
     /// </summary>
     /// <param name="panelType"></param>
-    private void OnClick(UIPanelType panelType)
+    private void OnClick(string panelType)
     {
         UIManager.Instance.PushPanel(panelType);
         
@@ -78,13 +78,13 @@ public class CreatePanel : BasePanel {
         Vector2 rectSize = rect.sizeDelta;
         switch (panelType)
         {
-            case UIPanelType.Group:
+            case UIName.Group:
                 rectSize.y = groupHeight;
                 break;
-            case UIPanelType.Team:
+            case UIName.Team:
                 rectSize.y = teamHeight;
                 break;
-            case UIPanelType.CommandPost:
+            case UIName.CommandPost:
                 rectSize.y = comandPosHeight;
                 break;
             default:
@@ -105,7 +105,6 @@ public class CreatePanel : BasePanel {
         if (rectTran.GetComponent<ButtonExt>().CurrentBtnState == 1)
         {
             float y = rectTran.position.y;
-            UIManager.Instance.ShowDescribe(y, str_1, str_2);
         }
     }
 
@@ -115,6 +114,5 @@ public class CreatePanel : BasePanel {
     private async void DelayOut()
     {
         await Task.Delay(TimeSpan.FromSeconds(0.2f));
-        UIManager.Instance.CloseDescribe();
     }
 }

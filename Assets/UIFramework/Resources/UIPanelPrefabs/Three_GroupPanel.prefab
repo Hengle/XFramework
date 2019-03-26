@@ -755,7 +755,6 @@ GameObject:
   - component: {fileID: 2861559477968182249}
   - component: {fileID: 8802823032513606303}
   - component: {fileID: 3806470457838089366}
-  - component: {fileID: 733775821852881832}
   m_Layer: 5
   m_Name: Three_GroupPanel
   m_TagString: Untagged
@@ -835,16 +834,3 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &733775821852881832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8992377874432981530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5c52501cc4afcc4783491c8bf7a144e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: 0

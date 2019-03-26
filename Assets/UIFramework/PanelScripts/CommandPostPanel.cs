@@ -6,10 +6,19 @@ public class CommandPostPanel : BasePanel {
     private Vector2 rectSize;
 
     // Use this for initialization
-    protected override void Awake () {
-        base.Awake();
+    public override void Init(GameObject _gameObject)
+    {
+        base.Init(_gameObject);
         level = UILevel.Three;
         rectSize = rect.sizeDelta;
+
+        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIName.Create);
+        // 设父物体以及自己在子物体中的顺序
+        transform.SetParent(createPanel.commandPostBtn.transform.parent, true);
+        transform.SetSiblingIndex(createPanel.commandPostBtn.transform.GetSiblingIndex() + 1);
+        Vector2 size = rect.sizeDelta;
+        size.y = 1.5f;
+        rect.sizeDelta = size;
     }
 	
 	// Update is called once per frame
@@ -26,21 +35,10 @@ public class CommandPostPanel : BasePanel {
 
     }
 
-    public override void Init()
-    {
-        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIPanelType.Create);
-        // 设父物体以及自己在子物体中的顺序
-        transform.SetParent(createPanel.commandPostBtn.transform.parent, true);
-        transform.SetSiblingIndex(createPanel.commandPostBtn.transform.GetSiblingIndex() + 1);
-        Vector2 size = rect.sizeDelta;
-        size.y = 1.5f;
-        rect.sizeDelta = size;
-    }
-
     public override void OnEnter()
     {
         if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup = transform.GetComponent<CanvasGroup>();
         rect.DOSizeDelta(rectSize, 0.3f); // 进场动画
         canvasGroup.interactable = true;
     }

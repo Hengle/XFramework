@@ -248,9 +248,8 @@ GameObject:
   - component: {fileID: 1765881542677306828}
   - component: {fileID: 8400383693826806795}
   - component: {fileID: 7908722888441188584}
-  - component: {fileID: 2092641096196631389}
   m_Layer: 5
-  m_Name: One_MainPanel
+  m_Name: MainPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -321,19 +320,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
---- !u!114 &2092641096196631389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7315559091338167103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74a14d65705347f4bbe9d9b2554a640e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: 0
 --- !u!1 &8041777544675426472
 GameObject:
   m_ObjectHideFlags: 0

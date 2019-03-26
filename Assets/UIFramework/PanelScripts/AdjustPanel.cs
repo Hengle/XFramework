@@ -6,9 +6,9 @@ using DG.Tweening;
 
 public class AdjustPanel : BasePanel {
 
-	protected override void Awake ()
+	public override void Init(GameObject _gameObject)
     {
-        base.Awake();
+        base.Init(_gameObject);
         level = UILevel.Two;
     }
 
@@ -18,7 +18,7 @@ public class AdjustPanel : BasePanel {
     public override void OnEnter()
     {
         if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup = transform.GetComponent<CanvasGroup>();
         rect.DOScaleY(1.0f, 0.1f);
         canvasGroup.interactable = true;
         transform.SetAsLastSibling();

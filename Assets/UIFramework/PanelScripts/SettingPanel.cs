@@ -9,16 +9,6 @@ public class SettingPanel : BasePanel {
     private Button escBtn;
     private Button backBtn;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        level = UILevel.Ten;
-        escBtn = transform.Find("Esc").GetComponent<Button>();
-        backBtn = transform.Find("Back").GetComponent<Button>();
-        escBtn.onClick.AddListener(OnEscClick);
-        backBtn.onClick.AddListener(OnBackClick);
-    }
-
     private void OnEscClick()
     {
 #if UNITY_EDITOR
@@ -34,9 +24,14 @@ public class SettingPanel : BasePanel {
         Time.timeScale = 1;
     }
 
-    public override void Init()
+    public override void Init(GameObject _gameObject)
     {
-        
+        base.Init(_gameObject);
+        level = UILevel.Ten;
+        escBtn = transform.Find("Esc").GetComponent<Button>();
+        backBtn = transform.Find("Back").GetComponent<Button>();
+        escBtn.onClick.AddListener(OnEscClick);
+        backBtn.onClick.AddListener(OnBackClick);
     }
 
     public override void OnEnter()

@@ -26,14 +26,9 @@ public class ButtonListPanel : BasePanel {
     private Text showText;
     private UnityAction<string> operateAction;
 
-    private void OnEnable()
+    public override void Init(GameObject _gameObject)
     {
-
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
+        base.Init(_gameObject);
         level = UILevel.Ten;
 
         content = transform.FindRecursive("Content").GetComponent<RectTransform>();
@@ -50,15 +45,10 @@ public class ButtonListPanel : BasePanel {
         btnList = new List<Transform>();
     }
 
-    public override void Init()
-    {
-        base.Init();
-    }
-
     public override void OnEnter()
     {
         if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup = transform.GetComponent<CanvasGroup>();
         rect.DOScaleY(1.0f, 0.1f);
         canvasGroup.interactable = true;
         transform.SetAsLastSibling();
@@ -81,7 +71,7 @@ public class ButtonListPanel : BasePanel {
         {
             for (int i = btnList.Count, length = btnStr.Length; i < length; i++)
             {
-                Transform btn = Instantiate(btnObj).transform;
+                Transform btn = GameObject.Instantiate(btnObj).transform;
                 btn.SetParent(content, false);
                 btnList.Add(btn);
                 btn.GetComponent<Button>().onClick.AddListener(() => { ChangeShowText(btnStr[btnList.IndexOf(btn)]); });
@@ -93,7 +83,7 @@ public class ButtonListPanel : BasePanel {
             {
                 Transform btn = btnList[btnList.Count - 1];
                 btnList.Remove(btn);
-                Destroy(btn.gameObject);
+                GameObject.Destroy(btn.gameObject);
             }
         }
 
