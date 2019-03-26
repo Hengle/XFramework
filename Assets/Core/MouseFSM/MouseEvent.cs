@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
@@ -24,6 +23,12 @@ public class MouseEvent : Singleton<MouseEvent>
     /// 鼠标是否移动
     /// </summary>
     public bool MouseMove { get; private set; }
+
+    public MouseEvent()
+    {
+        CurrentState = new MouseState();
+        MonoEvent.Instance.UPDATE += Update;
+    }
 
     void Update()
     {
@@ -84,6 +89,7 @@ public class MouseEvent : Singleton<MouseEvent>
         }
 
         CurrentState.OnDisable();
+        CurrentState = state;
 
         if (!CurrentState.isInited)
             CurrentState.OnInit();
