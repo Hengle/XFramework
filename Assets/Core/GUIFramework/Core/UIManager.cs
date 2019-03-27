@@ -25,7 +25,7 @@ public class UIName
 /// 单例UI管理类
 /// </summary>
 public class UIManager : Singleton<UIManager>
-{
+{ 
     private Transform canvasTransform;
     private Transform CanvasTransform
     {
@@ -168,6 +168,8 @@ public class UIManager : Singleton<UIManager>
             Assembly asmb;
 #if UNITY_EDITOR
             asmb = Assembly.LoadFrom(System.Environment.CurrentDirectory + @"\Library\ScriptAssemblies\Assembly-CSharp.dll");
+#else
+            asmb = Assembly.LoadFrom(Application.dataPath + "/Managed/Assembly-CSharp.dll");
 #endif
             Type type = asmb.GetType(uiname + "Panel");
             BasePanel basePanel = (BasePanel)Activator.CreateInstance(type);

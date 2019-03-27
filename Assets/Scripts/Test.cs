@@ -22,9 +22,9 @@ public class Test : MonoSingleton<Test>
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
-            Debug.Log(Application.dataPath);
-            Debug.Log(System.Environment.CurrentDirectory);
-            Debug.Log(Assembly.GetExecutingAssembly().GetName().CodeBase);
+            Debug.LogError(Application.dataPath);
+            Debug.LogError(System.Environment.CurrentDirectory);
+            Debug.LogError(Assembly.GetExecutingAssembly().GetName().CodeBase);
         }
 
         if (Input.GetKeyDown(KeyCode.K))

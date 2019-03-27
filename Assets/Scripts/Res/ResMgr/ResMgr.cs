@@ -293,7 +293,7 @@ public class ResMgr : MonoSingleton<ResMgr>
 
     public int EventPriority()
     {
-        return 0;
         Dictionary<int, int> a = new Dictionary<int, int>();
+        return 0;
     }
 }
