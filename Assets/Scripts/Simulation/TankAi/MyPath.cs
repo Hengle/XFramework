@@ -4,7 +4,7 @@
 // 时间： 2018-10-23 11:48:30
 // 版本： V 1.0
 // ==========================================
-using Pathfinding;
+//using Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -141,13 +141,13 @@ public class MyPath
     /// <param name="startPos">起始位置</param>
     /// <param name="endPos">目标位置</param>
     /// <param name="callBack">路径计算完成调用的方法</param>
-    public void InitByAStar(Vector3 startPos, Vector3 endPos, OnPathDelegate callBack = null)
-    {
-        ABPath path = ABPath.Construct(startPos, endPos, callBack);
-        AstarPath.StartPath(path);  // 异步执行
+    //public void InitByAStar(Vector3 startPos, Vector3 endPos, OnPathDelegate callBack = null)
+    //{
+    //    ABPath path = ABPath.Construct(startPos, endPos, callBack);
+    //    AstarPath.StartPath(path);  // 异步执行
 
 
-    }
+    //}
     #endregion
 
     /// <summary>

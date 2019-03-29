@@ -180,7 +180,7 @@ public class ArmoredCar : MonoBehaviour {
     /// <param name="_speed"></param>
     public virtual void SetPosAndSpeed(Vector3 _targetPos, float _speed)
     {
-        myPath.InitByAStar(transform.position, _targetPos, OnCompletePath);  // 计算路径
+        //myPath.InitByAStar(transform.position, _targetPos, OnCompletePath);  // 计算路径
         moveSpeed = _speed;
         if (engineSource != null)
         {
@@ -190,33 +190,33 @@ public class ArmoredCar : MonoBehaviour {
     /// <summary>
     /// 路径计算完成后调用
     /// </summary>
-    private void OnCompletePath(Pathfinding.Path path)
-    {
-        List<Vector3> p = new List<Vector3>(); 
+    //private void OnCompletePath(Pathfinding.Path path)
+    //{
+    //    List<Vector3> p = new List<Vector3>(); 
 
-        // 路径计算成功
-        if (!path.error)
-        {
-            for (int i = 0; i < path.vectorPath.Count; i++)
-            {
-                // 根据不同地图的NodeSize决定隔几个点取一个路径点
-                //if (i % 3 == 0)
-                //{
-                p.Add(path.vectorPath[i]);
-                //}
-            }
-            myPath.ResetPath(p.ToArray());
-            currentTargetPos = myPath.WayPoint;
-        }
-        else
-        {
-            p.Add(((Pathfinding.ABPath)path).originalEndPoint);
-            myPath.ResetPath(p.ToArray());
-            currentTargetPos = myPath.WayPoint;
-            Debug.Log("A*路径计算错误");
-        }
+    //    // 路径计算成功
+    //    if (!path.error)
+    //    {
+    //        for (int i = 0; i < path.vectorPath.Count; i++)
+    //        {
+    //            // 根据不同地图的NodeSize决定隔几个点取一个路径点
+    //            //if (i % 3 == 0)
+    //            //{
+    //            p.Add(path.vectorPath[i]);
+    //            //}
+    //        }
+    //        myPath.ResetPath(p.ToArray());
+    //        currentTargetPos = myPath.WayPoint;
+    //    }
+    //    else
+    //    {
+    //        //p.Add(((Pathfinding.ABPath)path).originalEndPoint);
+    //        myPath.ResetPath(p.ToArray());
+    //        currentTargetPos = myPath.WayPoint;
+    //        Debug.Log("A*路径计算错误");
+    //    }
         
-    }
+    //}
 
     /// <summary>
     /// 设置攻击目标
