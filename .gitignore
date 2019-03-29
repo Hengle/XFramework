@@ -2,6 +2,7 @@ Library
 Temp
 obj
 Logs
+Assets/zNewTechniqueTest
 UnityPackageManager
 xdedzl.csproj
 xdedzl.Editor.csproj
@@ -9,3 +10,4 @@ xdedzl.sln
 .vs
 Packages
 *.csproj
+Assets/zNewTechniqueTest.meta
