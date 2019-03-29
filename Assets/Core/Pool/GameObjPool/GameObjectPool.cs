@@ -59,6 +59,7 @@ public class GameObjectPool
         currentCount = initCount = _initCount;
         lockPoolSize = _lookPoolSize;
         dontDestroyOnLoad = _dontDestroyOnLoad;
+        maxCount = _maxCount;
 
         objParent = new GameObject(template.name + "Pool").transform;
 

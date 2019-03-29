@@ -7,10 +7,7 @@ using System;
 
 public class Test : MonoSingleton<Test>
 {
-    private short filter = 255;
-    public List<byte> buf = new List<byte>();
 
-    private int academyId = 1001;
 
     void Start()
     {

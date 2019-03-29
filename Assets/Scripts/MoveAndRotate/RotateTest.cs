@@ -13,7 +13,7 @@ public class RotateTest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		 
 	}
 	
 	// Update is called once per frame
@@ -43,32 +43,23 @@ public class RotateTest : MonoBehaviour {
     //给一个目标点，使物体朝向目标
     void RotateToTarget()
     {
-        if (false)
-        {
-            //1.LookAt
-            //transform.LookAt(targetTransform);
-            //transform.LookAt(targetTransform.position);
-            //2.利用LookAt差值平缓旋转
-            Vector3 currentTarget = transform.position + transform.forward * 100;
-            Vector3 targetDir = targetTransform.position - transform.position;
-            Vector3 tempTarget = Vector3.Lerp(currentTarget, targetTransform.position, Time.deltaTime * angleSpeed);
-            //transform.LookAt(tempTarget);//一般要把目标y设置为自身高度，否则旋转的方式可能会不是想要的
-            transform.LookAt(new Vector3(tempTarget.x, transform.position.y, tempTarget.z));
-        }
+        //1.LookAt
+        //transform.LookAt(targetTransform);
+        //transform.LookAt(targetTransform.position);
 
-        if (false)
-        {
-            //改变transform.forward
-            Vector3 dir = targetTransform.position - transform.position;
-            transform.forward = Vector3.Lerp(transform.forward, dir, Time.deltaTime * angleSpeed);
-        }
+        //2.利用LookAt差值平缓旋转
+        //Vector3 currentTarget = transform.position + transform.forward * 100;
+        //Vector3 targetDir = targetTransform.position - transform.position;
+        //Vector3 tempTarget = Vector3.Lerp(currentTarget, targetTransform.position, Time.deltaTime * angleSpeed);
+        //transform.LookAt(new Vector3(tempTarget.x, transform.position.y, tempTarget.z));
 
-        if (true)
-        {
-            //利用四元数差值
-            Vector3 dir = targetTransform.position - transform.position;
-            Quaternion rotation = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * angleSpeed);
-        }
+        //改变transform.forward
+        //Vector3 dir = targetTransform.position - transform.position;
+        //transform.forward = Vector3.Lerp(transform.forward, dir, Time.deltaTime * angleSpeed);
+
+        //利用四元数差值
+        Vector3 dir2 = targetTransform.position - transform.position;
+        Quaternion rotation = Quaternion.LookRotation(dir2);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * angleSpeed);
     }
 }

@@ -8,8 +8,6 @@ public class CameraOpr : MonoBehaviour
     private Camera mainCamera;
 
     [Range(0, 2000)]
-    //基础移动速度
-    private float m_translateSpeed = 200f;
 
     //相机最低、最高高度
     private float m_cameraMinimuxHeight = 3.0f;
@@ -39,11 +37,7 @@ public class CameraOpr : MonoBehaviour
     private float m_zLimitMin;
 
     //是否给相机加上碰撞
-    private bool currentUseCollider = false;
     public bool nextUseCollider = false;
-
-    [SerializeField]
-    private float terrainHeight = 0;
 
     void Start()
     {

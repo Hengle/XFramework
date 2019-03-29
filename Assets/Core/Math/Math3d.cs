@@ -348,7 +348,7 @@ namespace XDEDZL.Mathematics
 
             // mine
             //float ComplementaryAngle = (float)Math.Acos(Vector3.Dot(vector, normal) / vector.magnitude);
-            //return (float)(Math.PI / 2 - ComplementaryAngle);
+            //return (float)(Math.PI / 2 - ComplementaryAngle); 
         }
 
         // Token: 0x060019FE RID: 6654 RVA: 0x000BA51C File Offset: 0x000B871C

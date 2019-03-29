@@ -67,33 +67,33 @@ public static class ShieldButtonTools
 public class ShieldButtonManager
 {
     private float m_Period;
-    private OldTimer timer;
+    private Timer timer;
     private Button m_Btn;
 
     public ShieldButtonManager(Button button, float period, ShieldBtnType type)
     {
         m_Btn = button;
         m_Period = period;
-        timer = new OldTimer(m_Period, 1);
+        timer = new Timer(m_Period, 1);
 
         switch (type)
         {
             case ShieldBtnType.INTERACTABLE:
                 {
                     m_Btn.interactable = false;
-                    timer.AddEventListener(EventDispatchType.TIMER, ShieldInteractable);
+                    timer.AddEventListener(ShieldInteractable);
                 }
                 break;
             case ShieldBtnType.ENABLE:
                 {
                     m_Btn.enabled = false;
-                    timer.AddEventListener(EventDispatchType.TIMER, ShieldEnable);
+                    timer.AddEventListener(ShieldEnable);
                 }
                 break;
             case ShieldBtnType.RAYCASTTARGET:
                 {
                     m_Btn.image.raycastTarget = false;
-                    timer.AddEventListener(EventDispatchType.TIMER, ShieldRaycastTarget);
+                    timer.AddEventListener(ShieldRaycastTarget);
                 }
                 break;
             default:
@@ -102,33 +102,33 @@ public class ShieldButtonManager
         timer.Start();
     }
 
-    private void ShieldInteractable(object obj, EventArgs arg)
+    private void ShieldInteractable()
     {
         if (m_Btn.interactable)
         {
             return;
         }
-        timer.Stop();
+        timer.ReSet();
         m_Btn.interactable = true;
     }
 
-    private void ShieldEnable(object obj, EventArgs arg)
+    private void ShieldEnable()
     {
         if (m_Btn.enabled)
         {
             return;
         }
-        timer.Stop();
+        timer.ReSet();
         m_Btn.enabled = true;
     }
 
-    private void ShieldRaycastTarget(object obj, EventArgs arg)
+    private void ShieldRaycastTarget()
     {
         if (m_Btn.image.raycastTarget)
         {
             return;
         }
-        timer.Stop();
+        timer.ReSet();
         m_Btn.image.raycastTarget = true;
     }
 }

@@ -41,7 +41,7 @@ public class RuntimeHandle : MonoBehaviour
     public static Matrix4x4 localToWorld { get; private set; }
     public static float screenScale { get; private set; }
     public static Transform target { get; private set; }
-    public static Camera camera { get; private set; }
+    public static new Camera camera { get; private set; }
 
     public static Vector3[] circlePosX;
     public static Vector3[] circlePosY;

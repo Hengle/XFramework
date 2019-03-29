@@ -21,7 +21,7 @@ public class PageViewController : MonoBehaviour
         pageNumber.text = string.Format("当前页码：{0}", index.ToString());
     }
 
-    public void onClick()
+    public void OnClick()
     {
         try
         {

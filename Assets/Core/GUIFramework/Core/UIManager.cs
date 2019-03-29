@@ -5,23 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 对应面板的固定名称
-/// </summary>
-public class UIName
-{
-    public const string Main = "Main";                       // 主界面
-    public const string Create = "Create";
-    public const string Group = "Group";
-    public const string Team = "Team";
-    public const string CommandPost = "CommandPost";
-    public const string ShowPower = "ShowPower";
-    public const string Adjust = "Adjust";
-    public const string Setting = "Setting";
-    public const string Verify = "Verify";                   // 确认面板
-}
-
-
-/// <summary>
 /// 单例UI管理类
 /// </summary>
 public class UIManager : Singleton<UIManager>
@@ -93,7 +76,7 @@ public class UIManager : Singleton<UIManager>
 
         BasePanel nextPanel = GetPanel(panelType); // 计划打开的页面
         BasePanel currentPanel = null;             // 最近一次关闭的界面
-        //判断一下栈里面是否有页面
+        // 判断一下栈里面是否有页面
         if (panelStack.Count > 0)
         {
             BasePanel topPanel = panelStack.Peek(); // 获取栈顶页面
@@ -243,18 +226,21 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     private void InitPathDic()
     {
-        panelPathDict = new Dictionary<string, string>
+        panelPathDict = new Dictionary<string, string>();
+        string rootPath = "UIPanelPrefabs/";
+        string uipaths = Resources.Load<TextAsset>("UIPath").text;
+        uipaths = uipaths.Replace("\n", "");
+        uipaths = uipaths.Replace("\r", "");
+        uipaths = uipaths.Replace("\"", "");
+        string[] data = uipaths.Split(',');
+        string[] nameAndPath;
+        for (int i = 0; i < data.Length; i++)
         {
-            [UIName.Main] = "UIPanelPrefabs/One_MainPanel",
-            [UIName.Create] = "UIPanelPrefabs/Two_CreatePanel",
-            [UIName.ShowPower] = "UIPanelPrefabs/Two_ShowPowerPanel",
-            [UIName.Adjust] = "UIPanelPrefabs/Two_AdjustPanel",
-            [UIName.Group] = "UIPanelPrefabs/Three_GroupPanel",
-            [UIName.Team] = "UIPanelPrefabs/Three_TeamPanel",
-            [UIName.CommandPost] = "UIPanelPrefabs/Three_CommandPostPanel",
-            [UIName.Setting] = "UIPanelPrefabs/Top_SettingPanel",
-            [UIName.Verify] = "UIPanelPrefabs/VerifyPanel",
-        };
+            nameAndPath = data[i].Split(':');
+            if (nameAndPath == null || nameAndPath.Length != 2)
+                continue;
+            panelPathDict.Add(nameAndPath[0], rootPath + nameAndPath[1]);
+        }
     }
 
     /// <summary>

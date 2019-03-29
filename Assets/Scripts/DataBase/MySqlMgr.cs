@@ -48,12 +48,18 @@ public class MySqlMgr : Singleton<MySqlMgr>
     /// <param name="_pwd">密码</param>
     public MySqlMgr()
     {
-        ////getJsonData.inputDate.data[0]
+        //getJsonData.inputDate.data[0]
         //this.datasource = getJsonData.inputDate.data[0].datasource;
         //this.port = getJsonData.inputDate.data[0].port;
         //this.database = getJsonData.inputDate.data[0].database;
         //this.user = getJsonData.inputDate.data[0].user;
         //this.pwd = getJsonData.inputDate.data[0].pwd;
+
+        this.datasource = "";
+        this.port = "";
+        this.database = "";
+        this.user = "";
+        this.pwd = "";
     }
 
     public void Update<T, P>(string Keyword, T value, string column, P data, string tableName)
