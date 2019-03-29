@@ -2,6 +2,7 @@ using System;
 /// <summary>
 /// 在学习QFramework过程中需要用到的扩展函数，不想把所有东西都拷进来，后期根据需要选择是否留下
 /// </summary>
+[Obsolete]
 public static class QExtention
 {
     #region Action

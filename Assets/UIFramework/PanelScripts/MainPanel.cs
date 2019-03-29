@@ -1,24 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MainPanel : BasePanel {
-
-    Button createBtn;
-    Button powerBtn;
-    Button AdjustBtn;
 
     public override void Init(GameObject _gameobject)
     {
         base.Init(_gameobject);
         level = 1;
-        createBtn = transform.Find("CreateBtn").GetComponent<Button>();
-        powerBtn = transform.Find("PowerBtn").GetComponent<Button>();
-        AdjustBtn = transform.Find("AdjustBtn").GetComponent<Button>();
-        createBtn.onClick.AddListener(() => { OnClick(UIName.Create); });
-        powerBtn.onClick.AddListener(() => { OnClick(UIName.ShowPower); });
-        AdjustBtn.onClick.AddListener(() => { OnClick(UIName.Adjust); });
+        (this["CreateBtn"] as GUButton).button.onClick.AddListener(() => { OnClick(UIName.Create); });
+        (this["PowerBtn"] as GUButton).button.onClick.AddListener(() => { OnClick(UIName.ShowPower); });
+        (this["AdjustBtn"] as GUButton).button.onClick.AddListener(() => { OnClick(UIName.Adjust); });
     }
 
     /// <summary>

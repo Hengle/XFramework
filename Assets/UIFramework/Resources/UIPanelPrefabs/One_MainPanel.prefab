@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 553415618610032380}
   - component: {fileID: 4309296484672488056}
   - component: {fileID: 2490435012059387873}
+  - component: {fileID: 1766601827}
   m_Layer: 5
   m_Name: PowerBtn
   m_TagString: Untagged
@@ -118,6 +119,19 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &1766601827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949191955751394973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9aa568e89e892b4583e3784ebab0bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 2490435012059387873}
 --- !u!1 &5319630583813320153
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,6 +144,7 @@ GameObject:
   - component: {fileID: 4785390784872411985}
   - component: {fileID: 3082941019476785679}
   - component: {fileID: 1087196082249740523}
+  - component: {fileID: 1766601828}
   m_Layer: 5
   m_Name: CreateBtn
   m_TagString: Untagged
@@ -236,6 +251,19 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &1766601828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5319630583813320153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9aa568e89e892b4583e3784ebab0bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 1087196082249740523}
 --- !u!1 &7315559091338167103
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,7 +277,7 @@ GameObject:
   - component: {fileID: 8400383693826806795}
   - component: {fileID: 7908722888441188584}
   m_Layer: 5
-  m_Name: MainPanel
+  m_Name: One_MainPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -332,6 +360,7 @@ GameObject:
   - component: {fileID: 7211133135836039483}
   - component: {fileID: 7915624245257043883}
   - component: {fileID: 7078186001223913207}
+  - component: {fileID: 1766601826}
   m_Layer: 5
   m_Name: AdjustBtn
   m_TagString: Untagged
@@ -438,3 +467,16 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &1766601826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8041777544675426472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9aa568e89e892b4583e3784ebab0bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 7078186001223913207}

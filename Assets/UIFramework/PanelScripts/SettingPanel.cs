@@ -1,13 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using DG.Tweening;
 
 public class SettingPanel : BasePanel {
-
-    private Button escBtn;
-    private Button backBtn;
 
     private void OnEscClick()
     {
@@ -28,10 +22,8 @@ public class SettingPanel : BasePanel {
     {
         base.Init(_gameObject);
         level = 10;
-        escBtn = transform.Find("Esc").GetComponent<Button>();
-        backBtn = transform.Find("Back").GetComponent<Button>();
-        escBtn.onClick.AddListener(OnEscClick);
-        backBtn.onClick.AddListener(OnBackClick);
+        (this["Esc"] as GUButton).button.onClick.AddListener(OnEscClick);
+        (this["Back"] as GUButton).button.onClick.AddListener(OnBackClick);
     }
 
     public override void OnEnter()

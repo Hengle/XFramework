@@ -7,7 +7,7 @@ public class BasePanel
     /// <summary>
     /// UI层级
     /// </summary>
-    [HideInInspector] public int level = 1;
+    public int level { get; protected set; }
     protected CanvasGroup canvasGroup;
 
     protected RectTransform rect;
@@ -40,6 +40,9 @@ public class BasePanel
         transform.SetAsLastSibling();
     }
 
+    /// <summary>
+    /// 每帧运行
+    /// </summary>
     public virtual void OnUpdate()
     {
 
@@ -53,6 +56,9 @@ public class BasePanel
         gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// 初始化UI组件字典
+    /// </summary>
     private void InitGUIDic()
     {
         mUIDic = new Dictionary<string, BaseGUI>();
@@ -63,6 +69,9 @@ public class BasePanel
         }
     }
 
+    /// <summary>
+    /// Find UI组件的索引器
+    /// </summary>
     public BaseGUI this[string key]
     {
         get
