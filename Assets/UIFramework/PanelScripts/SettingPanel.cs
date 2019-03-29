@@ -27,7 +27,7 @@ public class SettingPanel : BasePanel {
     public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        level = UILevel.Ten;
+        level = 10;
         escBtn = transform.Find("Esc").GetComponent<Button>();
         backBtn = transform.Find("Back").GetComponent<Button>();
         escBtn.onClick.AddListener(OnEscClick);

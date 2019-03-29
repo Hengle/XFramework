@@ -14,7 +14,7 @@ public class TeamPanel : BasePanel {
     public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        level = UILevel.Three;
+        level = 3;
         rectSize = rect.sizeDelta;
         CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIName.Create);
         // 设父物体以及自己在子物体中的顺序

@@ -25,11 +25,11 @@ public class CreatePanel : BasePanel {
     public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        level = UILevel.Two;
+        level = 2;
         // 按钮赋值
-        groupBtn = transform.Find("Viewport/Content/GroupBtn").GetComponent<ButtonExt>();
-        teamBtn = transform.Find("Viewport/Content/TeamBtn").GetComponent<ButtonExt>();
-        commandPostBtn = transform.Find("Viewport/Content/CommandPostBtn").GetComponent<ButtonExt>();
+        groupBtn = ((this["GroupBtn"] as GUButton).button) as ButtonExt;
+        teamBtn = ((this["TeamBtn"] as GUButton).button) as ButtonExt;
+        commandPostBtn = ((this["CommandPostBtn"] as GUButton).button) as ButtonExt;
 
         groupRect = groupBtn.GetComponent<RectTransform>();
         teamRect = teamBtn.GetComponent<RectTransform>();

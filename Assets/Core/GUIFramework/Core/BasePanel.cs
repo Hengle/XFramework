@@ -1,21 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum UILevel
-{
-    One,
-    Two,
-    Three,
-    Ten,
-}
-
 public class BasePanel
 {
 
     /// <summary>
     /// UI层级
     /// </summary>
-    [HideInInspector] public UILevel level = UILevel.One;
+    [HideInInspector] public int level = 1;
     protected CanvasGroup canvasGroup;
 
     protected RectTransform rect;

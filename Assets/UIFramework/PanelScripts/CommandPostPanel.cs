@@ -9,7 +9,7 @@ public class CommandPostPanel : BasePanel {
     public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        level = UILevel.Three;
+        level = 3;
         rectSize = rect.sizeDelta;
 
         CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIName.Create);

@@ -9,7 +9,7 @@ public class AdjustPanel : BasePanel {
 	public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        level = UILevel.Two;
+        level = 2;
     }
 
     /// <summary>

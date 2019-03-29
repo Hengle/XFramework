@@ -11,7 +11,6 @@ public class Test : MonoSingleton<Test>
 
     void Start()
     {
-        
     }
 
     // Update is called once per frame

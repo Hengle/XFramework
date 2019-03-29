@@ -12,7 +12,7 @@ public class MainPanel : BasePanel {
     public override void Init(GameObject _gameobject)
     {
         base.Init(_gameobject);
-        level = UILevel.One;
+        level = 1;
         createBtn = transform.Find("CreateBtn").GetComponent<Button>();
         powerBtn = transform.Find("PowerBtn").GetComponent<Button>();
         AdjustBtn = transform.Find("AdjustBtn").GetComponent<Button>();

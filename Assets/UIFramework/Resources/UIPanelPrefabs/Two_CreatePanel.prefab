@@ -254,6 +254,7 @@ GameObject:
   - component: {fileID: 8813134000396527143}
   - component: {fileID: 1403117424193410780}
   - component: {fileID: 7121449861641903496}
+  - component: {fileID: 511963139}
   m_Layer: 5
   m_Name: GroupBtn
   m_TagString: Untagged
@@ -360,6 +361,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   isChangeSize: 1
+--- !u!114 &511963139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3270025110889026512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9aa568e89e892b4583e3784ebab0bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 7121449861641903496}
 --- !u!1 &5641934911798500043
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,6 +386,7 @@ GameObject:
   - component: {fileID: 2815171607055739714}
   - component: {fileID: 4435621960304566224}
   - component: {fileID: 4239237915656217487}
+  - component: {fileID: 511963138}
   m_Layer: 5
   m_Name: TeamBtn
   m_TagString: Untagged
@@ -478,6 +493,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   isChangeSize: 1
+--- !u!114 &511963138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5641934911798500043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9aa568e89e892b4583e3784ebab0bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 4239237915656217487}
 --- !u!1 &6651568719205469956
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,6 +518,7 @@ GameObject:
   - component: {fileID: 1369137077322760033}
   - component: {fileID: 2123000829280339245}
   - component: {fileID: 1030231179187251347}
+  - component: {fileID: 511963137}
   m_Layer: 5
   m_Name: CommandPostBtn
   m_TagString: Untagged
@@ -596,3 +625,16 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   isChangeSize: 1
+--- !u!114 &511963137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6651568719205469956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9aa568e89e892b4583e3784ebab0bb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 1030231179187251347}

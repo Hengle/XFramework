@@ -29,7 +29,7 @@ public class ButtonListPanel : BasePanel {
     public override void Init(GameObject _gameObject)
     {
         base.Init(_gameObject);
-        level = UILevel.Ten;
+        level = 10;
 
         content = transform.FindRecursive("Content").GetComponent<RectTransform>();
         showText = transform.Find("ShowText").GetComponent<Text>();
