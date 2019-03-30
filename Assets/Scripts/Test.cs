@@ -11,6 +11,10 @@ public class Test : MonoSingleton<Test>
 
     void Start()
     {
+        //UIHelper.Instance.OpenVerifyOperateTip("dasdasdasd",() =>
+        //{
+        //    Debug.Log("ss");
+        //});
     }
 
     // Update is called once per frame

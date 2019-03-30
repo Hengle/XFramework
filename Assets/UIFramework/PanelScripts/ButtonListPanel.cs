@@ -39,7 +39,7 @@ public class ButtonListPanel : BasePanel {
         // 界面关闭按钮
         transform.Find("Close").GetComponent<Button>().onClick.AddListener(() =>
         {
-            UIManager.Instance.PopPanel();
+            UIHelper.Instance.CloseTopPanel();
         });
 
         btnList = new List<Transform>();

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 单例UI管理类
 /// </summary>
-public class UIManager : Singleton<UIManager>
+public class UIManager : IUIManager
 { 
     private Transform canvasTransform;
     private Transform CanvasTransform
@@ -34,24 +34,6 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     private Stack<BasePanel> panelStack;
 
-    /// <summary>
-    /// 提示
-    /// </summary>
-    private RectTransform tipRect;
-    /// <summary>
-    /// 提示
-    /// </summary>
-    private Text tipText;
-
-    /// <summary>
-    /// 确认操作的委托
-    /// </summary>
-    private Action VerifyOperate;
-    /// <summary>
-    /// 确认面板的显示文字
-    /// </summary>
-    public string VerifyText { get; private set; }
-
     public UIManager()
     {
         InitPathDic();
@@ -69,12 +51,12 @@ public class UIManager : Singleton<UIManager>
     /// <summary>
     /// 把某个页面入栈，  把某个页面显示在界面上
     /// </summary>
-    public void PushPanel(string panelType)
+    public void PushPanel(string uiname)
     {
         if (panelStack == null)
             panelStack = new Stack<BasePanel>();
 
-        BasePanel nextPanel = GetPanel(panelType); // 计划打开的页面
+        BasePanel nextPanel = GetPanel(uiname); // 计划打开的页面
         BasePanel currentPanel = null;             // 最近一次关闭的界面
         // 判断一下栈里面是否有页面
         if (panelStack.Count > 0)
@@ -172,9 +154,9 @@ public class UIManager : Singleton<UIManager>
     /// <summary>
     /// 返回特定类型的panel
     /// </summary>
-    public T GetPanel<T>(string panelType) where T : BasePanel
+    public T GetPanel<T>(string uiname) where T : BasePanel
     {
-        return (T)GetPanel(panelType);
+        return (T)GetPanel(uiname);
     }
 
     /// <summary>
@@ -244,52 +226,6 @@ public class UIManager : Singleton<UIManager>
     }
 
     /// <summary>
-    /// 初始化提示
-    /// </summary>
-    private void InitTip()
-    {
-        tipRect = canvasTransform.Find("Tip").GetComponent<RectTransform>();
-        tipText = tipRect.GetComponent<Text>();
-    }
-
-    /// <summary>
-    /// 显示提示
-    /// </summary>
-    public void ShowTip(string content)
-    {
-        tipRect.localPosition = Vector3.zero;
-        tipText.color = Color.red;
-        tipText.text = content;
-    }
-
-    /// <summary>
-    /// 初始化游戏运行过程中需要的UI
-    /// </summary>
-    public void InitGamingUI()
-    {
-        InitTip();
-    }
-
-    /// <summary>
-    /// 添加确认操作
-    /// 在某个面板的某个操作前调用
-    /// </summary>
-    public void AddVerifyOperate(string showText, Action action = null)
-    {
-        VerifyOperate = action;
-        VerifyText = showText;
-    }
-
-    /// <summary>
-    /// 执行确认委托
-    /// 除了VerifyPanel面板 不要调用
-    /// </summary>
-    public void ExecuteVerifyOperate()
-    {
-        VerifyOperate?.Invoke();
-    }
-
-    /// <summary>
     /// 清楚所有UI面板
     /// </summary>
     public void Clear()
@@ -300,5 +236,20 @@ public class UIManager : Singleton<UIManager>
         //}
         panelDict?.Clear();
         panelStack?.Clear();
+    }
+
+    public void OpenPanel(string uiname)
+    {
+        PushPanel(uiname);
+    }
+
+    public void ClosePanel(string uiname)
+    {
+
+    }
+
+    public void CloseTopPanel()
+    {
+        PopPanel();
     }
 }

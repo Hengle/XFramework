@@ -13,7 +13,7 @@ public class TeamPanel : BasePanel {
         base.Init(_gameObject);
         level = 3;
         rectSize = rect.sizeDelta;
-        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIName.Create);
+        CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.teamBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.teamBtn.transform.GetSiblingIndex() + 1);

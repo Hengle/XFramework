@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
 using System;
@@ -72,7 +69,7 @@ public class CreatePanel : BasePanel {
     /// <param name="panelType"></param>
     private void OnClick(string panelType)
     {
-        UIManager.Instance.PushPanel(panelType);
+        UIHelper.Instance.OpenPanel(panelType);
         
 
         Vector2 rectSize = rect.sizeDelta;

@@ -14,7 +14,7 @@ public class SettingPanel : BasePanel {
 
     private void OnBackClick()
     {
-        UIManager.Instance.PopPanel();
+        UIHelper.Instance.CloseTopPanel();
         Time.timeScale = 1;
     }
 

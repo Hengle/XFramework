@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MainPanel : BasePanel {
 
@@ -19,6 +17,6 @@ public class MainPanel : BasePanel {
     /// <param name="_type"></param>
     private void OnClick(string _type)
     {
-        UIManager.Instance.PushPanel(_type);
+        UIHelper.Instance.OpenPanel(_type);
     }
 }

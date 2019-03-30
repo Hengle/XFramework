@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using DG.Tweening;
 
 /// <summary>
@@ -17,7 +14,7 @@ public class GroupPanel : BasePanel {
         level = 3;
         rectSize = rect.sizeDelta;
         
-        CreatePanel createPanel = (CreatePanel)UIManager.Instance.GetPanel(UIName.Create);
+        CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.groupBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.groupBtn.transform.GetSiblingIndex() + 1);

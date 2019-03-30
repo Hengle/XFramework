@@ -6,11 +6,24 @@
  */
 
 /// <summary>
-/// 
+/// UI管理器接口
 /// </summary>
-public interface IUImanager
+public interface IUIManager
 {
-    void OpenPanel(string name);
-    void ClosePanel(string name);
-    BasePanel GetPanel(string name);
+    /// <summary>
+    /// 打开面板
+    /// </summary>
+    void OpenPanel(string uiname);
+    /// <summary>
+    /// 关闭面板
+    /// </summary>
+    void ClosePanel(string uiname);
+    /// <summary>
+    /// 获取面板
+    /// </summary>
+    BasePanel GetPanel(string uiname);
+    /// <summary>
+    /// 关闭最近一次打开的面板
+    /// </summary>
+    void CloseTopPanel();
 }
