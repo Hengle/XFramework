@@ -18,10 +18,9 @@ public class SettingPanel : BasePanel {
         Time.timeScale = 1;
     }
 
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 10;
+        Level = 10;
         (this["Esc"] as GUButton).button.onClick.AddListener(OnEscClick);
         (this["Back"] as GUButton).button.onClick.AddListener(OnBackClick);
     }

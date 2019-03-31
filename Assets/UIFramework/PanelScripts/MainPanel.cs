@@ -2,10 +2,9 @@
 
 public class MainPanel : BasePanel {
 
-    public override void Init(GameObject _gameobject)
+    public override void Reg()
     {
-        base.Init(_gameobject);
-        level = 1;
+        Level = 1;
         (this["CreateBtn"] as GUButton).button.onClick.AddListener(() => { OnClick(UIName.Create); });
         (this["PowerBtn"] as GUButton).button.onClick.AddListener(() => { OnClick(UIName.ShowPower); });
         (this["AdjustBtn"] as GUButton).button.onClick.AddListener(() => { OnClick(UIName.Adjust); });

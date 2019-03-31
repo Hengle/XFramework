@@ -3,10 +3,9 @@ using DG.Tweening;
 
 public class ShowPowerPanel : BasePanel {
 
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 2;
+        Level = 2;
     }
 
     /// <summary>

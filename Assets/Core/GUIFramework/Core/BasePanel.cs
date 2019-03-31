@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 面板基类
+/// </summary>
 public class BasePanel
 {
-
     /// <summary>
     /// UI层级
     /// </summary>
-    public int level { get; protected set; }
+    public int Level { get; protected set; }
+    /// <summary>
+    /// 面板名
+    /// </summary>
+    public string Name { get; protected set; }
     protected CanvasGroup canvasGroup;
 
     protected RectTransform rect;
@@ -20,8 +26,9 @@ public class BasePanel
     /// <summary>
     /// 面板初始化，只会执行一次，在Awake后start前执行
     /// </summary>
-    public virtual void Init(GameObject _gameObject)
+    public void Init(GameObject _gameObject,string name)
     {
+        Name = name;
         gameObject = _gameObject;
         transform = _gameObject.transform;
         InitGUIDic();
@@ -29,6 +36,16 @@ public class BasePanel
         rect = transform.GetComponent<RectTransform>();
         Vector3 rectSize = rect.localScale;
         rect.localScale = rectSize;
+
+        Reg();
+    }
+
+    /// <summary>
+    /// 初始化UI组件
+    /// </summary>
+    public virtual void Reg()
+    {
+
     }
 
     /// <summary>

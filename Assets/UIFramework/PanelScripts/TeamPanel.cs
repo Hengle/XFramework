@@ -8,10 +8,9 @@ public class TeamPanel : BasePanel {
 
     private Vector2 rectSize;
 
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 3;
+        Level = 3;
         rectSize = rect.sizeDelta;
         CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);
         // 设父物体以及自己在子物体中的顺序

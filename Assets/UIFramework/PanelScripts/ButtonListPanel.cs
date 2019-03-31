@@ -26,10 +26,9 @@ public class ButtonListPanel : BasePanel {
     private Text showText;
     private UnityAction<string> operateAction;
 
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 10;
+        Level = 10;
 
         content = transform.FindRecursive("Content").GetComponent<RectTransform>();
         showText = transform.Find("ShowText").GetComponent<Text>();

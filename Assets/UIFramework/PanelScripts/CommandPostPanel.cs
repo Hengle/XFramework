@@ -6,10 +6,9 @@ public class CommandPostPanel : BasePanel {
     private Vector2 rectSize;
 
     // Use this for initialization
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 3;
+        Level = 3;
         rectSize = rect.sizeDelta;
 
         CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);

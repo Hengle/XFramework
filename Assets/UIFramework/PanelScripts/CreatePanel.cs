@@ -19,10 +19,9 @@ public class CreatePanel : BasePanel {
     private const float teamHeight = 533;
     private const float comandPosHeight = 336;
 
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 2;
+        Level = 2;
         // 按钮赋值
         groupBtn = ((this["GroupBtn"] as GUButton).button) as ButtonExt;
         teamBtn = ((this["TeamBtn"] as GUButton).button) as ButtonExt;

@@ -8,10 +8,9 @@ public class GroupPanel : BasePanel {
 
     private Vector2 rectSize;
 
-    public override void Init(GameObject _gameObject)
+    public override void Reg()
     {
-        base.Init(_gameObject);
-        level = 3;
+        Level = 3;
         rectSize = rect.sizeDelta;
         
         CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);

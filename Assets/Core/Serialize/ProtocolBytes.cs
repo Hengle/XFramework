@@ -11,23 +11,24 @@ using UnityEngine;
 
 /// <summary>
 /// 提供了一种基于字节流的协议
+/// </summary>
 public class ProtocolBytes
 {
-    private byte[] bytes;     //传输的字节流
-    private List<byte> byteList;
+    private byte[] buffer;     //传输的字节流
+    private List<byte> bufferList;
     private int index;
 
     public ProtocolBytes()
     {
         index = 0;
-        byteList = new List<byte>();
+        bufferList = new List<byte>();
     }
 
     public ProtocolBytes(byte[] _bytes)
     {
         index = 0;
-        bytes = _bytes;
-        byteList = new List<byte>(_bytes);
+        buffer = _bytes;
+        bufferList = new List<byte>(_bytes);
     }
 
     /// <summary>
@@ -36,7 +37,7 @@ public class ProtocolBytes
     /// <returns></returns>
     public byte[] Encode()
     {
-        return byteList.ToArray();
+        return bufferList.ToArray();
     }
 
     /// <summary>
@@ -46,10 +47,10 @@ public class ProtocolBytes
     public string GetDesc()
     {
         string str = "";
-        if (bytes == null) return str;
-        for (int i = 0; i < bytes.Length; i++)
+        if (buffer == null) return str;
+        for (int i = 0; i < buffer.Length; i++)
         {
-            int b = (int)bytes[i];
+            int b = (int)buffer[i];
             str += b.ToString() + " ";
         }
         return str;
@@ -66,8 +67,8 @@ public class ProtocolBytes
         Int32 len = str.Length;
         byte[] lenBytes = BitConverter.GetBytes(len);
         byte[] strBytes = Encoding.UTF8.GetBytes(str);
-        byteList.AddRange(lenBytes);
-        byteList.AddRange(strBytes);
+        bufferList.AddRange(lenBytes);
+        bufferList.AddRange(strBytes);
     }
 
     /// <summary>
@@ -78,14 +79,14 @@ public class ProtocolBytes
     /// <returns></returns>
     public string GetString()
     {
-        if (bytes == null)
+        if (buffer == null)
             return "";
-        if (bytes.Length < index + sizeof(int))
+        if (buffer.Length < index + sizeof(int))
             return "";
-        int strLen = BitConverter.ToInt32(bytes, index);
-        if (bytes.Length < index + sizeof(int) + strLen)
+        int strLen = BitConverter.ToInt32(buffer, index);
+        if (buffer.Length < index + sizeof(int) + strLen)
             return "";
-        string str = Encoding.UTF8.GetString(bytes, index + sizeof(int), strLen);
+        string str = Encoding.UTF8.GetString(buffer, index + sizeof(int), strLen);
         index = index + sizeof(int) + strLen;
         return str;
     }
@@ -100,10 +101,10 @@ public class ProtocolBytes
     /// <param name="num">要转化的Int32</param>
     public void AddInt32(int num)
     {
-        byteList.Add((byte)num);
-        byteList.Add((byte)(num >> 8));
-        byteList.Add((byte)(num >> 16));
-        byteList.Add((byte)(num >> 24));
+        bufferList.Add((byte)num);
+        bufferList.Add((byte)(num >> 8));
+        bufferList.Add((byte)(num >> 16));
+        bufferList.Add((byte)(num >> 24));
     }
 
     /// <summary>
@@ -111,12 +112,12 @@ public class ProtocolBytes
     /// </summary>
     public int GetInt32()
     {
-        if (bytes == null)
+        if (buffer == null)
             return 0;
-        if (bytes.Length < index + 4)
+        if (buffer.Length < index + 4)
             return 0;
 
-        return (int)(bytes[index++] | bytes[index++] << 8 | bytes[index++] << 16 | bytes[index++] << 24);
+        return (int)(buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24);
     }
 
     #endregion
@@ -130,10 +131,10 @@ public class ProtocolBytes
     public unsafe void AddFloat(float num)
     {
         uint temp = *(uint*)&num;
-        byteList.Add((byte)temp);
-        byteList.Add((byte)(temp >> 8));
-        byteList.Add((byte)(temp >> 16));
-        byteList.Add((byte)(temp >> 24));
+        bufferList.Add((byte)temp);
+        bufferList.Add((byte)(temp >> 8));
+        bufferList.Add((byte)(temp >> 16));
+        bufferList.Add((byte)(temp >> 24));
     }
 
     /// <summary>
@@ -141,11 +142,11 @@ public class ProtocolBytes
     /// </summary>
     public unsafe float GetFloat()
     {
-        if (bytes == null)
+        if (buffer == null)
             return -1;
-        if (bytes.Length < index + sizeof(float))
+        if (buffer.Length < index + sizeof(float))
             return -1;
-        uint temp = (uint)(bytes[index++] | bytes[index++] << 8 | bytes[index++] << 16 | bytes[index++] << 24);
+        uint temp = (uint)(buffer[index++] | buffer[index++] << 8 | buffer[index++] << 16 | buffer[index++] << 24);
         return *((float*)&temp);
     }
 
@@ -155,12 +156,12 @@ public class ProtocolBytes
 
     public void AddBoolen(bool value)
     {
-        byteList.Add((byte)(value ? 1 : 0));
+        bufferList.Add((byte)(value ? 1 : 0));
     }
 
     public bool GetBoolen()
     {
-        return (bytes[index++] == 1);
+        return (buffer[index++] == 1);
     }
 
     #endregion
@@ -386,15 +387,4 @@ public class ProtocolBytes
     }
 
     #endregion
-
-
-    /// <summary>
-    /// 添加帧同步
-    /// </summary>
-    public void AddFrameSynInfo(int id, Transform tran)
-    {
-        AddInt32(id);
-        AddVector3(tran.position);
-        AddVector3(tran.localEulerAngles);
-    }
 }

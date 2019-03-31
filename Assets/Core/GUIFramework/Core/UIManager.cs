@@ -72,7 +72,7 @@ public class UIManager : IUIManager
             // 当栈内有面板时，进行判断
             while (panelStack.Count > 0)
             {
-                if (topPanel.level < nextPanel.level)
+                if (topPanel.Level < nextPanel.Level)
                 {
                     break;
                 }
@@ -138,7 +138,7 @@ public class UIManager : IUIManager
 #endif
             Type type = asmb.GetType(uiname + "Panel");
             BasePanel basePanel = (BasePanel)Activator.CreateInstance(type);
-            basePanel.Init(instPanel);
+            basePanel.Init(instPanel, uiname);
             if (basePanel == null)
             {
                 throw new Exception("面板类名错误");
@@ -226,14 +226,14 @@ public class UIManager : IUIManager
     }
 
     /// <summary>
-    /// 清楚所有UI面板
+    /// 清除所有UI面板
     /// </summary>
     public void Clear()
     {
-        //while(panelStack?.Count > 0)
-        //{
-        //    PopPanel();
-        //}
+        while (panelStack?.Count > 0)
+        {
+            PopPanel();
+        }
         panelDict?.Clear();
         panelStack?.Clear();
     }
@@ -245,7 +245,7 @@ public class UIManager : IUIManager
 
     public void ClosePanel(string uiname)
     {
-
+        
     }
 
     public void CloseTopPanel()
