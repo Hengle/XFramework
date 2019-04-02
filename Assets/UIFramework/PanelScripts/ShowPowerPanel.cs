@@ -2,7 +2,7 @@
 using DG.Tweening;
 
 public class ShowPowerPanel : BasePanel {
-
+    protected CanvasGroup canvasGroup;
     public override void Reg()
     {
         Level = 2;

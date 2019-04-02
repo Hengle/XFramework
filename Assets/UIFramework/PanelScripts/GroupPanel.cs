@@ -7,6 +7,7 @@ using DG.Tweening;
 public class GroupPanel : BasePanel {
 
     private Vector2 rectSize;
+    protected CanvasGroup canvasGroup;
 
     public override void Reg()
     {

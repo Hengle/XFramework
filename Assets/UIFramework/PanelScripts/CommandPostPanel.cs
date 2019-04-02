@@ -4,6 +4,7 @@ using DG.Tweening;
 public class CommandPostPanel : BasePanel {
 
     private Vector2 rectSize;
+    protected CanvasGroup canvasGroup;
 
     // Use this for initialization
     public override void Reg()

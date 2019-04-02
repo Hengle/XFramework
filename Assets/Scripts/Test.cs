@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using System.Text;
 using System;
+using XDEDZL.Collections;
 
 public class Test : MonoSingleton<Test>
 {
@@ -15,7 +16,10 @@ public class Test : MonoSingleton<Test>
         //{
         //    Debug.Log("ss");
         //});
-    }
+        int[] a = new int[10];
+        a[45] = 10;
+            
+        }
 
     // Update is called once per frame
     void Update()

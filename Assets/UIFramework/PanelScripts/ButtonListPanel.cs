@@ -26,6 +26,8 @@ public class ButtonListPanel : BasePanel {
     private Text showText;
     private UnityAction<string> operateAction;
 
+    protected CanvasGroup canvasGroup;
+
     public override void Reg()
     {
         Level = 10;

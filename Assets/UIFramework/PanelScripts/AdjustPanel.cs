@@ -2,8 +2,9 @@
 using DG.Tweening;
 
 public class AdjustPanel : BasePanel {
+    protected CanvasGroup canvasGroup;
 
-	public override void Reg()
+    public override void Reg()
     {
         Level = 2;
     }

@@ -14,7 +14,6 @@ public class BasePanel
     /// 面板名
     /// </summary>
     public string Name { get; protected set; }
-    protected CanvasGroup canvasGroup;
 
     protected RectTransform rect;
 
@@ -32,7 +31,6 @@ public class BasePanel
         gameObject = _gameObject;
         transform = _gameObject.transform;
         InitGUIDic();
-        canvasGroup = transform.GetComponent<CanvasGroup>();
         rect = transform.GetComponent<RectTransform>();
         Vector3 rectSize = rect.localScale;
         rect.localScale = rectSize;
@@ -61,6 +59,22 @@ public class BasePanel
     /// 每帧运行
     /// </summary>
     public virtual void OnUpdate()
+    {
+
+    }
+
+    /// <summary>
+    /// 界面暂停,被遮挡
+    /// </summary>
+    public virtual void OnPause()
+    {
+
+    }
+
+    /// <summary>
+    /// 界面恢复
+    /// </summary>
+    public virtual void OnResume()
     {
 
     }

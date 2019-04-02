@@ -19,6 +19,8 @@ public class CreatePanel : BasePanel {
     private const float teamHeight = 533;
     private const float comandPosHeight = 336;
 
+    protected CanvasGroup canvasGroup;
+
     public override void Reg()
     {
         Level = 2;
