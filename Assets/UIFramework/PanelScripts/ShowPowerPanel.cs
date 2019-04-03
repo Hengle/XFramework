@@ -12,7 +12,7 @@ public class ShowPowerPanel : BasePanel {
     /// <summary>
     /// 界面被显示出来
     /// </summary>
-    public override void OnEnter()
+    public override void OnOpen()
     {
         if (canvasGroup == null)
             canvasGroup = transform.GetComponent<CanvasGroup>();
@@ -24,7 +24,7 @@ public class ShowPowerPanel : BasePanel {
     /// <summary>
     /// 界面不显示,退出这个界面，界面被关闭
     /// </summary>
-    public override void OnExit()
+    public override void OnClose()
     {
         rect.DOScaleY(0, 0.1f);
         canvasGroup.interactable = false;

@@ -26,13 +26,13 @@ public class SettingPanel : BasePanel {
         (this["Back"] as GUButton).button.onClick.AddListener(OnBackClick);
     }
 
-    public override void OnEnter()
+    public override void OnOpen()
     {
         rect.DOScaleY(1.0f, 0.1f).OnComplete(() => { Time.timeScale = 0; });
         transform.SetAsLastSibling();
     }
 
-    public override void OnExit()
+    public override void OnClose()
     {
         rect.DOScaleY(0.0f, 0.1f);
     }

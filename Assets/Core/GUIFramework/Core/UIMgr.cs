@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace XDEDZL.UI
 {
+    /// <summary>
+    /// 一个使用列表管理的UI管理器
+    /// </summary>
     public class UIMgr : IUIManager
     {
         private Transform canvasTransform;
@@ -29,58 +32,70 @@ namespace XDEDZL.UI
         /// </summary>
         private Dictionary<string, BasePanel> panelDict;
         /// <summary>
-        /// 出于打开状态的面板列表
-        /// TODO ,列表数据结构要重写
+        /// 处于打开状态的面板字典，key为层级
         /// </summary>
-        private List<BasePanel> panelList;
+        private Dictionary<int, BasePanel> onDisplayPanelDic;
 
         public UIMgr()
         {
-            panelList = new List<BasePanel>();
+            onDisplayPanelDic = new Dictionary<int, BasePanel>();
             InitPathDic();
             MonoEvent.Instance.UPDATE += OnUpdate;
         }
 
         private void OnUpdate()
         {
-            foreach (var item in panelList)
+            foreach (var item in onDisplayPanelDic.Values)
             {
                 item.OnUpdate();
             }
         }
 
+        /// <summary>
+        /// 打开面板
+        /// </summary>
         public void OpenPanel(string uiname)
         {
             BasePanel panel = GetPanel(uiname);
             if (null == panel)
                 return;
 
-            if (panelList.Contains(panel))
+            if (onDisplayPanelDic.ContainsKey(panel.Level))
             {
-                panel.OnResume();
-                panelList.Remove(panel);
+                if (onDisplayPanelDic[panel.Level] == panel)
+                    return;
+                onDisplayPanelDic[panel.Level].OnClose();
             }
-            else
+            onDisplayPanelDic[panel.Level] = panel;
+            if (onDisplayPanelDic.ContainsKey(panel.Level - 1))
             {
-                if (panelList.Count > 0)
-                {
-                    panelList[panelList.Count - 1].OnPause();
-                }
-                panel.OnEnter();
+                onDisplayPanelDic[panel.Level - 1].OnPause();
             }
-            panelList.Add(panel);
+
+            panel.OnOpen();
         }
 
+        /// <summary>
+        /// 关闭面板
+        /// </summary>
         public void ClosePanel(string uiname)
         {
             BasePanel panel = GetPanel(uiname);
-            if (panelList.Contains(panel))
+            if (onDisplayPanelDic.ContainsKey(panel.Level))
             {
-                panel.OnExit();
-                panelList.Remove(panel);
+                panel.OnClose();
+                onDisplayPanelDic.Remove(panel.Level);
+            }
+
+            if (onDisplayPanelDic.ContainsKey(panel.Level - 1))
+            {
+                onDisplayPanelDic[panel.Level - 1].OnResume();
             }
         }
 
+        /// <summary>
+        /// 获取面板
+        /// </summary>
         public BasePanel GetPanel(string uiname)
         {
             if (panelDict == null)
@@ -88,16 +103,13 @@ namespace XDEDZL.UI
                 panelDict = new Dictionary<string, BasePanel>();
             }
 
-            BasePanel panel;
-            panelDict.TryGetValue(uiname, out panel);
+            panelDict.TryGetValue(uiname, out BasePanel panel);
 
             if (panel == null)
             {
-                // 如果找不到，那么就找这个面板的prefab的路径，然后去根据prefab去实例化面板
-                string path;
-                panelPathDict.TryGetValue(uiname, out path);
+                // 根据prefab去实例化面板
+                panelPathDict.TryGetValue(uiname, out string path);
                 GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
-                instPanel.transform.SetParent(CanvasTransform, false);
 
                 // UICore与派生类不一定在一个程序集类，所以不能直接用Type.GetType  TODO : 根据不同平台规定路径
                 Assembly asmb;
@@ -114,6 +126,15 @@ namespace XDEDZL.UI
                     throw new Exception("面板类名错误");
                 }
                 panelDict.Add(uiname, basePanel);
+
+                Transform uiGroup = CanvasTransform.Find("Level" + basePanel.Level);
+                if(uiGroup == null)
+                {
+                    uiGroup = (new GameObject("Level" + basePanel.Level)).transform;
+                    uiGroup.SetParent(CanvasTransform);
+                    uiGroup.localPosition = new Vector3(-CanvasTransform.position.x, CanvasTransform.position.y, 0); 
+                }
+                instPanel.transform.SetParent(uiGroup, false);
                 return basePanel;
             }
             else
@@ -122,13 +143,19 @@ namespace XDEDZL.UI
             }
         }
 
+        /// <summary>
+        /// 关闭最上层界面
+        /// </summary>
         public void CloseTopPanel()
         {
-            if (panelList.Count > 0)
+            int level = 0;
+            foreach (var item in onDisplayPanelDic.Keys)
             {
-                panelList[panelList.Count - 1].OnExit();
-                panelList.RemoveAt(panelList.Count - 1);
+                if (item > level)
+                    level = item;
             }
+            onDisplayPanelDic[level].OnClose();
+            onDisplayPanelDic.Remove(level);
         }
 
         /// <summary>
@@ -139,9 +166,9 @@ namespace XDEDZL.UI
             panelPathDict = new Dictionary<string, string>();
             string rootPath = "UIPanelPrefabs/";
             string uipaths = Resources.Load<TextAsset>("UIPath").text;
+            uipaths = uipaths.Replace("\"", "");
             uipaths = uipaths.Replace("\n", "");
             uipaths = uipaths.Replace("\r", "");
-            uipaths = uipaths.Replace("\"", "");
             string[] data = uipaths.Split(',');
             string[] nameAndPath;
             for (int i = 0; i < data.Length; i++)

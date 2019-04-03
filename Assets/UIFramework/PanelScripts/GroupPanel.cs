@@ -15,10 +15,7 @@ public class GroupPanel : BasePanel {
         Level = 3;
         rectSize = rect.sizeDelta;
         
-        CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);
-        // 设父物体以及自己在子物体中的顺序
-        transform.SetParent(createPanel.groupBtn.transform.parent, true);
-        transform.SetSiblingIndex(createPanel.groupBtn.transform.GetSiblingIndex() + 1);
+
         Vector2 size = rect.sizeDelta;
         size.y = 1.5f;
         rect.sizeDelta = size;
@@ -27,8 +24,12 @@ public class GroupPanel : BasePanel {
     /// <summary>
     /// 进入该按钮状态
     /// </summary>
-    public override void OnEnter()
+    public override void OnOpen()
     {
+        CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);
+        // 设父物体以及自己在子物体中的顺序
+        transform.SetParent(createPanel.groupBtn.transform.parent, true);
+        transform.SetSiblingIndex(createPanel.groupBtn.transform.GetSiblingIndex() + 1);
         if (canvasGroup == null)
             canvasGroup = transform.GetComponent<CanvasGroup>();
         rect.DOSizeDelta(rectSize, 0.3f); // 进场动画
@@ -38,7 +39,7 @@ public class GroupPanel : BasePanel {
     /// <summary>
     /// 退出该按钮状态
     /// </summary>
-    public override void OnExit()
+    public override void OnClose()
     {
         rect.DOSizeDelta(new Vector2(rectSize.x, 1.5f), 0.3f); // 退出动画
         canvasGroup.interactable = false;

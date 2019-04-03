@@ -6,7 +6,7 @@ using UnityEngine;
 namespace XDEDZL.UI
 {
     /// <summary>
-    /// 单例UI管理类
+    /// 栈入式UI管理器
     /// </summary>
     public class UIManager : IUIManager
     {
@@ -88,7 +88,7 @@ namespace XDEDZL.UI
             // 如果最后关闭的界面和要打开的是同一个，就不打开了
             if (currentPanel != nextPanel)
             {
-                nextPanel.OnEnter();
+                nextPanel.OnOpen();
                 panelStack.Push(nextPanel); // 将打开的面板入栈
             }
         }
@@ -104,7 +104,7 @@ namespace XDEDZL.UI
             if (panelStack.Count <= 0) return null;
 
             BasePanel topPanel = panelStack.Pop(); // 获取并移除栈顶面板
-            topPanel.OnExit();                     // 关闭面板
+            topPanel.OnClose();                     // 关闭面板
             return topPanel;
         }
 
@@ -200,7 +200,7 @@ namespace XDEDZL.UI
         {
             while (panelStack.Count > 0)
             {
-                panelStack.Pop().OnExit();
+                panelStack.Pop().OnClose();
             }
         }
 

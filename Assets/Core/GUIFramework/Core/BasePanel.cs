@@ -9,7 +9,7 @@ namespace XDEDZL.UI
     public class BasePanel
     {
         /// <summary>
-        /// UI层级
+        /// UI层级,层级最低的显示在底层
         /// </summary>
         public int Level { get; protected set; }
         /// <summary>
@@ -51,7 +51,7 @@ namespace XDEDZL.UI
         /// <summary>
         /// 界面显示
         /// </summary>
-        public virtual void OnEnter()
+        public virtual void OnOpen()
         {
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
@@ -84,7 +84,7 @@ namespace XDEDZL.UI
         /// <summary>
         /// 退出界面，界面被关闭
         /// </summary>
-        public virtual void OnExit()
+        public virtual void OnClose()
         {
             gameObject.SetActive(false);
         }

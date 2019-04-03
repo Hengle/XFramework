@@ -621,7 +621,7 @@ PrefabInstance:
     - target: {fileID: 5148882017195591299, guid: 5c5909ed703514349ac794caca4e09e6,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5148882017195591299, guid: 5c5909ed703514349ac794caca4e09e6,
         type: 3}
@@ -802,3 +802,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5d1b4161915e340b4c7d0d78858c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Close: 
+  Open: 

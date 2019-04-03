@@ -47,7 +47,7 @@ public class ButtonListPanel : BasePanel {
         btnList = new List<Transform>();
     }
 
-    public override void OnEnter()
+    public override void OnOpen()
     {
         if (canvasGroup == null)
             canvasGroup = transform.GetComponent<CanvasGroup>();
@@ -56,9 +56,9 @@ public class ButtonListPanel : BasePanel {
         transform.SetAsLastSibling();
     }
     
-    public override void OnExit()
+    public override void OnClose()
     {
-        base.OnExit();
+        base.OnClose();
     }
 
     /// <summary>
