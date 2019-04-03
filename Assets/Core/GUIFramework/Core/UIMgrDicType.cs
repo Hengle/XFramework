@@ -6,9 +6,9 @@ using UnityEngine;
 namespace XDEDZL.UI
 {
     /// <summary>
-    /// 一个使用列表管理的UI管理器
+    /// 一个使用字典管理的UI管理器
     /// </summary>
-    public class UIMgr : IUIManager
+    public class UIMgrDicType : IUIManager
     {
         private Transform canvasTransform;
         private Transform CanvasTransform
@@ -36,7 +36,7 @@ namespace XDEDZL.UI
         /// </summary>
         private Dictionary<int, BasePanel> onDisplayPanelDic;
 
-        public UIMgr()
+        public UIMgrDicType()
         {
             onDisplayPanelDic = new Dictionary<int, BasePanel>();
             InitPathDic();

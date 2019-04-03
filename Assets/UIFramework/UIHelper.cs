@@ -46,7 +46,7 @@ public class UIHelper : Singleton<UIHelper>
 
     public UIHelper()
     {
-        UImanager = new UIMgr();
+        UImanager = new UIMgrDicType();
         InitTip();
     }
 

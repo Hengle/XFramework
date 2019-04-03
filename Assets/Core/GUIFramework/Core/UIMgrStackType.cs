@@ -8,7 +8,7 @@ namespace XDEDZL.UI
     /// <summary>
     /// 栈入式UI管理器
     /// </summary>
-    public class UIManager : IUIManager
+    public class UIMgrStackType : IUIManager
     {
         private Transform canvasTransform;
         private Transform CanvasTransform
@@ -35,7 +35,7 @@ namespace XDEDZL.UI
         /// </summary>
         private Stack<BasePanel> panelStack;
 
-        public UIManager()
+        public UIMgrStackType()
         {
             InitPathDic();
             MonoEvent.Instance.UPDATE += OnUpdate;
