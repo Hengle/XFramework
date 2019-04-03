@@ -8,18 +8,14 @@ using XDEDZL.Collections;
 
 public class Test : MonoSingleton<Test>
 {
-
+    public string Close;
+    public string Open;
 
     void Start()
     {
-        //UIHelper.Instance.OpenVerifyOperateTip("dasdasdasd",() =>
-        //{
-        //    Debug.Log("ss");
-        //});
-        int[] a = new int[10];
-        a[45] = 10;
-            
-        }
+        LinkedList<int> s;
+
+    }
 
     // Update is called once per frame
     void Update()
@@ -34,6 +30,16 @@ public class Test : MonoSingleton<Test>
         if (Input.GetKeyDown(KeyCode.K))
         {
             Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/xdedzl/Library/ScriptAssemblies/Assembly-CSharp.dll");
+        }
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            UIHelper.Instance.OpenPanel(Open);
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            UIHelper.Instance.ClosePanel(Close);
         }
     }
 

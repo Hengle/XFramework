@@ -1,22 +1,25 @@
 ﻿using UnityEditor;
 using UnityEditor.UI;
 
-[CustomEditor(typeof(LongPressBtn), true)]
-[CanEditMultipleObjects]
-public class LongPressBtnEditor : ButtonEditor
+namespace XDEDZL.UI
 {
-    SerializedProperty m_maxTime;
-
-    protected override void OnEnable()
+    [CustomEditor(typeof(LongPressBtn), true)]
+    [CanEditMultipleObjects]
+    public class LongPressBtnEditor : ButtonEditor
     {
-        base.OnEnable();
-        m_maxTime = serializedObject.FindProperty("maxTime");
-    }
+        SerializedProperty m_maxTime;
 
-    public override void OnInspectorGUI()
-    {
-        EditorGUILayout.PropertyField(m_maxTime);
-        serializedObject.ApplyModifiedProperties();
-        base.OnInspectorGUI();
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            m_maxTime = serializedObject.FindProperty("maxTime");
+        }
+
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.PropertyField(m_maxTime);
+            serializedObject.ApplyModifiedProperties();
+            base.OnInspectorGUI();
+        }
     }
 }

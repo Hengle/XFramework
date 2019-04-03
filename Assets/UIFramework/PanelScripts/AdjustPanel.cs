@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
-
+using XDEDZL.UI;
 public class AdjustPanel : BasePanel {
     protected CanvasGroup canvasGroup;
 

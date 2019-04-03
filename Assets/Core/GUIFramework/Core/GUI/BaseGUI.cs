@@ -1,20 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BaseGUI : MonoBehaviour
+namespace XDEDZL.UI
 {
-    public virtual GUIType GetUIType { get { return GUIType.None; } }
-}
+    public class BaseGUI : MonoBehaviour
+    {
+        public virtual GUIType GetUIType { get { return GUIType.None; } }
+    }
 
-public enum GUIType
-{
-    None,
-    Image,
-    Button,
-    Toggle,
-    Dropdown,
-    Text,
-    ScrollRect,
-    InputField,
+    public enum GUIType
+    {
+        None,
+        Image,
+        Button,
+        Toggle,
+        Dropdown,
+        Text,
+        ScrollRect,
+        InputField,
+    }
 }

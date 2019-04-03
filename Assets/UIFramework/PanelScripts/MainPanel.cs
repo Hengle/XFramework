@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using XDEDZL.UI;
 
 public class MainPanel : BasePanel {
 

@@ -6,25 +6,28 @@
  * UIManager只负责管理多个UI面板之间的逻辑，其余扩展性的功能交给UIHelper
  */
 
-/// <summary>
-/// UI管理器接口
-/// </summary>
-public interface IUIManager
+namespace XDEDZL.UI
 {
     /// <summary>
-    /// 打开面板
+    /// UI管理器接口
     /// </summary>
-    void OpenPanel(string uiname);
-    /// <summary>
-    /// 关闭面板
-    /// </summary>
-    void ClosePanel(string uiname);
-    /// <summary>
-    /// 获取面板
-    /// </summary>
-    BasePanel GetPanel(string uiname);
-    /// <summary>
-    /// 关闭最近一次打开的面板
-    /// </summary>
-    void CloseTopPanel();
+    public interface IUIManager
+    {
+        /// <summary>
+        /// 打开面板
+        /// </summary>
+        void OpenPanel(string uiname);
+        /// <summary>
+        /// 关闭面板
+        /// </summary>
+        void ClosePanel(string uiname);
+        /// <summary>
+        /// 获取面板
+        /// </summary>
+        BasePanel GetPanel(string uiname);
+        /// <summary>
+        /// 关闭最近一次打开的面板
+        /// </summary>
+        void CloseTopPanel();
+    }
 }

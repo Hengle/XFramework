@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GUDropdown : BaseGUI
+﻿
+namespace XDEDZL.UI
 {
-    public override GUIType GetUIType { get { return GUIType.Dropdown; } }
+    public class GUDropdown : BaseGUI
+    {
+        public override GUIType GetUIType { get { return GUIType.Dropdown; } }
 
-    public UnityEngine.UI.Dropdown dropdown;
+        public UnityEngine.UI.Dropdown dropdown;
+    }
 }

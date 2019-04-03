@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using XDEDZL.UI;
 
 /// <summary>
 /// UI管理助手
@@ -45,7 +46,7 @@ public class UIHelper : Singleton<UIHelper>
 
     public UIHelper()
     {
-        UImanager = new UIManager();
+        UImanager = new UIMgr();
         InitTip();
     }
 

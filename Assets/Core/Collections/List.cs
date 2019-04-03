@@ -80,6 +80,14 @@ namespace XDEDZL.Collections
 
         public bool Contains(T item)
         {
+            ListNode<T> node = firstNode;
+            EqualityComparer<T> c = EqualityComparer<T>.Default;
+            for (int i = 0; i < count; i++)
+            {
+                if (c.Equals(node.value, item))
+                    return true;
+                node = node.next;
+            }
             return false;
         }
 
@@ -116,6 +124,18 @@ namespace XDEDZL.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             throw new NotImplementedException();
+        }
+
+        private ListNode<T> GetNode(T item)
+        {
+            ListNode<T> node = firstNode;
+            EqualityComparer<T> c = EqualityComparer<T>.Default;
+            for (int i = 0; i < count; i++)
+            {
+                if (c.Equals(node.value, item))
+                    return node;
+            }
+            return null;
         }
     }
 

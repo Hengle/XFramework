@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
+using XDEDZL.UI;
 
 /// <summary>
 /// 十八队界面
