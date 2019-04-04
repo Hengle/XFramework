@@ -6,5 +6,9 @@ namespace XDEDZL.UI
         public override GUIType GetUIType { get { return GUIType.Dropdown; } }
 
         public UnityEngine.UI.Dropdown dropdown;
+        private void Reset()
+        {
+            dropdown = transform.GetComponent<UnityEngine.UI.Dropdown>();
+        }
     }
 }

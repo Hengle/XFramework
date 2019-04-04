@@ -17,5 +17,6 @@ namespace XDEDZL.UI
         Text,
         ScrollRect,
         InputField,
+        RectTransform,
     }
 }

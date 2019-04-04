@@ -2,18 +2,15 @@
 
 namespace XDEDZL.UI
 {
-    public class GUImage : MonoBehaviour
+    public class GUImage : BaseGUI
     {
-        // Start is called before the first frame update
-        void Start()
+        public override GUIType GetUIType { get { return GUIType.Image; } }
+
+        public UnityEngine.UI.Image image;
+
+        private void Reset()
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            image = transform.GetComponent<UnityEngine.UI.Image>();
         }
     }
 }
