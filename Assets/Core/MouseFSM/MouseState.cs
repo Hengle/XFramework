@@ -1,17 +1,13 @@
 ﻿using UnityEngine;
 
-public class MouseState
+public class BaseMouseState
 {
     /// <summary>
     /// 是否已经初始化
     /// </summary>
     public bool isInited { get; private set; }
-    /// <summary>
-    /// 检测射线信息
-    /// </summary>
-    protected RaycastHit hitInfo;
 
-    public MouseState() { isInited = false; }
+    public BaseMouseState() { isInited = false; }
     /// <summary>
     /// 状态初始化，只会执行一次
     /// </summary>
@@ -53,21 +49,4 @@ public class MouseState
     /// 每帧调用
     /// </summary>
     public virtual void Update() { }
-
-    /// <summary>
-    /// 发射一次射线更新hitInfo并返回当前鼠标接触到的物体
-    /// </summary>
-    /// <param name="layer">射线层级</param>
-    /// <returns></returns>
-    protected GameObject SendRay(int layer)
-    {
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, float.MaxValue, layer))
-        {
-            return hitInfo.collider.gameObject;
-        }
-        else
-        {
-            return null;
-        }
-    }
 }

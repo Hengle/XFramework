@@ -9,11 +9,11 @@ public class MouseEvent : Singleton<MouseEvent>
     /// <summary>
     /// 当前鼠标状态
     /// </summary>
-    public MouseState CurrentState { get; private set; }
+    public BaseMouseState CurrentState { get; private set; }
     /// <summary>
     /// 当前模块的默认鼠标状态
     /// </summary>
-    private MouseState DefaultState;
+    private BaseMouseState DefaultState;
 
     /// <summary>
     /// 鼠标在上一帧的位置
@@ -26,7 +26,7 @@ public class MouseEvent : Singleton<MouseEvent>
 
     public MouseEvent()
     {
-        CurrentState = new MouseState();
+        CurrentState = new BaseMouseState();
         MonoEvent.Instance.UPDATE += Update;
     }
 
@@ -79,7 +79,7 @@ public class MouseEvent : Singleton<MouseEvent>
     /// 改变当前鼠标状态
     /// </summary>
     /// <param name="state"></param>
-    public void ChangeState(MouseState state, params object[] args)
+    public void ChangeState(BaseMouseState state, params object[] args)
     {
         // 状态未改变
         if (CurrentState == state)
