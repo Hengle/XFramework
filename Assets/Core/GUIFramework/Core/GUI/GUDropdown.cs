@@ -1,6 +1,7 @@
 ﻿
 namespace XDEDZL.UI
 {
+    [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Dropdown))]
     public class GUDropdown : BaseGUI
     {
         public override GUIType GetUIType { get { return GUIType.Dropdown; } }

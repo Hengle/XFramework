@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace XDEDZL.UI
 {
+    [RequireComponent(typeof(VerticalLayoutGroup))]
     public class GUVerticalLayoutGroup : BaseGUI
     {
         /// <summary>

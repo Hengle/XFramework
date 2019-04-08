@@ -8,13 +8,31 @@ using XDEDZL.Collections;
 
 public class Test : MonoSingleton<Test>
 {
+    [Serializable]
+    public class AAA
+    {
+        public float a;
+        public float b;
+        public int c;
+
+    }
     public string Close;
     public string Open;
 
     void Start()
     {
-        LinkedList<int> s;
 
+        AAA aaa = new AAA();
+        aaa.a = 10;
+        aaa.b = 108.999f;
+        aaa.c = 800;
+
+        byte[] t = IOUtility.Serialize(aaa);
+        AAA q = IOUtility.Deserialize(t) as AAA;
+
+        Debug.Log(q.a);
+        Debug.Log(q.b);
+        Debug.Log(q.c);
     }
 
     // Update is called once per frame

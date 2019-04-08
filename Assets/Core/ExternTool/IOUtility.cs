@@ -13,9 +13,12 @@ public static class IOUtility
     public static byte[] Serialize(object data)
     {
         BinaryFormatter formatter = new BinaryFormatter();
-        MemoryStream rems = new MemoryStream();
-        formatter.Serialize(rems, data);
-        return rems.GetBuffer();
+        using (MemoryStream rems = new MemoryStream())
+        {
+            formatter.Serialize(rems, data);
+            rems.Close();
+            return rems.GetBuffer();
+        }
     }
 
     /// <summary> 
@@ -26,9 +29,12 @@ public static class IOUtility
     public static object Deserialize(byte[] data)
     {
         BinaryFormatter formatter = new BinaryFormatter();
-        MemoryStream rems = new MemoryStream(data);
-        data = null;
-        return formatter.Deserialize(rems);
+        using(MemoryStream rems = new MemoryStream(data))
+        {
+            object temp = formatter.Deserialize(rems);
+            rems.Close();
+            return temp;
+        }
     }
 
     /// <summary>
@@ -66,7 +72,6 @@ public static class IOUtility
                     return outStream.ToArray();
                 }
             }
-
         }
     }
 

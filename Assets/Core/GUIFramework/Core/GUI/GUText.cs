@@ -1,6 +1,7 @@
 ﻿
 namespace XDEDZL.UI
 {
+    [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Text))]
     public class GUText : BaseGUI
     {
         public override GUIType GetUIType { get { return GUIType.Text; } }

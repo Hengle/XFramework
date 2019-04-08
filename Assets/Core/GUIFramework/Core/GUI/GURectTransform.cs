@@ -1,5 +1,6 @@
 ﻿namespace XDEDZL.UI
 {
+    [UnityEngine.RequireComponent(typeof(UnityEngine.RectTransform))]
     public class GURectTransform : BaseGUI
     {
         public UnityEngine.RectTransform rect;

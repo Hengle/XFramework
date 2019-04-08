@@ -7,14 +7,20 @@ namespace XDEDZL.UI
     /// <summary>
     /// 可长按按钮
     /// </summary>
-    public class LongPressBtn : UnityEngine.UI.Button
+    public class LongOrDoubleBtn : UnityEngine.UI.Button
     {
+        /// <summary>
+        /// 是否为长按
+        /// </summary>
+        public bool isLongPressTrigger;
+        public LongClickEvent onLongClick = new LongClickEvent();
+        public UnityEvent onDoubleClick = new UnityEvent();
+
         /// <summary>
         /// 长按最大时间，超过后系数为1
         /// 单位 秒
         /// </summary>
-        public float maxTime;
-        public LongClickEvent onLongClick = new LongClickEvent();
+        public float maxTime = 1;
 
         private float startTime;
 
@@ -32,6 +38,19 @@ namespace XDEDZL.UI
             onLongClick.Invoke(Mathf.Min(1, (Time.time - startTime) / maxTime));
         }
 
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.clickCount == 1)
+            {
+                onClick.Invoke();
+            }
+            else if (eventData.clickCount == 2)
+            {
+                onDoubleClick.Invoke();
+            }
+        }
+
+        [System.Serializable]
         public class LongClickEvent : UnityEvent<float> { }
     }
 }
