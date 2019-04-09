@@ -1,16 +1,33 @@
-﻿
+﻿using UnityEngine.UI;
+using UnityEngine.Events;
+
 namespace XDEDZL.UI
 {
-    [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Image))]
+    [UnityEngine.RequireComponent(typeof(Image))]
     public class GUInputField : BaseGUI
     {
         public override GUIType GetUIType { get { return GUIType.InputField; } }
 
-        public UnityEngine.UI.InputField inputField;
+        public InputField inputField;
 
         private void Reset()
         {
-            inputField = transform.GetComponent<UnityEngine.UI.InputField>();
+            inputField = transform.GetComponent<InputField>();
+        }
+
+        public void AddOnEditorEnd(UnityAction<string> call)
+        {
+            inputField.onEndEdit.AddListener(call);
+        }
+
+        public void AddOnValidateInput(InputField.OnValidateInput call)
+        {
+            inputField.onValidateInput = call;
+        }
+
+        public void AddOnValueChanged(UnityAction<string> call)
+        {
+            inputField.onValueChanged.AddListener(call);
         }
     }
 }

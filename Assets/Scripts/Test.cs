@@ -5,34 +5,28 @@ using UnityEngine;
 using System.Text;
 using System;
 using XDEDZL.Collections;
+using UnityEngine.Networking;
+using System.Collections;
 
 public class Test : MonoSingleton<Test>
 {
-    [Serializable]
-    public class AAA
-    {
-        public float a;
-        public float b;
-        public int c;
-
-    }
-    public string Close;
-    public string Open;
-
     void Start()
     {
+        object a = 4;
+        StartCoroutine(WebGet());
+    }
 
-        AAA aaa = new AAA();
-        aaa.a = 10;
-        aaa.b = 108.999f;
-        aaa.c = 800;
+    IEnumerator WebGet()
+    {
+        UnityWebRequest webRequest = UnityWebRequestAssetBundle.GetAssetBundle("http://www.baidu.com");
+        yield return webRequest.SendWebRequest();
 
-        byte[] t = IOUtility.Serialize(aaa);
-        AAA q = IOUtility.Deserialize(t) as AAA;
-
-        Debug.Log(q.a);
-        Debug.Log(q.b);
-        Debug.Log(q.c);
+        if (webRequest.isHttpError || webRequest.isNetworkError)
+            Debug.Log(webRequest.error);
+        else
+        {
+            Debug.Log(webRequest.downloadHandler.text);
+        }
     }
 
     // Update is called once per frame
@@ -48,16 +42,6 @@ public class Test : MonoSingleton<Test>
         if (Input.GetKeyDown(KeyCode.K))
         {
             Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/xdedzl/Library/ScriptAssemblies/Assembly-CSharp.dll");
-        }
-
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            UIHelper.Instance.OpenPanel(Open);
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            UIHelper.Instance.ClosePanel(Close);
         }
     }
 

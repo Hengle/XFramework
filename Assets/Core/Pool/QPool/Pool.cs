@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Pool<T>:Singleton<T>, IPool<T> where T : new()
+public abstract class Pool<T>:Singleton<Pool<T>>, IPool<T>
 {
     public int CurCount
     {

@@ -291,6 +291,26 @@ public static class ExtenFun
         return new Vector3(x / count, y / count, z / count);
     }
 
+    /// <summary>
+    /// 获取列表最后一个元素
+    /// </summary>
+    public static T End<T>(this List<T> list)
+    {
+        return list[list.Count - 1];
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="value"></param>
+    public static void MoveToEnd<T>(this List<T> list, T value)
+    {
+        list.Remove(value);
+        list.Add(value);
+    }
+
     #endregion
 
     #region UI

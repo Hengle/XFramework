@@ -10,14 +10,14 @@ namespace XDEDZL.UI
     /// </summary>
     public class UIMgrDicType : IUIManager
     {
-        private Transform canvasTransform;
-        private Transform CanvasTransform
+        private RectTransform canvasTransform;
+        private RectTransform CanvasTransform
         {
             get
             {
                 if (canvasTransform == null)
                 {
-                    canvasTransform = GameObject.Find("Canvas").transform;
+                    canvasTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
                 }
                 return canvasTransform;
             }
@@ -34,11 +34,11 @@ namespace XDEDZL.UI
         /// <summary>
         /// 处于打开状态的面板字典，key为层级
         /// </summary>
-        private Dictionary<int, BasePanel> onDisplayPanelDic;
+        private Dictionary<int, List<BasePanel>> onDisplayPanelDic;
 
         public UIMgrDicType()
         {
-            onDisplayPanelDic = new Dictionary<int, BasePanel>();
+            onDisplayPanelDic = new Dictionary<int, List<BasePanel>>();
             InitPathDic();
             MonoEvent.Instance.UPDATE += OnUpdate;
         }
@@ -47,7 +47,10 @@ namespace XDEDZL.UI
         {
             foreach (var item in onDisplayPanelDic.Values)
             {
-                item.OnUpdate();
+                for (int i = 0, length = item.Count; i < length; i++)
+                {
+                    item[i].OnUpdate();
+                }
             }
         }
 
@@ -62,14 +65,21 @@ namespace XDEDZL.UI
 
             if (onDisplayPanelDic.ContainsKey(panel.Level))
             {
-                if (onDisplayPanelDic[panel.Level] == panel)
+                if(onDisplayPanelDic[panel.Level].Contains(panel))
+                {
+                    ClosePanel(uiname);
                     return;
-                onDisplayPanelDic[panel.Level].OnClose();
+                }
             }
-            onDisplayPanelDic[panel.Level] = panel;
-            if (onDisplayPanelDic.ContainsKey(panel.Level - 1))
+            else
             {
-                onDisplayPanelDic[panel.Level - 1].OnPause();
+                onDisplayPanelDic.Add(panel.Level, new List<BasePanel>());
+            }
+
+            onDisplayPanelDic[panel.Level].Add(panel);
+            if (onDisplayPanelDic.ContainsKey(panel.Level - 1)) // 可以改为 if(panel.level > 0)
+            {
+                onDisplayPanelDic[panel.Level - 1].End().OnPause();
             }
 
             panel.OnOpen();
@@ -81,15 +91,15 @@ namespace XDEDZL.UI
         public void ClosePanel(string uiname)
         {
             BasePanel panel = GetPanel(uiname);
-            if (onDisplayPanelDic.ContainsKey(panel.Level))
+            if (onDisplayPanelDic.ContainsKey(panel.Level)&& onDisplayPanelDic[panel.Level].Contains(panel))
             {
                 panel.OnClose();
-                onDisplayPanelDic.Remove(panel.Level);
+                onDisplayPanelDic[panel.Level].Remove(panel);
             }
 
             if (onDisplayPanelDic.ContainsKey(panel.Level - 1))
             {
-                onDisplayPanelDic[panel.Level - 1].OnResume();
+                onDisplayPanelDic[panel.Level - 1].End().OnResume();
             }
         }
 
@@ -128,11 +138,15 @@ namespace XDEDZL.UI
                 panelDict.Add(uiname, basePanel);
 
                 Transform uiGroup = CanvasTransform.Find("Level" + basePanel.Level);
-                if(uiGroup == null)
+                if (uiGroup == null)
                 {
-                    uiGroup = (new GameObject("Level" + basePanel.Level)).transform;
-                    uiGroup.SetParent(CanvasTransform);
-                    uiGroup.localPosition = new Vector3(-CanvasTransform.position.x, CanvasTransform.position.y, 0); 
+                    RectTransform rect;
+                    rect = (new GameObject("Level" + basePanel.Level)).AddComponent<RectTransform>();
+                    rect.SetParent(CanvasTransform);
+                    rect.sizeDelta = CanvasTransform.sizeDelta;
+                    rect.position = CanvasTransform.position;
+                    rect.localScale = Vector3.one;
+                    uiGroup = rect;
                 }
                 instPanel.transform.SetParent(uiGroup, false);
                 return basePanel;
@@ -154,8 +168,19 @@ namespace XDEDZL.UI
                 if (item > level)
                     level = item;
             }
-            onDisplayPanelDic[level].OnClose();
+            onDisplayPanelDic[level].End().OnClose();
             onDisplayPanelDic.Remove(level);
+        }
+
+        /// <summary>
+        /// 关闭某一层级的所有面板
+        /// </summary>
+        public void CloseLevelPanel(int level)
+        {
+            foreach (var item in onDisplayPanelDic[level])
+            {
+                item.OnClose();
+            }
         }
 
         /// <summary>

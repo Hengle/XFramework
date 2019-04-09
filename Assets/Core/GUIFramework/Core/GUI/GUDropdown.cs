@@ -11,5 +11,10 @@ namespace XDEDZL.UI
         {
             dropdown = transform.GetComponent<UnityEngine.UI.Dropdown>();
         }
+
+        public void AddListener(UnityEngine.Events.UnityAction<int> call)
+        {
+            dropdown.onValueChanged.AddListener(call);
+        }
     }
 }

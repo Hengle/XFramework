@@ -14,7 +14,7 @@ namespace XDEDZL
     /// <summary>
     /// 所有的MeshPrefab 的管理类, 单例
     /// </summary>
-    public class MeshManager
+    public class MeshManager : Singleton<MeshManager>
     {
         //// 类型枚举
         //public enum Shape

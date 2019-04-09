@@ -110,38 +110,38 @@ public class MeshTest : MonoBehaviour
 
     private void CreateCylinder()
     {
-        Singleton<MeshManager>.Instance.CreateCylinder(id++, positions[0], 2500, 1500, Color.blue, Color.blue);
+        MeshManager.Instance.CreateCylinder(id++, positions[0], 2500, 1500, Color.blue, Color.blue);
     }
 
     private void CreatePolygon()
     {
-        Singleton<MeshManager>.Instance.CreatePolygon(id++, positions, 0.01f, Color.red, Color.red);
+        MeshManager.Instance.CreatePolygon(id++, positions, 0.01f, Color.red, Color.red);
     }
 
     private void CreateAirCorridorSpace()
     {
-        Singleton<MeshManager>.Instance.CreateAirCorridorSpace(id++, positions, 1500, 2500, Color.green);
+        MeshManager.Instance.CreateAirCorridorSpace(id++, positions, 1500, 2500, Color.green);
     }
 
     private void CreatSector_2()
     {
         Vector3[] points = PhysicsMath.GetSectorPoints_2(positions[0], new Vector3(positions[1].x, positions[0].y, positions[1].z), alpha, theta);
-        Singleton<MeshManager>.Instance.CreateSector(id++, positions[0], positions[1], alpha, theta, Color.yellow, Color.yellow);
+        MeshManager.Instance.CreateSector(id++, positions[0], positions[1], alpha, theta, Color.yellow, Color.yellow);
     }
 
     private void CreateHemisphere()
     {
-        Singleton<MeshManager>.Instance.CreateHemisphere(id++, positions[0] - Vector3.up * 1500, 7000, new Color(0.784f, 0.784f, 1));
+        MeshManager.Instance.CreateHemisphere(id++, positions[0] - Vector3.up * 1500, 7000, new Color(0.784f, 0.784f, 1));
     }
 
     private void CreatKillBox()
     {
-        Singleton<MeshManager>.Instance.CreateKillBox(id++, positions, 3400, 6000, new Color(0.706f, 0.235f, 1), Color.black);
+        MeshManager.Instance.CreateKillBox(id++, positions, 3400, 6000, new Color(0.706f, 0.235f, 1), Color.black);
     }
 
     private void CreatDoubleCylinder()
     {
-        Singleton<MeshManager>.Instance.DoubleCylinder(id++, positions[0], 2500, 1500, 1000, new Color(1, 0.392f, 0), Color.black);
+        MeshManager.Instance.DoubleCylinder(id++, positions[0], 2500, 1500, 1000, new Color(1, 0.392f, 0), Color.black);
     }
 
     /// <summary>
@@ -155,6 +155,6 @@ public class MeshTest : MonoBehaviour
 
     private void SetFalse(int id)
     {
-        Singleton<MeshManager>.Instance.SetMeshPrefabFalse(id);
+        MeshManager.Instance.SetMeshPrefabFalse(id);
     }
 }
