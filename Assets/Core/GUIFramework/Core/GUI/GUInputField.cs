@@ -6,8 +6,6 @@ namespace XDEDZL.UI
     [UnityEngine.RequireComponent(typeof(Image))]
     public class GUInputField : BaseGUI
     {
-        public override GUIType GetUIType { get { return GUIType.InputField; } }
-
         public InputField inputField;
 
         private void Reset()

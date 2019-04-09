@@ -3,8 +3,6 @@
     [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Button))]
     public class GUButton : BaseGUI
     {
-        public override GUIType GetUIType { get { return GUIType.Button; } }
-
         public UnityEngine.UI.Button button;
 
         private void Reset()

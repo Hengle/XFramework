@@ -1,8 +1,10 @@
 ﻿using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine;
 
 namespace XDEDZL.UI
 {
-    [UnityEngine.RequireComponent(typeof(ScrollRect))]
+    [RequireComponent(typeof(ScrollRect))]
     public class GUScrollRect : BaseGUI
     {
         public ScrollRect scrollRect;
@@ -10,6 +12,11 @@ namespace XDEDZL.UI
         private void Reset()
         {
             scrollRect = GetComponent<ScrollRect>();
+        }
+
+        public void AddOnValueChanged(UnityAction<Vector2> call)
+        {
+            scrollRect.onValueChanged.AddListener(call);
         }
     }
 }
