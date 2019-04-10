@@ -65,7 +65,7 @@ namespace XDEDZL.UI
 
             if (onDisplayPanelDic.ContainsKey(panel.Level))
             {
-                if(onDisplayPanelDic[panel.Level].Contains(panel))
+                if (onDisplayPanelDic[panel.Level].Contains(panel))
                 {
                     ClosePanel(uiname);
                     return;
@@ -91,12 +91,27 @@ namespace XDEDZL.UI
         public void ClosePanel(string uiname)
         {
             BasePanel panel = GetPanel(uiname);
-            if (onDisplayPanelDic.ContainsKey(panel.Level)&& onDisplayPanelDic[panel.Level].Contains(panel))
+            if (onDisplayPanelDic.ContainsKey(panel.Level) && onDisplayPanelDic[panel.Level].Contains(panel))
             {
                 panel.OnClose();
                 onDisplayPanelDic[panel.Level].Remove(panel);
             }
 
+            int index = panel.Level + 1;
+            List<BasePanel> temp;
+            while (onDisplayPanelDic.ContainsKey(index))
+            {
+                temp = onDisplayPanelDic[index];
+                if (temp.Count > 0)
+                {
+                    temp.End().OnClose();
+                    temp.RemoveAt(temp.Count - 1);
+                }
+                else
+                {
+                    break;
+                }
+            }
             if (onDisplayPanelDic.ContainsKey(panel.Level - 1))
             {
                 onDisplayPanelDic[panel.Level - 1].End().OnResume();

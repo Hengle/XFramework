@@ -4,16 +4,43 @@ using System.Reflection;
 using UnityEngine;
 using System.Text;
 using System;
-using XDEDZL.Collections;
 using UnityEngine.Networking;
 using System.Collections;
+using XDEDZL.Collections;
+using XDEDZL.UI;
 
 public class Test : MonoSingleton<Test>
 {
     void Start()
     {
-        object a = 4;
-        StartCoroutine(WebGet());
+        XDEDZL.Collections.List<BasePanel> list = new XDEDZL.Collections.List<BasePanel>();
+        
+        for (int i = 0; i < 1000000; i++)
+        {
+            list.Add(new BasePanel());
+        }
+        BasePanel a = new ButtonListPanel();
+        list.Add(a);
+
+        Debug.Log(Utility.DebugActionRunTime(() =>
+        {
+            list.Remove(a);
+        }));
+
+
+        System.Collections.Generic.List<BasePanel> l = new System.Collections.Generic.List<BasePanel>();
+       
+        for (int i = 0; i < 1000000; i++)
+        {
+            l.Add(new BasePanel());
+        }
+        BasePanel b = new ButtonListPanel();
+        l.Add(b);
+
+        Debug.Log(Utility.DebugActionRunTime(() =>
+        {
+            l.Remove(b);
+        }));
     }
 
     IEnumerator WebGet()

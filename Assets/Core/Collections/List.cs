@@ -113,7 +113,31 @@ namespace XDEDZL.Collections
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            EqualityComparer<T> c = EqualityComparer<T>.Default;
+
+            ListNode<T> node = firstNode;
+            ListNode<T> preNode = null;
+            while (node != null)
+            {
+                if (c.Equals(node.value, item))
+                {
+                    if(node == firstNode)
+                    {
+                        ListNode<T> temp = firstNode.next;
+                        firstNode.next = null;
+                        firstNode = temp;
+                    }
+                    else
+                    {
+                        preNode.next = node.next;
+                    }
+                    count--;
+                    return true;
+                }
+                preNode = node;
+                node = node.next;
+            }
+            return false;
         }
 
         public void RemoveAt(int index)
@@ -136,6 +160,11 @@ namespace XDEDZL.Collections
                     return node;
             }
             return null;
+        }
+
+        private void Compare(T a,T b)
+        {
+
         }
     }
 
