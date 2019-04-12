@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using XDEDZL.Collections;
 using XDEDZL.UI;
+using UnityEditor;
 
 public class Test : MonoSingleton<Test>
 {
@@ -52,6 +53,7 @@ public class Test : MonoSingleton<Test>
             Debug.Log(webRequest.error);
         else
         {
+            //AssetDatabase
             Debug.Log(webRequest.downloadHandler.text);
         }
     }

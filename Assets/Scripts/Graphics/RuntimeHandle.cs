@@ -41,6 +41,7 @@ public class RuntimeHandle : MonoBehaviour
     public static Matrix4x4 localToWorld { get; private set; }
     public static float screenScale { get; private set; }
     public static Transform target { get; private set; }
+    public Transform testTarget;
     public static new Camera camera { get; private set; }
 
     public static Vector3[] circlePosX;
@@ -61,7 +62,10 @@ public class RuntimeHandle : MonoBehaviour
         currentHandle = positionHandle;
 
         // 测试用
-        SetTarget(GameObject.Find("Cube").transform);
+        if (testTarget)
+        {
+            SetTarget(testTarget);
+        }
     }
 
     private void Update()

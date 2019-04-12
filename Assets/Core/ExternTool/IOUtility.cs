@@ -3,8 +3,16 @@ using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
+public enum CreatType
+{
+    CreateNew,
+    KeepOld,
+}
+
 public static class IOUtility
 {
+    #region 序列化相关
+
     ///<summary> 
     /// 序列化 
     /// </summary> 
@@ -75,6 +83,10 @@ public static class IOUtility
         }
     }
 
+    #endregion
+
+    #region 文件操作
+
     /// <summary>
     /// 打开一个文件
     /// </summary>
@@ -86,6 +98,58 @@ public static class IOUtility
         process.Start();
         process.Dispose();
     }
+
+    /// <summary>
+    /// 创建文件夹
+    /// </summary>
+    public static void CreateFolder(string path, CreatType type = CreatType.KeepOld)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        else
+        {
+            switch (type)
+            {
+                case CreatType.CreateNew:
+                    DeleteFolder(path);
+                    Directory.CreateDirectory(path);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 创建文件
+    /// </summary>
+    public static void CreateFile(string path, CreatType type = CreatType.KeepOld)
+    {
+        if (!File.Exists(path))
+            File.Create(path).Close();
+        else
+        {
+            switch (type)
+            {
+                case CreatType.CreateNew:
+                    File.Delete(path);
+                    File.Create(path).Close();
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 删除文件夹
+    /// </summary>
+    public static void DeleteFolder(string dirPath)
+    {
+        if (Directory.Exists(dirPath))
+            Directory.Delete(dirPath);
+    }
+
+    #endregion
+
 
     public static void Test()
     {
