@@ -12,36 +12,48 @@ using UnityEditor;
 
 public class Test : MonoSingleton<Test>
 {
-    void Start()
+    void Start() 
     {
-        XDEDZL.Collections.List<BasePanel> list = new XDEDZL.Collections.List<BasePanel>();
-        
-        for (int i = 0; i < 1000000; i++)
-        {
-            list.Add(new BasePanel());
-        }
-        BasePanel a = new ButtonListPanel();
-        list.Add(a);
-
-        Debug.Log(Utility.DebugActionRunTime(() =>
-        {
-            list.Remove(a);
-        }));
-
-
-        System.Collections.Generic.List<BasePanel> l = new System.Collections.Generic.List<BasePanel>();
        
-        for (int i = 0; i < 1000000; i++)
-        {
-            l.Add(new BasePanel());
-        }
-        BasePanel b = new ButtonListPanel();
-        l.Add(b);
+    }
 
-        Debug.Log(Utility.DebugActionRunTime(() =>
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
         {
-            l.Remove(b);
-        }));
+            GetMaterialIndex(Utility.SendRay());
+        }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Debug.LogError(Application.dataPath);
+            Debug.LogError(System.Environment.CurrentDirectory);
+            Debug.LogError(Assembly.GetExecutingAssembly().GetName().CodeBase);
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/xdedzl/Library/ScriptAssemblies/Assembly-CSharp.dll");
+        }
+    }
+
+    private int GetMaterialIndex(RaycastHit hitInfo)
+    {
+        int matLength = hitInfo.collider.GetComponent<MeshRenderer>().materials.Length;
+        int totalCount = 0;
+        MeshFilter meshFilter = hitInfo.collider.GetComponent<MeshFilter>();
+
+        int triangleIndex = hitInfo.triangleIndex;
+        for (int i = 0; i < matLength; i++)
+        {
+            int count = meshFilter.mesh.GetTriangles(i).Length / 3;
+            totalCount += count;
+            if (triangleIndex < totalCount)
+                return i;
+        }
+        return -1;
     }
 
     IEnumerator WebGet()
@@ -58,21 +70,6 @@ public class Test : MonoSingleton<Test>
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Debug.LogError(Application.dataPath);
-            Debug.LogError(System.Environment.CurrentDirectory);
-            Debug.LogError(Assembly.GetExecutingAssembly().GetName().CodeBase);
-        }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/xdedzl/Library/ScriptAssemblies/Assembly-CSharp.dll");
-        }
-    }
 
     #region Graph Test
 

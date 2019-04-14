@@ -12,7 +12,7 @@ public class ThreadTest : MonoBehaviour
         {
             Debug.Log("AAA");
         });
-        thread.Start();
+        thread.Start(); 
 
 
     }

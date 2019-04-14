@@ -1,5 +1,4 @@
-﻿
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 
 namespace XDEDZL.UI
 {
