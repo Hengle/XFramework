@@ -4,13 +4,13 @@
 /// </summary>
 public class UIName
 {
-    public const string Main = "Main";                       // 主界面
-    public const string Create = "Create";
-    public const string Group = "Group";
-    public const string Team = "Team";
-    public const string CommandPost = "CommandPost";
-    public const string ShowPower = "ShowPower";
-    public const string Adjust = "Adjust";
-    public const string Setting = "Setting";
-    public const string Verify = "Verify";                   // 确认面板
+    public const string Main = "MainPanel";                       // 主界面
+    public const string Create = "CreatePanel";
+    public const string Group = "GroupPanel";
+    public const string Team = "TeamPanel";
+    public const string CommandPost = "CommandPostPanel";
+    public const string ShowPower = "ShowPowerPanel";
+    public const string Adjust = "AdjustPanel";
+    public const string Setting = "SettingPanel";
+    public const string Verify = "VerifyPanel";                   // 确认面板
 }

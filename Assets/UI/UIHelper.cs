@@ -44,7 +44,7 @@ public class UIHelper : Singleton<UIHelper>
     /// </summary>
     private Text VerifyText;
 
-    public UIHelper()
+    private UIHelper()
     {
         UImanager = new UIMgrDicType();
         InitTip();

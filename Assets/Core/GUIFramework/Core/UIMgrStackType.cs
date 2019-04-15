@@ -10,14 +10,14 @@ namespace XDEDZL.UI
     /// </summary>
     public class UIMgrStackType : IUIManager
     {
-        private Transform canvasTransform;
-        private Transform CanvasTransform
+        private RectTransform canvasTransform;
+        private RectTransform CanvasTransform
         {
             get
             {
                 if (canvasTransform == null)
                 {
-                    canvasTransform = GameObject.Find("Canvas").transform;
+                    canvasTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
                 }
                 return canvasTransform;
             }
@@ -119,16 +119,14 @@ namespace XDEDZL.UI
                 panelDict = new Dictionary<string, BasePanel>();
             }
 
-            BasePanel panel;
-            panelDict.TryGetValue(uiname, out panel);
+            panelDict.TryGetValue(uiname, out BasePanel panel);
 
             if (panel == null)
             {
-                // 如果找不到，那么就找这个面板的prefab的路径，然后去根据prefab去实例化面板
-                string path;
-                panelPathDict.TryGetValue(uiname, out path);
+                // 根据prefab去实例化面板
+                panelPathDict.TryGetValue(uiname, out string path);
+                Debug.Log(path);
                 GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
-                instPanel.transform.SetParent(CanvasTransform, false);
 
                 // UICore与派生类不一定在一个程序集类，所以不能直接用Type.GetType  TODO : 根据不同平台规定路径
                 Assembly asmb;
@@ -137,7 +135,7 @@ namespace XDEDZL.UI
 #else
             asmb = Assembly.LoadFrom(Application.dataPath + "/Managed/Assembly-CSharp.dll");
 #endif
-                Type type = asmb.GetType(uiname + "Panel");
+                Type type = asmb.GetType(uiname);
                 BasePanel basePanel = (BasePanel)Activator.CreateInstance(type);
                 basePanel.Init(instPanel, uiname);
                 if (basePanel == null)
@@ -145,6 +143,19 @@ namespace XDEDZL.UI
                     throw new Exception("面板类名错误");
                 }
                 panelDict.Add(uiname, basePanel);
+
+                Transform uiGroup = CanvasTransform.Find("Level" + basePanel.Level);
+                if (uiGroup == null)
+                {
+                    RectTransform rect;
+                    rect = (new GameObject("Level" + basePanel.Level)).AddComponent<RectTransform>();
+                    rect.SetParent(CanvasTransform);
+                    rect.sizeDelta = CanvasTransform.sizeDelta;
+                    rect.position = CanvasTransform.position;
+                    rect.localScale = Vector3.one;
+                    uiGroup = rect;
+                }
+                instPanel.transform.SetParent(uiGroup, false);
                 return basePanel;
             }
             else
@@ -152,6 +163,7 @@ namespace XDEDZL.UI
                 return panel;
             }
         }
+
         /// <summary>
         /// 返回特定类型的panel
         /// </summary>
@@ -212,9 +224,9 @@ namespace XDEDZL.UI
             panelPathDict = new Dictionary<string, string>();
             string rootPath = "UIPanelPrefabs/";
             string uipaths = Resources.Load<TextAsset>("UIPath").text;
+            uipaths = uipaths.Replace("\"", "");
             uipaths = uipaths.Replace("\n", "");
             uipaths = uipaths.Replace("\r", "");
-            uipaths = uipaths.Replace("\"", "");
             string[] data = uipaths.Split(',');
             string[] nameAndPath;
             for (int i = 0; i < data.Length; i++)
@@ -222,7 +234,8 @@ namespace XDEDZL.UI
                 nameAndPath = data[i].Split(':');
                 if (nameAndPath == null || nameAndPath.Length != 2)
                     continue;
-                panelPathDict.Add(nameAndPath[0], rootPath + nameAndPath[1]);
+                string temp = nameAndPath[1] == "" ? nameAndPath[0] : nameAndPath[1] + "/" + nameAndPath[0];
+                panelPathDict.Add(nameAndPath[0], rootPath + temp);
             }
         }
 

@@ -134,6 +134,7 @@ namespace XDEDZL.UI
             {
                 // 根据prefab去实例化面板
                 panelPathDict.TryGetValue(uiname, out string path);
+                Debug.Log(path);
                 GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
 
                 // UICore与派生类不一定在一个程序集类，所以不能直接用Type.GetType  TODO : 根据不同平台规定路径
@@ -143,7 +144,7 @@ namespace XDEDZL.UI
 #else
             asmb = Assembly.LoadFrom(Application.dataPath + "/Managed/Assembly-CSharp.dll");
 #endif
-                Type type = asmb.GetType(uiname + "Panel");
+                Type type = asmb.GetType(uiname);
                 BasePanel basePanel = (BasePanel)Activator.CreateInstance(type);
                 basePanel.Init(instPanel, uiname);
                 if (basePanel == null)
@@ -216,7 +217,8 @@ namespace XDEDZL.UI
                 nameAndPath = data[i].Split(':');
                 if (nameAndPath == null || nameAndPath.Length != 2)
                     continue;
-                panelPathDict.Add(nameAndPath[0], rootPath + nameAndPath[1]);
+                string temp = nameAndPath[1] == "" ? nameAndPath[0] : nameAndPath[1] + "/" + nameAndPath[0];
+                panelPathDict.Add(nameAndPath[0], rootPath + temp);
             }
         }
     }

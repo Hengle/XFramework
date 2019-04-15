@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using XDEDZL.OldPool;
+using XDEDZL.Pool;
 
 /// <summary>
 /// 直升机状态
