@@ -1,140 +1,172 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using XDEDZL.Pool;
+using System;
 
-/// <summary>
-/// 对象池
-/// </summary>
-public class GameObjectPool
+namespace XDEDZL.Pool
 {
     /// <summary>
-    /// 所有对象池的父物体
+    /// 对象池
     /// </summary>
-    private static Transform poolRoot;
-    /// <summary>
-    /// 对象池模板
-    /// </summary>
-    private GameObject template;
-    /// <summary>
-    /// 对象池链表
-    /// </summary>
-    private List<GameObject> pooledObjects;
-    /// <summary>
-    /// 初始化大小
-    /// </summary>
-    private readonly int initCount;
-    /// <summary>
-    /// 对象池数量
-    /// </summary>
-    private int currentCount;
-    /// <summary>
-    /// 对象池最大数量
-    /// </summary>
-    private readonly int maxCount;
-    /// <summary>
-    /// 是否锁定对象池大小
-    /// </summary>
-    private readonly bool lockPoolSize = false;
-    /// <summary>
-    /// 切换场景时是否卸载
-    /// 后面默认值要改为false
-    /// </summary>
-    private bool dontDestroyOnLoad = true;
-
-    public Transform objParent;
-
-    /// <summary>
-    /// 当前指向链表位置索引
-    /// </summary>
-    private int currentIndex = 0;
-
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="_template"></param>
-    /// <param name="_initCount"></param>
-    /// <param name="_lookPoolSize"></param>
-    public GameObjectPool(GameObject _template, bool _dontDestroyOnLoad = false, int _initCount = 5, int _maxCount = 10, bool _lookPoolSize = false)
+    public class GameObjectPool : IPool<GameObject>
     {
-        template = _template;
-        currentCount = initCount = _initCount;
-        lockPoolSize = _lookPoolSize;
-        dontDestroyOnLoad = _dontDestroyOnLoad;
-        maxCount = _maxCount;
+        /// <summary>
+        /// 所有对象池的父物体
+        /// </summary>
+        private static Transform poolRoot;
+        /// <summary>
+        /// 当前对象池的父物体
+        /// </summary>
+        public Transform objParent;
 
-        objParent = new GameObject(template.name + "Pool").transform;
+        /// <summary>
+        /// 对象池模板
+        /// </summary>
+        private readonly GameObject template;
+        /// <summary>
+        /// 初始化大小
+        /// </summary>
+        private readonly int initCount;
+        /// <summary>
+        /// 对象池最大数量
+        /// </summary>
+        private readonly int maxCount;
+        /// <summary>
+        /// 是否锁定对象池大小
+        /// </summary>
+        private readonly bool lockPoolSize = false;
+        /// <summary>
+        /// 切换场景时是否卸载
+        /// 后面默认值要改为false
+        /// </summary>
+        private readonly bool dontDestroyOnLoad = true;
 
-        poolRoot = poolRoot ?? new GameObject("PoolRoot").transform;
-        objParent.SetParent(poolRoot);
+        /// <summary>
+        /// 对象池链表
+        /// </summary>
+        private readonly List<Info> pooledObjects;
+        /// <summary>
+        /// 回收对象方法
+        /// </summary>
+        private readonly Func<GameObject, bool> RecycleAction;
+        /// <summary>
+        /// 对象池数量
+        /// </summary>
+        private int currentCount;
 
-        if (dontDestroyOnLoad)
-            Object.DontDestroyOnLoad(objParent);
+        /// <summary>
+        /// 当前指向链表位置索引
+        /// </summary>
+        private int currentIndex = 0;
 
-        pooledObjects = new List<GameObject>();             // 初始化链表
-        for (int i = 0; i < currentCount; ++i)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="_template"></param>
+        /// <param name="_initCount"></param>
+        /// <param name="_lookPoolSize"></param>
+        public GameObjectPool(GameObject _template,Func<GameObject,bool> _RecycleAction = null, bool _dontDestroyOnLoad = false, int _initCount = 5, int _maxCount = 10, bool _lookPoolSize = false)
         {
-            GameObject obj = Object.Instantiate(template); // 创建对象
+            template = _template;
+            initCount = _initCount;
+            lockPoolSize = _lookPoolSize;
+            dontDestroyOnLoad = _dontDestroyOnLoad;
+            maxCount = _maxCount;
+
+            poolRoot = poolRoot ?? new GameObject("PoolRoot").transform;
+            objParent = new GameObject(template.name + "Pool").transform;
+            objParent.SetParent(poolRoot);
+
             if (dontDestroyOnLoad)
-                Object.DontDestroyOnLoad(obj);
-            obj.SetActive(false);                           // 设置对象无效
-            obj.transform.SetParent(objParent);
-            pooledObjects.Add(obj);                         // 把对象添加到对象池中
-        }
-    }
+                GameObject.DontDestroyOnLoad(objParent);
 
-    /// <summary>
-    /// 获取对象池中可以使用的对象。
-    /// </summary>
-    /// <returns></returns>
-    public GameObject GetPooledObject()
-    {
-        for (int i = 0; i < pooledObjects.Count; ++i)
-        {
-            //每一次遍历都是从上一次被使用的对象的下一个
-            int Item = (currentIndex + i) % pooledObjects.Count;
-            if (!pooledObjects[Item].activeSelf)
+            pooledObjects = new List<Info>();             // 初始化链表
+            for (int i = 0; i < currentCount; ++i)
             {
-                currentIndex = (Item + 1) % pooledObjects.Count;
-                //返回第一个未激活的对象
-                return pooledObjects[Item];
+                Create(template, false);
+            }
+
+            RecycleAction = _RecycleAction ?? ((obj) => { obj.SetActive(false); return true; });
+        }
+
+        /// <summary>
+        /// 将对象池的数量回归5
+        /// </summary>
+        public void Clear()
+        {
+            for (int i = 0; i < pooledObjects.Count; i++)
+            {
+                if (i > initCount)
+                {
+                    GameObject.Destroy(pooledObjects[i].obj);
+                    pooledObjects.Remove(pooledObjects[i]);
+                }
+                else if (pooledObjects[i].obj.activeInHierarchy)
+                {
+                    pooledObjects[i].obj.SetActive(false);
+                }
             }
         }
 
-        //如果遍历完一遍对象库发现没有闲置对象且对象池未达到数量限制
-        if (!lockPoolSize || currentCount < maxCount)
+        /// <summary>
+        /// 获取对象池中可以使用的对象。
+        /// </summary>
+        public GameObject Allocate()
         {
-            GameObject obj = Object.Instantiate(template);
-            obj.transform.SetParent(objParent);
+            for (int i = 0; i < pooledObjects.Count; ++i)
+            {
+                //每一次遍历都是从上一次被使用的对象的下一个
+                int Item = (currentIndex + i) % pooledObjects.Count;
+                if (!pooledObjects[Item].used)
+                {
+                    currentIndex = (Item + 1) % pooledObjects.Count;
+                    //返回第一个未激活的对象
+                    pooledObjects[Item].used = true;
+                    return pooledObjects[Item].obj;
+                }
+            }
+
+            //如果遍历完一遍对象库发现没有闲置对象且对象池未达到数量限制
+            if (!lockPoolSize || currentCount < maxCount)
+            {
+                Info info = Create(template);
+                info.used = false;
+                return Create(template).obj;
+            }
+
+            return null;
+        }
+
+        public bool Recycle(GameObject obj)
+        {
+            return RecycleAction.Invoke(obj);
+        }
+
+        /// <summary>
+        /// 为对象池新增一个对象
+        /// </summary>
+        private Info Create(GameObject template,bool isShow = true)
+        {
+            Info info = new Info(GameObject.Instantiate(template, objParent), false);
             if (dontDestroyOnLoad)
-                Object.DontDestroyOnLoad(obj);
-            pooledObjects.Add(obj);
+                GameObject.DontDestroyOnLoad(info.obj);
+            pooledObjects.Add(info);
             currentCount++;
-            return obj;
+            if (!isShow)
+                info.obj.SetActive(false);
+            return info;
         }
 
-        //如果遍历完没有而且锁定了对象池大小，返回空。
-        return null;
-    }
-
-    /// <summary>
-    /// 将对象池的数量回归5
-    /// </summary>
-    public void Clear()
-    {
-        for (int i = 0; i < pooledObjects.Count; i++)
+        public class Info
         {
-            if (i > initCount)
+            public GameObject obj;
+            public bool used;
+
+            public Info(GameObject _obj,bool _used)
             {
-                Object.Destroy(pooledObjects[i]);
-            }
-            else if (pooledObjects[i].activeInHierarchy)
-            {
-                pooledObjects[i].SetActive(false);
+                obj = _obj;
+                used = _used;
             }
         }
-    }
-
-    public void Test()
-    {
-
     }
 }

@@ -736,8 +736,8 @@ MonoBehaviour:
   onLongClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: XDEDZL.UI.LongOrDoubleBtn+LongClickEvent, Core, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: XDEDZL.UI.LongOrDoubleBtn+LongClickEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onDoubleClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1012,5 +1012,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5d1b4161915e340b4c7d0d78858c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Close: 
-  Open: 
