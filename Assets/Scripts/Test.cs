@@ -21,9 +21,32 @@ public class Test : MonoSingleton<Test>
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            FsmManager.Instance.ChangeState<MouseFsm, State1>();
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            FsmManager.Instance.ChangeState<MouseFsm, State2>();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            FsmManager.Instance.ChangeState<QQQFsm, QQQ1>();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            FsmManager.Instance.ChangeState<QQQFsm, QQQ2>();
+        }
+
+
+
+
+
         if (Input.GetMouseButtonDown(0))
         {
-            GetMaterialIndex(Utility.SendRay());
         }
 
         if (Input.GetKeyDown(KeyCode.J))
