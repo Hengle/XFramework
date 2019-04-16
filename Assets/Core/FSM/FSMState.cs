@@ -14,7 +14,7 @@ using System.Collections.Generic;
 /// which state the FSM should be if a transition is fired while this state
 /// is the current state.
 /// Reason method is used to determine which transition should be fired .
-/// Act method has the code to perform the actions the NPC is supposed to do if it´s on this state.
+/// Act method has the code to perform the actions the NPC is supposed to do if itÂ´s on this state.
 /// </summary>
 public abstract class FSMState
 {
@@ -45,7 +45,7 @@ public abstract class FSMState
     }
 
     /// <summary>
-    /// This method deletes a pair transition-state from this state´s map.    
+    /// This method deletes a pair transition-state from this stateÂ´s map.    
     /// </summary>
     public void DeleteTransition(Transition trans)
     {
@@ -55,7 +55,7 @@ public abstract class FSMState
             map.Remove(trans);
             return;
         }
-        Debug.LogError("FSMState ERROR: Transition passed was not on this State´s List");
+        Debug.LogError("FSMState ERROR: Transition passed was not on this StateÂ´s List");
     }
 
 

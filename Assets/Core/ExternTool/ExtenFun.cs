@@ -327,24 +327,6 @@ public static class ExtenFun
 
     #endregion
 
-    #region Reflection
-
-    /// <summary>
-    /// 通过反射和函数名调用非公有方法
-    /// </summary>
-    /// <param name="obj">目标对象</param>
-    /// <param name="methodName">函数名</param>
-    /// <param name="objs">参数数组</param>
-    public static void Invoke(this object obj, string methodName, params object[] objs)
-    {
-        BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-        Type type = obj.GetType();
-        MethodInfo m = type.GetMethod(methodName, flags);
-        m.Invoke(obj, objs);
-    }
-
-    #endregion
-
     #region Terrain
 
     /// <summary>
