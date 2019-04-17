@@ -1,16 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using XDEDZL.Utility;
 
-public class FsmBase<TState> where TState : FsmState
+/// <summary>
+/// 状态机基类
+/// </summary>
+/// <typeparam name="TState"></typeparam>
+public class FsmBase
 {
-    private readonly Dictionary<string, TState> stateDic;
+    private readonly Dictionary<string, FsmState> stateDic;
 
-    private TState currentState;
+    private FsmState currentState;
 
     public FsmBase()
     {
-        stateDic = new Dictionary<string, TState>();
+        stateDic = new Dictionary<string, FsmState>();
         IsActive = true;
     }
 
@@ -23,29 +26,30 @@ public class FsmBase<TState> where TState : FsmState
         }
     }
 
-    public virtual void ChangeState<T>() where T : TState
+    public virtual void ChangeState<T>() where T : FsmState
     {
-        if (currentState != null)
-        {
-            currentState.OnExit();
-        }
-
+        FsmState tempstate;
         if (stateDic.ContainsKey(typeof(T).Name))
         {
-            currentState = stateDic[typeof(T).Name];
+            tempstate = stateDic[typeof(T).Name];
         }
         else
         {
-            currentState = CreateState<T>();
-            stateDic.Add(typeof(T).Name, currentState);
+            tempstate = CreateState<T>();
+            stateDic.Add(typeof(T).Name, tempstate);
         }
 
-        currentState.OnEnter();
+        if (currentState != tempstate)
+        {
+            currentState?.OnExit();
+            currentState = tempstate;
+            currentState.OnEnter();
+        }
     }
 
-    private TState CreateState<T>() where T : TState
+    private FsmState CreateState<T>() where T : FsmState
     {
-        TState state = ReflectionUtility.CreateInstance<T>();
+        FsmState state = ReflectionUtility.CreateInstance<T>();
         state.Init();
         return state;
     }

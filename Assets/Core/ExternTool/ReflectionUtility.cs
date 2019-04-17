@@ -7,9 +7,13 @@ namespace XDEDZL.Utility
     /// </summary>
     public static class ReflectionUtility
     {
-        public static T CreateInstance<T>() where T : class
+        public static T CreateInstance<T>(params object[] objs) where T : class
         {
-            T instance = Activator.CreateInstance(typeof(T)) as T;
+            T instance;
+            if (objs != null)
+                instance = Activator.CreateInstance(typeof(T), objs) as T;
+            else
+                instance = Activator.CreateInstance(typeof(T)) as T;
             return instance;
         }
     }

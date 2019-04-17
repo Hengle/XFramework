@@ -5,11 +5,11 @@ using XDEDZL.Utility;
 
 public class FsmManager : Singleton<FsmManager>
 {
-    private readonly Dictionary<string, FsmBase<FsmState>> fsmDic;
+    private readonly Dictionary<string, FsmBase> fsmDic;
 
     public FsmManager()
     {
-        fsmDic = new Dictionary<string, FsmBase<FsmState>>();
+        fsmDic = new Dictionary<string, FsmBase>();
         MonoEvent.Instance.UPDATE += OnUpdate;
     }
 
@@ -30,12 +30,12 @@ public class FsmManager : Singleton<FsmManager>
         }
     }
 
-    public void CreateFsm<T>() where T : FsmBase<FsmState>
+    public void CreateFsm<T>() where T : FsmBase
     {
         fsmDic.Add(typeof(T).Name, ReflectionUtility.CreateInstance<T>());
     }
 
-    public bool HasFsm<T>() where T : FsmBase<FsmState>
+    public bool HasFsm<T>() where T : FsmBase
     {
         return fsmDic.ContainsKey(typeof(T).Name);
     }
@@ -45,7 +45,7 @@ public class FsmManager : Singleton<FsmManager>
         return fsmDic.ContainsKey(type.Name);
     }
 
-    public void ChangeState<TFsm,KState>() where TFsm : FsmBase<FsmState> where KState : FsmState
+    public void ChangeState<TFsm,KState>() where TFsm : FsmBase where KState : FsmState
     {
         if (!HasFsm<TFsm>())
         {

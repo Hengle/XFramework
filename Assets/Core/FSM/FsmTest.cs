@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseFsm : FsmBase<FsmState>
+public class MouseFsm : FsmBase
 {
 
 }
@@ -58,7 +58,7 @@ public class State2 : MouseState
 
 
 
-public class QQQFsm : FsmBase<FsmState>
+public class QQQFsm : FsmBase
 {
 
 }
