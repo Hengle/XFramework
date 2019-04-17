@@ -14,7 +14,6 @@ public class Test : MonoSingleton<Test>
 {
     void Start() 
     {
-       
     }
 
 
@@ -33,16 +32,13 @@ public class Test : MonoSingleton<Test>
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            FsmManager.Instance.ChangeState<QQQFsm, QQQ1>();
+            FsmManager.Instance.ChangeState<QQQFsm, State2>();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
             FsmManager.Instance.ChangeState<QQQFsm, QQQ2>();
         }
-
-
-
 
 
         if (Input.GetMouseButtonDown(0))

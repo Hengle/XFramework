@@ -1,10 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using XDEDZL.Utility;
 
+/// <summary>
+/// 状态机管理类
+/// </summary>
 public class FsmManager : Singleton<FsmManager>
 {
+    /// <summary>
+    /// 存储所有状态机的字典
+    /// </summary>
     private readonly Dictionary<string, FsmBase> fsmDic;
 
     public FsmManager()
@@ -22,6 +27,9 @@ public class FsmManager : Singleton<FsmManager>
         }
     }
 
+    /// <summary>
+    /// 状态机的数量
+    /// </summary>
     public int Count
     {
         get
@@ -30,21 +38,35 @@ public class FsmManager : Singleton<FsmManager>
         }
     }
 
+    /// <summary>
+    /// 根据类型创建一个状态机
+    /// </summary>
     public void CreateFsm<T>() where T : FsmBase
     {
         fsmDic.Add(typeof(T).Name, ReflectionUtility.CreateInstance<T>());
     }
 
+    /// <summary>
+    /// 是否包含某种状态机
+    /// </summary>
     public bool HasFsm<T>() where T : FsmBase
     {
         return fsmDic.ContainsKey(typeof(T).Name);
     }
 
+    /// <summary>
+    /// 是否包含某种状态机
+    /// </summary>
     public bool HasFsm(Type type)
     {
         return fsmDic.ContainsKey(type.Name);
     }
 
+    /// <summary>
+    /// 切换对应状态机到对应状态
+    /// </summary>
+    /// <typeparam name="TFsm">状态机类型</typeparam>
+    /// <typeparam name="KState">目标状态</typeparam>
     public void ChangeState<TFsm,KState>() where TFsm : FsmBase where KState : FsmState
     {
         if (!HasFsm<TFsm>())

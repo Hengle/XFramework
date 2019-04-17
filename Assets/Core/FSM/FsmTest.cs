@@ -2,15 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseFsm : FsmBase
-{
-
-}
-public class MouseState : FsmState
-{
-
-}
-
 public class State1 : MouseState
 {
     public override void Init()
@@ -31,6 +22,16 @@ public class State1 : MouseState
     public override void OnExit()
     {
         Debug.Log("State1Exit");
+    }
+
+    public override void OnLeftButtonDown()
+    {
+        Debug.Log("1_Left");
+    }
+
+    public override void OnRightButtonDown()
+    {
+        Debug.Log("1_Right");
     }
 }
 
@@ -54,11 +55,21 @@ public class State2 : MouseState
     {
         Debug.Log("State2Exit");
     }
+
+    public override void OnLeftButtonDown()
+    {
+        Debug.Log("2_Left");
+    }
+
+    public override void OnRightButtonDown()
+    {
+        Debug.Log("2_Right");
+    }
 }
 
 
 
-public class QQQFsm : FsmBase
+public class QQQFsm : Fsm<QQQState>
 {
 
 }
@@ -67,7 +78,7 @@ public class QQQState : FsmState
 
 }
 
-public class QQQ1 : MouseState
+public class QQQ1 : QQQState
 {
     public override void Init()
     {
@@ -89,7 +100,7 @@ public class QQQ1 : MouseState
     }
 }
 
-public class QQQ2 : MouseState
+public class QQQ2 : QQQState
 {
     public override void Init()
     {

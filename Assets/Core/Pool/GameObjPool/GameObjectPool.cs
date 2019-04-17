@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using XDEDZL.Pool;
 using System;
 
 namespace XDEDZL.Pool

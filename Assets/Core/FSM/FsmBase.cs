@@ -1,56 +1,36 @@
 ﻿using System.Collections.Generic;
-using XDEDZL.Utility;
 
 /// <summary>
 /// 状态机基类
+/// 状态机不要基础这个类，请继承Fsm<TState>
 /// </summary>
-/// <typeparam name="TState"></typeparam>
-public class FsmBase
+public abstract class FsmBase
 {
-    private readonly Dictionary<string, FsmState> stateDic;
+    /// <summary>
+    /// 存储该状态机包含的所有状态
+    /// </summary>
+    protected Dictionary<string, FsmState> stateDic;
+    /// <summary>
+    /// 状态机当前状态
+    /// </summary>
+    protected FsmState currentState;
+    /// <summary>
+    /// 状态机是否激活
+    /// </summary>
+    public virtual bool IsActive { get; protected set; }
+    /// <summary>
+    /// 状态切换
+    /// </summary>
+    public abstract FsmState ChangeState<T>() where T : FsmState;
 
-    private FsmState currentState;
-
-    public FsmBase()
-    {
-        stateDic = new Dictionary<string, FsmState>();
-        IsActive = true;
-    }
-
-    public virtual bool IsActive { get; private set; }
+    /// <summary>
+    /// 没帧调用
+    /// </summary>
     public virtual void OnUpdate()
     {
         if (currentState != null)
         {
             currentState.OnUpdate();
         }
-    }
-
-    public virtual void ChangeState<T>() where T : FsmState
-    {
-        FsmState tempstate;
-        if (stateDic.ContainsKey(typeof(T).Name))
-        {
-            tempstate = stateDic[typeof(T).Name];
-        }
-        else
-        {
-            tempstate = CreateState<T>();
-            stateDic.Add(typeof(T).Name, tempstate);
-        }
-
-        if (currentState != tempstate)
-        {
-            currentState?.OnExit();
-            currentState = tempstate;
-            currentState.OnEnter();
-        }
-    }
-
-    private FsmState CreateState<T>() where T : FsmState
-    {
-        FsmState state = ReflectionUtility.CreateInstance<T>();
-        state.Init();
-        return state;
     }
 }
