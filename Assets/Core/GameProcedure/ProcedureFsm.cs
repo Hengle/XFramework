@@ -2,7 +2,7 @@
 /// <summary>
 /// 流程状态机
 /// </summary>
-public class ProcedureFsm : Fsm<ProcedureState>
+public class ProcedureFsm : Fsm<ProcedureBase>
 {
 
 }

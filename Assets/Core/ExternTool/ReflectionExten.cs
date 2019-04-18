@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -22,7 +21,7 @@ public static class ReflectionExtern
     public static string[] GetSonNames(this Type typeBase, string assemblyName = "Assembly-CSharp")
     {
         List<string> typeNames = new List<string>();
-        Assembly assembly = null;
+        Assembly assembly;
         try
         {
             assembly = Assembly.Load(assemblyName);

@@ -39,14 +39,6 @@ public class FsmManager : Singleton<FsmManager>
     }
 
     /// <summary>
-    /// 根据类型创建一个状态机
-    /// </summary>
-    public void CreateFsm<T>() where T : FsmBase
-    {
-        fsmDic.Add(typeof(T).Name, ReflectionUtility.CreateInstance<T>());
-    }
-
-    /// <summary>
     /// 是否包含某种状态机
     /// </summary>
     public bool HasFsm<T>() where T : FsmBase
@@ -74,5 +66,26 @@ public class FsmManager : Singleton<FsmManager>
             CreateFsm<TFsm>();
         }
         fsmDic[typeof(TFsm).Name].ChangeState<KState>();
+    }
+
+    public void ChanegState(Type type1,Type type2)
+    {
+        if(!type1.IsSubclassOf(typeof(FsmBase)) || !type2.IsSubclassOf(typeof(FsmState)))
+        {
+            throw new Exception("类型传入错误");
+        }
+
+        if (!HasFsm(type1))
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// 根据类型创建一个状态机
+    /// </summary>
+    public void CreateFsm<T>() where T : FsmBase
+    {
+        fsmDic.Add(typeof(T).Name, ReflectionUtility.CreateInstance<T>());
     }
 }
