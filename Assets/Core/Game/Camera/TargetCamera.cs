@@ -268,7 +268,7 @@ public class TargetCamera : MonoBehaviour
     public CameraLookAt lookAt = new CameraLookAt();
 
     private Mode prevMode;
-    private BaseCameraMode[] cameraModes = new BaseCameraMode[0];
+    private BaseCameraMode[] cameraModes;
 
     private Transform prevTarget;
     private Rigidbody targetRigidbody;

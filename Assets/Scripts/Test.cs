@@ -14,6 +14,11 @@ public class Test : MonoSingleton<Test>
 {
     void Start() 
     {
+        Debug.Log(typeof(float).ToString());
+        Debug.Log(typeof(float).Name);
+
+        Debug.Log(typeof(Enum).ToString());
+        Debug.Log(typeof(Enum).Name);
     }
 
 
