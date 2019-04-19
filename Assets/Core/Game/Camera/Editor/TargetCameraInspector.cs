@@ -10,32 +10,42 @@ public class TargetCameraInspector : Editor
 {
     private TargetCamera targetCamera;
     private SerializedProperty mode;
-    //private SerializedProperty attachTo;
+    private SerializedProperty attachTo;
+    private SerializedProperty smoothFollow;
+    private SerializedProperty mouseOrbit;
+    private SerializedProperty lookAt;
 
     private void OnEnable()
     {
         targetCamera = (TargetCamera)target;
         mode = serializedObject.FindProperty("mode");
-        //attachTo = serializedObject.FindProperty("attachTo");
+        attachTo = serializedObject.FindProperty("attachTo");
+        smoothFollow = serializedObject.FindProperty("smoothFollow");
+        mouseOrbit = serializedObject.FindProperty("mouseOrbit");
+        lookAt = serializedObject.FindProperty("lookAt");
     }
 
     public override void OnInspectorGUI()
     {
         EditorGUILayout.PropertyField(mode);
         SerializableObj(targetCamera);
+        //GUI.backgroundColor = new Color32(0,170,255,30);
         switch (targetCamera.mode)
         {
             case TargetCamera.Mode.AttachTo:
+                //EditorGUILayout.PropertyField(attachTo, true);
                 SerializableObj(targetCamera.attachTo);
                 break;
             case TargetCamera.Mode.SmoothFollow:
-                //EditorGUILayout.PropertyField(attachTo, true);
+                //EditorGUILayout.PropertyField(smoothFollow, true);
                 SerializableObj(targetCamera.smoothFollow);
                 break;
             case TargetCamera.Mode.MouseOrbit:
+                //EditorGUILayout.PropertyField(mouseOrbit, true);
                 SerializableObj(targetCamera.mouseOrbit);
                 break;
             case TargetCamera.Mode.LookAt:
+                //EditorGUILayout.PropertyField(lookAt, true);
                 SerializableObj(targetCamera.lookAt);
                 break;
             default:
