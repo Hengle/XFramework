@@ -8,47 +8,26 @@ using UnityEngine.Networking;
 using System.Collections;
 using XDEDZL.Collections;
 using XDEDZL.UI;
+using XDEDZL.Extd;
 using UnityEditor;
 
 public class Test : MonoSingleton<Test>
 {
     void Start() 
     {
-        Debug.Log(typeof(float).ToString());
-        Debug.Log(typeof(float).Name);
+        //Debug.Log((int)'a');
+        //Debug.Log((int)'z');
+        //Debug.Log((int)'A');
+        //Debug.Log((int)'Z');
 
-        Debug.Log(typeof(Enum).ToString());
-        Debug.Log(typeof(Enum).Name);
+        Debug.Log("fasdKuhfrDEdaskhj".AddSpace());
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            FsmManager.Instance.ChangeState<MouseFsm, State1>();
-        }
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            FsmManager.Instance.ChangeState<MouseFsm, State2>();
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            FsmManager.Instance.ChangeState<QQQFsm, State2>();
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            FsmManager.Instance.ChangeState<QQQFsm, QQQ2>();
-        }
-
-
-        if (Input.GetMouseButtonDown(0))
-        {
-        }
 
         if (Input.GetKeyDown(KeyCode.J))
         {

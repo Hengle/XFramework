@@ -169,5 +169,58 @@ namespace XDEDZL.Extd
         }
 
         #endregion
+
+        #region String
+
+        /// <summary>
+        /// 首字母大写
+        /// </summary>
+        public static string InitialToUpper(this string str)
+        {
+            return str.Substring(0,1).ToUpper() + str.Substring(1);
+        }
+
+        /// <summary>
+        /// 在大写字符前加空格
+        /// </summary>
+        /// <param name="upper">首字母是否大写</param>
+        /// <returns></returns>
+        public static string AddSpace(this string str,bool upper = true)
+        {
+            char[] chars = str.ToCharArray();
+            List<int> indexs = new List<int>();
+
+            if(upper && chars[0] >= 97 && chars[0] <= 122)
+            {
+                chars[0] = (char)(chars[0] - 32);
+            }
+
+            for (int i = 1,length = chars.Length; i < length; i++)
+            {
+                if(chars[i] >= 65 && chars[i] <= 90)
+                {
+                    indexs.Add(i);
+                }
+            }
+
+            char[] ret = new char[chars.Length + indexs.Count];
+
+            // i => chars, k => ret, j => indexs
+            for (int i = 0,k = 0,j = 0 ,length = chars.Length; i < length; i++,k++)
+            {
+                if(j<indexs.Count && i == indexs[j])
+                {
+                    ret[k] = ' ';
+                    k++;
+                    j++;
+                }
+
+                ret[k] = chars[i];
+            }
+
+            return new string(ret);
+        }
+
+        #endregion
     }
 }

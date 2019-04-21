@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace XDEDZL.Utility
 {
@@ -25,6 +27,31 @@ namespace XDEDZL.Utility
             else
                 instance = Activator.CreateInstance(type) as T;
             return instance;
+        }
+
+        public static List<Type> GetInterfaceSon(Type typeBase, string assemblyName = "Assembly-CSharp")
+        {
+            if (!typeBase.IsInterface)
+            {
+                throw new Exception("参数错误，应为接口");
+            }
+
+            List<Type> types = new List<Type>();
+            Assembly assembly = Assembly.Load(assemblyName);
+            if (assembly == null)
+            {
+                throw new Exception("没有找到程序集");
+            }
+
+            Type[] allType = assembly.GetTypes();
+            foreach (Type type in allType)
+            {
+                if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeBase))
+                {
+                    types.Add(type);
+                }
+            }
+            return types;
         }
     }
 }

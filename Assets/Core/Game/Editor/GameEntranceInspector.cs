@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using XDEDZL.UI;
-using XDEDZL;
+using XDEDZL.Extd;
 
 [CustomEditor(typeof(GameEntrance))]
 public class GameEntranceInspector : Editor

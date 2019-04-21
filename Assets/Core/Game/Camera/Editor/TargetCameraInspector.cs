@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System;
 using System.Reflection;
+using XDEDZL.Extd;
 
 [CustomEditor(typeof(TargetCamera),true),CanEditMultipleObjects]
 public class TargetCameraInspector : Editor
@@ -72,29 +71,29 @@ public class TargetCameraInspector : Editor
             switch (field.FieldType.ToString())
             {
                 case "System.Int32":
-                    field.SetValue(obj, EditorGUILayout.IntField(field.Name, (int)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.IntField(field.Name.AddSpace(), (int)field.GetValue(obj)));
                     break;
                 case "System.Single":
-                    field.SetValue(obj, EditorGUILayout.FloatField(field.Name, (float)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.FloatField(field.Name.AddSpace(), (float)field.GetValue(obj)));
                     break;
                 case "System.Double":
-                    field.SetValue(obj, EditorGUILayout.DoubleField(field.Name, (double)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.DoubleField(field.Name.AddSpace(), (double)field.GetValue(obj)));
                     break;
                 case "System.Boolean":
-                    field.SetValue(obj, EditorGUILayout.Toggle(field.Name, (bool)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.Toggle(field.Name.AddSpace(), (bool)field.GetValue(obj)));
                     break;
                 case "System.String":
-                    field.SetValue(obj, EditorGUILayout.TextField(field.Name, (string)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.TextField(field.Name.AddSpace(), (string)field.GetValue(obj)));
                     break;
                 case "System.Enum":
                     Debug.Log("a");
-                    field.SetValue(obj, EditorGUILayout.EnumPopup(field.Name, (Enum)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.EnumPopup(field.Name.AddSpace(), (Enum)field.GetValue(obj)));
                     break;
                 case "UnityEngine.Transform":
-                    field.SetValue(obj, EditorGUILayout.ObjectField(field.Name, (Transform)field.GetValue(obj), typeof(Transform), true) as Transform);
+                    field.SetValue(obj, EditorGUILayout.ObjectField(field.Name.AddSpace(), (Transform)field.GetValue(obj), typeof(Transform), true) as Transform);
                     break;
                 case "UnityEngine.Vector3":
-                    field.SetValue(obj, EditorGUILayout.Vector3Field(field.Name, (Vector3)field.GetValue(obj)));
+                    field.SetValue(obj, EditorGUILayout.Vector3Field(field.Name.AddSpace(), (Vector3)field.GetValue(obj)));
                     break;
                 case "UnityEngine.Vector2":
                     field.SetValue(obj, EditorGUILayout.Vector2Field(field.Name, (Vector3)field.GetValue(obj)));
