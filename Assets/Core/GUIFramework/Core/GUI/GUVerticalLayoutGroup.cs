@@ -92,5 +92,22 @@ namespace XDEDZL.UI
         {
             return Instantiate(entityTemplate,transform);
         }
+
+        /// <summary>
+        /// 删除所有子物体
+        /// </summary>
+        public void Clear()
+        {
+            for (int i = verticalLayoutGroup.transform.childCount; i > 0; i--)
+            {
+                Destroy(verticalLayoutGroup.transform.GetChild(i - 1).gameObject);
+            }
+        }
+
+        public void SetEntity(GameObject template)
+        {
+            entityTemplate = template;
+            entityTemplate.transform.position = Vector3.up * 100000;
+        }
     }
 }
