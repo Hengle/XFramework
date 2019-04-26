@@ -8,6 +8,5 @@ xdedzl.csproj
 xdedzl.Editor.csproj
 xdedzl.sln
 .vs
-Packages
 *.csproj
 Assets/zNewTechniqueTest.meta
