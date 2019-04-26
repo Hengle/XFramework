@@ -72,7 +72,7 @@ public class CreatePanel : BasePanel {
     /// <param name="panelType"></param>
     private void OnClick(string panelType)
     {
-        UIHelper.Instance.OpenPanel(panelType);
+        UIHelper.Instance.Open(panelType);
         
 
         Vector2 rectSize = rect.sizeDelta;

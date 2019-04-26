@@ -17,6 +17,6 @@ public class MainPanel : BasePanel {
     /// <param name="_type"></param>
     private void OnClick(string _type)
     {
-        UIHelper.Instance.OpenPanel(_type);
+        UIHelper.Instance.Open(_type);
     }
 }

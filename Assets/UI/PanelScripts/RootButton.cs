@@ -5,7 +5,9 @@ public class RootButton : MonoBehaviour {
 
     private Button startBtn;
 
-	void Start () {
+	void Start ()
+    {
+        Screen.SetResolution(1920, 1080, true);
         startBtn = GetComponent<Button>();
         startBtn.onClick.AddListener(OnClick);
         GetComponent<Image>().alphaHitTestMinimumThreshold = 0.1f;
@@ -14,7 +16,15 @@ public class RootButton : MonoBehaviour {
     public void OnClick()
     {
         // 显示主界面
-        UIHelper.Instance.OpenPanel(UIName.Main);
+        UIHelper.Instance.Open(UIName.Main);
     }
-	
+
+    private void Update()
+    {
+        // 打开/关闭设置界面
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UIHelper.Instance.Open(UIName.Setting);
+        }
+    }
 }

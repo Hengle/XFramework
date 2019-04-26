@@ -1,9 +1,10 @@
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Events;
+using XDEDZL.UI;
 
 [RequireComponent(typeof(Toggle))]
-public class GUToggle : MonoBehaviour
+public class GUToggle : BaseGUI
 {
     public Toggle toggle;
 

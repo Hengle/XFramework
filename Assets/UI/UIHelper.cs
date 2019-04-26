@@ -53,7 +53,7 @@ public class UIHelper : Singleton<UIHelper>
     /// <summary>
     /// 打开面板
     /// </summary>
-    public void OpenPanel(string name)
+    public void Open(string name)
     {
         UImanager.OpenPanel(name);
     }
@@ -62,7 +62,7 @@ public class UIHelper : Singleton<UIHelper>
     /// 关闭面板
     /// </summary>
     /// <param name="name"></param>
-    public void ClosePanel(string name)
+    public void Close(string name)
     {
         UImanager.ClosePanel(name);
     }
@@ -124,6 +124,6 @@ public class UIHelper : Singleton<UIHelper>
     {
         VerifyOperate = action;
         VerifyText.text = showText;
-        OpenPanel(UIName.Verify);
+        Open(UIName.Verify);
     }
 }
