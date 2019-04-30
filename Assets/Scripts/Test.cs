@@ -13,22 +13,34 @@ using UnityEditor;
 
 public class Test : MonoSingleton<Test>
 {
+    public GameObject obj;
+    private Material lineMaterial;
+    public SpriteRenderer sprite;
+    public Mesh mesh;
     void Start() 
     {
-        //Debug.Log((int)'a');
-        //Debug.Log((int)'z');
-        //Debug.Log((int)'A');
-        //Debug.Log((int)'Z');
 
-        Debug.Log("fasdKuhfrDEdaskhj".AddSpace());
+        
+        lineMaterial = new Material(Shader.Find("RunTimeHandles/VertexColor"));
+        lineMaterial.color = Color.white;
+
+    }
+
+    private void OnPostRender()
+    {
+        //for (int i = 0; i < 200; i++)
+        //{
+        //    for (int j = 0; j < 200; j++)
+        //    {
+        //        Graphics.DrawMeshNow(mesh,new Vector3(i,0,j),Quaternion.identity);
+        //    }
+        //}
     }
 
 
     // Update is called once per frame
     void Update()
     {
-
-
         if (Input.GetKeyDown(KeyCode.J))
         {
             Debug.LogError(Application.dataPath);
