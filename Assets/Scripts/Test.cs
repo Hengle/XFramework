@@ -10,6 +10,7 @@ using XDEDZL.Collections;
 using XDEDZL.UI;
 using XDEDZL.Extd;
 using UnityEditor;
+using System.Text.RegularExpressions;
 
 public class Test : MonoSingleton<Test>
 {
@@ -19,10 +20,17 @@ public class Test : MonoSingleton<Test>
     public Mesh mesh;
     void Start() 
     {
-
-        
         lineMaterial = new Material(Shader.Find("RunTimeHandles/VertexColor"));
         lineMaterial.color = Color.white;
+
+
+        Regex reg = new Regex("[0-9]*[.]{1}[0-9]*");
+        MatchCollection matchs = reg.Matches("(1.25,2,5.33,5.2222222)");
+        Debug.Log(matchs.Count);
+        for (int i = 0; i < matchs.Count; i++)
+        {
+            Debug.Log(matchs[i].Value);
+        }
 
     }
 
