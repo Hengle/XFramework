@@ -20,26 +20,36 @@ namespace XDEDZL
             }
         }
 
-        public static GameModule GetModule<T>()
+        /// <summary>
+        /// 获取一个模块
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T GetModule<T>() where T : GameModule
         {
             Type moduleType = typeof(T);
             foreach (var module in gameModules)
             {
                 if(module.GetType() == moduleType)
                 {
-                    return module;
+                    return module as T;
                 }
             }
 
-            return CreateModule(moduleType);
+            return CreateModule(moduleType) as T;
         }
 
+        /// <summary>
+        /// 创建一个模块
+        /// </summary>
+        /// <param name="moduleType"></param>
+        /// <returns></returns>
         private static GameModule CreateModule(Type moduleType)
         {
             GameModule module = (GameModule)Activator.CreateInstance(moduleType);
             if (module == null)
             {
-                throw new Exception(moduleType.Name + " is not a module");
+                throw new System.Exception(moduleType.Name + " is not a module");
             }
 
             LinkedListNode<GameModule> current = gameModules.First;

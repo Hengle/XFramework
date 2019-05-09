@@ -9,6 +9,11 @@ namespace XDEDZL.Utility
     /// </summary>
     public static class ReflectionUtility
     {
+        /// <summary>
+        /// 创建一个对象
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="objs">参数</param>
         public static T CreateInstance<T>(params object[] objs) where T : class
         {
             T instance;
@@ -19,6 +24,13 @@ namespace XDEDZL.Utility
             return instance;
         }
 
+        /// <summary>
+        /// 创建一个对象
+        /// </summary>
+        /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="type">类型</param>
+        /// <param name="objs">参数数组</param>
+        /// <returns></returns>
         public static T CreateInstance<T>(Type type,params object[] objs) where T : class
         {
             T instance;
@@ -33,14 +45,14 @@ namespace XDEDZL.Utility
         {
             if (!typeBase.IsInterface)
             {
-                throw new Exception("参数错误，应为接口");
+                throw new System.Exception("参数错误，应为接口");
             }
 
             List<Type> types = new List<Type>();
             Assembly assembly = Assembly.Load(assemblyName);
             if (assembly == null)
             {
-                throw new Exception("没有找到程序集");
+                throw new System.Exception("没有找到程序集");
             }
 
             Type[] allType = assembly.GetTypes();

@@ -172,7 +172,7 @@ public class PhysicsMath
         }
         catch (IndexOutOfRangeException ex)
         {
-            throw new Exception(ex.Message);
+            throw new System.Exception(ex.Message);
         }
     }
 

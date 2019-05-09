@@ -41,7 +41,7 @@ namespace XDEDZL.Pool
         {
             if (!PoolTemplateDic.ContainsKey(name))
             {
-                throw new Exception("已有名为" + name + "的对象池");
+                throw new System.Exception("已有名为" + name + "的对象池");
             }
 
             if (!poolDic.TryGetValue(name, out GameObjectPool pool))

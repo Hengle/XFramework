@@ -6,32 +6,13 @@ using System.Collections.Generic;
 /// </summary>
 public enum MessageEventType
 {    
-    HIDE_UI_ON_CHANGE_SCENE, // 隐藏UI
-
-    ON_CHANGESOUND_TOGGLE,   // 音乐开关
-
     A,
     B,
-}
-
-public class BroadcastException : Exception
-{
-    public BroadcastException(string msg) : base(msg)
-    {
-    }
-}
-
-public class List : Exception
-{
-    public List(string msg) : base(msg)
-    {
-    }
 }
 
 //=====================================================================================/
 /// <summary>
 /// 消息类 全局类消息
-/// 这个类暂时感觉没什么鸟用
 /// </summary>
 //=====================================================================================.
 public class Messenger : Singleton<Messenger>
@@ -127,7 +108,7 @@ public class Messenger : Singleton<Messenger>
 
         if (d != null && d.GetType() != listenerBeingAdded.GetType())
         {
-            throw new List(string.Format("Attempting to add listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being added has type {2}", eventType, d.GetType().Name, listenerBeingAdded.GetType().Name));
+            throw new Exception(string.Format("Attempting to add listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being added has type {2}", eventType, d.GetType().Name, listenerBeingAdded.GetType().Name));
         }
     }
 
@@ -139,16 +120,16 @@ public class Messenger : Singleton<Messenger>
 
             if (d == null)
             {
-                throw new List(string.Format("Attempting to remove listener with for event type \"{0}\" but current listener is null.", eventType));
+                throw new Exception(string.Format("Attempting to remove listener with for event type \"{0}\" but current listener is null.", eventType));
             }
             else if (d.GetType() != listenerBeingRemoved.GetType())
             {
-                throw new List(string.Format("Attempting to remove listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being removed has type {2}", eventType, d.GetType().Name, listenerBeingRemoved.GetType().Name));
+                throw new Exception(string.Format("Attempting to remove listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being removed has type {2}", eventType, d.GetType().Name, listenerBeingRemoved.GetType().Name));
             }
         }
         else
         {
-            throw new List(string.Format("Attempting to remove listener for type \"{0}\" but Messenger doesn't know about this event type.", eventType));
+            throw new Exception(string.Format("Attempting to remove listener for type \"{0}\" but Messenger doesn't know about this event type.", eventType));
         }
     }
 
@@ -327,9 +308,9 @@ public class Messenger : Singleton<Messenger>
         return false;
     }
 
-    public BroadcastException CreateBroadcastSignatureException(MessageEventType eventType)
+    public Exception CreateBroadcastSignatureException(MessageEventType eventType)
     {
-        return new BroadcastException(string.Format("Broadcasting message \"{0}\" but listeners have a different signature than the broadcaster.", eventType));
+        return new System.Exception(string.Format("Broadcasting message \"{0}\" but listeners have a different signature than the broadcaster.", eventType));
     }
 
     #endregion CheckEventListener
@@ -337,10 +318,5 @@ public class Messenger : Singleton<Messenger>
     public void Cleanup()
     {
         m_eventDictionary.Clear();
-    }
-
-    public void Log()
-    {
-        
     }
 }

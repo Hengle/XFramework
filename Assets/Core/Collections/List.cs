@@ -16,11 +16,11 @@ namespace XDEDZL.Collections
             {
                 if(count == 0)
                 {
-                    throw new Exception("List has no node.");
+                    throw new System.Exception("List has no node.");
                 }
                 else if(index > count - 1)
                 {
-                    throw new Exception("Index was outside the bounds of the List.");
+                    throw new System.Exception("Index was outside the bounds of the List.");
                 }
                 else
                 {
@@ -36,11 +36,11 @@ namespace XDEDZL.Collections
             {
                 if (count == 0)
                 {
-                    throw new Exception("List has no node.");
+                    throw new System.Exception("List has no node.");
                 }
                 else if (index > count - 1)
                 {
-                    throw new Exception("Index was outside the bounds of the List.");
+                    throw new System.Exception("Index was outside the bounds of the List.");
                 }
                 else
                 {

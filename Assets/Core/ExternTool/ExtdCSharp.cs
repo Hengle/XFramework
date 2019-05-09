@@ -55,7 +55,7 @@ namespace XDEDZL.Extd
         {
             if (array_0.GetLength(0) != array_1.GetLength(0))
             {
-                throw new Exception("两个数组第一维不一致");
+                throw new System.Exception("两个数组第一维不一致");
             }
             T[,] ret = new T[array_0.GetLength(0), array_0.GetLength(1) + array_1.GetLength(1)];
             for (int i = 0; i < array_0.GetLength(0); i++)
@@ -82,7 +82,7 @@ namespace XDEDZL.Extd
         {
             if (array_0.GetLength(1) != array_1.GetLength(1))
             {
-                throw new Exception("两个数组第二维不一致");
+                throw new System.Exception("两个数组第二维不一致");
             }
             T[,] ret = new T[array_0.GetLength(0) + array_1.GetLength(0), array_0.GetLength(1)];
             for (int i = 0; i < array_0.GetLength(0); i++)
@@ -115,7 +115,7 @@ namespace XDEDZL.Extd
         {
             if (base_0 + length_0 > array.GetLength(0) || base_1 + length_1 > array.GetLength(1))
             {
-                throw new Exception("索引超出范围");
+                throw new System.Exception("索引超出范围");
             }
             T[,] ret = new T[length_0, length_1];
             for (int i = 0; i < length_0; i++)

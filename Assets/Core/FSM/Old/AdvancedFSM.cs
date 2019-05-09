@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace XDEDZL.OldFsm
 {
     /// <summary>
-    /// ×´Ì¬×ª»»ÖÖÀà
+    /// ×´Ì¬×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public enum Transition
     {

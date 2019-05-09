@@ -26,7 +26,7 @@ class MySqlOpr
         {
             dbConn = new MySqlConnection(uri);
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.LogError(e.Message);
             return null;
@@ -38,7 +38,7 @@ class MySqlOpr
             {
                 dbConn.Open();
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 LogError("数据库连接失败" + e.Message);
             }
@@ -443,7 +443,7 @@ class MySqlOpr
             reader = cmd.ExecuteReader();
             cmd.Dispose();
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.LogError("读取数据库报错");
             Debug.LogError(e.Message);
@@ -646,7 +646,7 @@ class MySqlOpr
             //dataReader.Close();
             return dataReader;
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.Log("[DataMgr]SelectRegion fail   " + e.Message);
             return null;

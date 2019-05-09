@@ -19,19 +19,7 @@ public class Fsm<TState> : FsmBase where TState : FsmState
     /// <typeparam name="T"></typeparam>
     public override FsmState ChangeState<T>()
     {
-        FsmState tempstate;
-        if (stateDic.ContainsKey(typeof(T).Name))
-        {
-            tempstate = stateDic[typeof(T).Name];
-        }
-        else
-        {
-            tempstate = CreateState<T>();
-            if (!(tempstate is TState))
-                throw new System.Exception("状态类型设置错误");
-
-            stateDic.Add(typeof(T).Name, tempstate);
-        }
+        FsmState tempstate = GetState<T>();
 
         if (currentState != tempstate)
         {
@@ -45,9 +33,13 @@ public class Fsm<TState> : FsmBase where TState : FsmState
     /// <summary>
     /// 创建对应状态
     /// </summary>
-    private FsmState CreateState<T>() where T : FsmState
+    protected override FsmState CreateState<T>()
     {
         FsmState state = ReflectionUtility.CreateInstance<T>();
+
+        if (!(state is TState))
+            throw new System.Exception("状态类型设置错误");
+
         state.Init();
         return state;
     }

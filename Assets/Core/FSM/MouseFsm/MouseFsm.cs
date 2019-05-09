@@ -9,11 +9,11 @@ public class MouseFsm : Fsm<MouseState>
     /// <summary>
     /// 当前鼠标状态
     /// </summary>
-    public MouseState currentMouseState { get; private set; }
+    public MouseState CurrentMouseState { get; private set; }
     /// <summary>
     /// 当前模块的默认鼠标状态
     /// </summary>
-    private MouseState DefaultState;
+    private MouseState defaultState;
     /// <summary>
     /// 鼠标在上一帧的位置
     /// </summary>
@@ -23,11 +23,6 @@ public class MouseFsm : Fsm<MouseState>
     /// </summary>
     public bool MouseMove { get; private set; }
 
-    public MouseFsm()
-    {
-
-    }
-
     public override void OnUpdate()
     {
         //处理鼠标事件 当点击UI面板时不处理
@@ -35,32 +30,32 @@ public class MouseFsm : Fsm<MouseState>
         {
             if (Input.GetMouseButtonDown(0))
             {
-                currentMouseState.OnLeftButtonDown();
+                CurrentMouseState.OnLeftButtonDown();
             }
             else if (Input.GetMouseButton(0))
             {
-                currentMouseState.OnLeftButtonHold();
+                CurrentMouseState.OnLeftButtonHold();
             }
             else if (Input.GetMouseButtonUp(0))
             {
-                currentMouseState.OnLeftButtonUp();
+                CurrentMouseState.OnLeftButtonUp();
             }
 
             else if (Input.GetMouseButtonDown(1))
             {
-                currentMouseState.OnRightButtonDown();
+                CurrentMouseState.OnRightButtonDown();
             }
             else if (Input.GetMouseButton(1))
             {
-                currentMouseState.OnRightButtonHold();
+                CurrentMouseState.OnRightButtonHold();
             }
             else if (Input.GetMouseButtonUp(1))
             {
-                currentMouseState.OnRightButtonUp();
+                CurrentMouseState.OnRightButtonUp();
             }
         }
 
-        currentMouseState.OnUpdate();
+        CurrentMouseState.OnUpdate();
 
         if (Input.mousePosition != lastPosition)
         {
@@ -75,7 +70,7 @@ public class MouseFsm : Fsm<MouseState>
 
     public override FsmState ChangeState<T>()
     {
-        currentMouseState = (MouseState)base.ChangeState<T>();
-        return currentMouseState;
+        CurrentMouseState = (MouseState)base.ChangeState<T>();
+        return CurrentMouseState;
     }
 }

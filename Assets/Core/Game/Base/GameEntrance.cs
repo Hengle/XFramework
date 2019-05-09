@@ -1,20 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XDEDZL;
 
 public class GameEntrance : MonoBehaviour
 {
-
-
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        GameEntry.ModelUpdate(Time.deltaTime, Time.unscaledDeltaTime);
     }
 }

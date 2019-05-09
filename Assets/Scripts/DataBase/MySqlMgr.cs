@@ -140,7 +140,7 @@ public class MySqlMgr : Singleton<MySqlMgr>
                             break;
                         case "UnityEngine.Vector2[]":
                             string typeName = reader.GetString(p.Name);
-                            if (!String.IsNullOrEmpty(typeName))// 安全校验
+                            if (!string.IsNullOrEmpty(typeName))// 安全校验
                             {
                                 p.SetValue(entity, GetVector2s(typeName));
                             }
@@ -165,7 +165,7 @@ public class MySqlMgr : Singleton<MySqlMgr>
                 returnDatas.Add(dicKey, entity);// 加入字典
             }
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.Log("[表转类读写出错] " + e.Message);
             Debug.Log("第" + id + "个数据有错");

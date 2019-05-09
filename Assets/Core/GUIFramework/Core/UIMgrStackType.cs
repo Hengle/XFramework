@@ -140,7 +140,7 @@ namespace XDEDZL.UI
                 basePanel.Init(instPanel, uiname);
                 if (basePanel == null)
                 {
-                    throw new Exception("面板类名错误");
+                    throw new System.Exception("面板类名错误");
                 }
                 panelDict.Add(uiname, basePanel);
 

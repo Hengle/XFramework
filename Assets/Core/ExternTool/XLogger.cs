@@ -52,14 +52,14 @@ public class XLogger : MonoBehaviour
         Debug.LogError((object)info, obj);
     }
 
-    public static void LogException(Exception info)
+    public static void LogException(System.Exception info)
     {
         if (!XLogger.bDebug)
             return;
         Debug.LogException(info);
     }
 
-    public static void LogException(Exception info, UnityEngine.Object obj)
+    public static void LogException(System.Exception info, UnityEngine.Object obj)
     {
         if (!XLogger.bDebug)
             return;

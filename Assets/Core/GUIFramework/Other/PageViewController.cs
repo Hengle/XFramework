@@ -28,7 +28,7 @@ public class PageViewController : MonoBehaviour
             int idnex = int.Parse(inputField.text);
             pageView.PageTo(idnex - 1);
         }
-        catch (Exception ex)
+        catch (System.Exception ex)
         {
             Debug.LogWarning("请输入数字" + ex.ToString());
         }

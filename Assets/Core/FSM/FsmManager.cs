@@ -15,9 +15,12 @@ public class FsmManager : Singleton<FsmManager>
     public FsmManager()
     {
         fsmDic = new Dictionary<string, FsmBase>();
-        MonoEvent.Instance.UPDATE += OnUpdate;
+        MonoEvent.Instance.UPDATE += OnUpdate;     //TODO 日后删除MonoEvent，这里交给游戏系统管理
     }
 
+    /// <summary>
+    /// 每帧调用处于激活状态的状态机
+    /// </summary>
     public void OnUpdate()
     {
         foreach (var fsm in fsmDic.Values)
@@ -43,7 +46,7 @@ public class FsmManager : Singleton<FsmManager>
     /// </summary>
     public bool HasFsm<T>() where T : FsmBase
     {
-        return fsmDic.ContainsKey(typeof(T).Name);
+        return HasFsm(typeof(T));
     }
 
     /// <summary>
@@ -68,14 +71,14 @@ public class FsmManager : Singleton<FsmManager>
         fsmDic[typeof(TFsm).Name].ChangeState<KState>();
     }
 
-    public void ChanegState(Type type1,Type type2)
+    public void ChanegState(Type typeFsm,Type typeState)
     {
-        if(!type1.IsSubclassOf(typeof(FsmBase)) || !type2.IsSubclassOf(typeof(FsmState)))
+        if(!typeFsm.IsSubclassOf(typeof(FsmBase)) || !typeState.IsSubclassOf(typeof(FsmState)))
         {
-            throw new Exception("类型传入错误");
+            throw new System.Exception("类型传入错误");
         }
 
-        if (!HasFsm(type1))
+        if (!HasFsm(typeFsm))
         {
 
         }
