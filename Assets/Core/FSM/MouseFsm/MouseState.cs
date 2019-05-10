@@ -11,6 +11,7 @@ public class MouseState : FsmState
     /// 左键抬起
     /// </summary>
     public virtual void OnLeftButtonUp() { }
+
     /// <summary>
     /// 右键按下
     /// </summary>
@@ -23,4 +24,17 @@ public class MouseState : FsmState
     /// 右键抬起
     /// </summary>
     public virtual void OnRightButtonUp() { }
+
+    /// <summary>
+    /// 右键按下
+    /// </summary>
+    public virtual void OnCenterButtonDown() { }
+    /// <summary>
+    /// 右键保持按下状态
+    /// </summary>
+    public virtual void OnCenterButtonHold() { }
+    /// <summary>
+    /// 右键抬起
+    /// </summary>
+    public virtual void OnCenterButtonUp() { }
 }

@@ -23,7 +23,10 @@
         /// <param name="elapseSeconds">逻辑运行时间，以秒为单位。</param>
         /// <param name="realElapseSeconds">真实运行时间，以秒为单位。</param>
         internal abstract void Update(float elapseSeconds, float realElapseSeconds);
-
+        /// <summary>
+        /// 启用一个游戏模块
+        /// </summary>
+        internal abstract void Init();
         /// <summary>
         /// 关闭并清理游戏框架模块。
         /// </summary>

@@ -1,76 +1,86 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>
-/// 鼠标事件
-/// </summary>
-public class MouseFsm : Fsm<MouseState>
+namespace XDEDZL
 {
     /// <summary>
-    /// 当前鼠标状态
+    /// 鼠标事件
     /// </summary>
-    public MouseState CurrentMouseState { get; private set; }
-    /// <summary>
-    /// 当前模块的默认鼠标状态
-    /// </summary>
-    private MouseState defaultState;
-    /// <summary>
-    /// 鼠标在上一帧的位置
-    /// </summary>
-    private Vector3 lastPosition;
-    /// <summary>
-    /// 鼠标是否移动
-    /// </summary>
-    public bool MouseMove { get; private set; }
-
-    public override void OnUpdate()
+    public sealed class MouseFsm : Fsm<MouseState>
     {
-        //处理鼠标事件 当点击UI面板时不处理
-        if (!EventSystem.current.IsPointerOverGameObject())
+        /// <summary>
+        /// 当前鼠标状态
+        /// </summary>
+        public MouseState CurrentMouseState
         {
-            if (Input.GetMouseButtonDown(0))
+            get
             {
-                CurrentMouseState.OnLeftButtonDown();
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                CurrentMouseState.OnLeftButtonHold();
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                CurrentMouseState.OnLeftButtonUp();
-            }
-
-            else if (Input.GetMouseButtonDown(1))
-            {
-                CurrentMouseState.OnRightButtonDown();
-            }
-            else if (Input.GetMouseButton(1))
-            {
-                CurrentMouseState.OnRightButtonHold();
-            }
-            else if (Input.GetMouseButtonUp(1))
-            {
-                CurrentMouseState.OnRightButtonUp();
+                return (MouseState)CurrentState;
             }
         }
+        /// <summary>
+        /// 鼠标在上一帧的位置
+        /// </summary>
+        private Vector3 lastPosition;
+        /// <summary>
+        /// 鼠标是否移动
+        /// </summary>
+        public bool MouseMove { get; private set; }
 
-        CurrentMouseState.OnUpdate();
-
-        if (Input.mousePosition != lastPosition)
+        internal override void OnUpdate()
         {
-            lastPosition = Input.mousePosition;
-            MouseMove = true;
-        }
-        else
-        {
-            MouseMove = false;
-        }
-    }
+            //处理鼠标事件 当点击UI面板时不处理
+            if (!EventSystem.current.IsPointerOverGameObject())
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    CurrentMouseState.OnLeftButtonDown();
+                }
+                else if (Input.GetMouseButton(0))
+                {
+                    CurrentMouseState.OnLeftButtonHold();
+                }
+                else if (Input.GetMouseButtonUp(0))
+                {
+                    CurrentMouseState.OnLeftButtonUp();
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    CurrentMouseState.OnRightButtonDown();
+                }
+                else if (Input.GetMouseButton(1))
+                {
+                    CurrentMouseState.OnRightButtonHold();
+                }
+                else if (Input.GetMouseButtonUp(1))
+                {
+                    CurrentMouseState.OnRightButtonUp();
+                }
+                else if (Input.GetMouseButtonDown(2))
+                {
+                    CurrentMouseState.OnCenterButtonDown();
+                }
+                else if (Input.GetMouseButton(2))
+                {
+                    CurrentMouseState.OnCenterButtonHold();
+                }
+                else if (Input.GetMouseButtonUp(2))
+                {
+                    CurrentMouseState.OnCenterButtonUp();
+                }
+            }
 
-    public override FsmState ChangeState<T>()
-    {
-        CurrentMouseState = (MouseState)base.ChangeState<T>();
-        return CurrentMouseState;
+            CurrentMouseState.OnUpdate();
+
+            if (Input.mousePosition != lastPosition)
+            {
+                lastPosition = Input.mousePosition;
+                MouseMove = true;
+            }
+            else
+            {
+                MouseMove = false;
+            }
+        }
     }
 }

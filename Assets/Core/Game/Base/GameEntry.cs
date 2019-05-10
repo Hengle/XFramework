@@ -47,6 +47,7 @@ namespace XDEDZL
         private static GameModule CreateModule(Type moduleType)
         {
             GameModule module = (GameModule)Activator.CreateInstance(moduleType);
+            module.Init();
             if (module == null)
             {
                 throw new System.Exception(moduleType.Name + " is not a module");

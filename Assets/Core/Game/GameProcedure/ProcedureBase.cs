@@ -1,9 +1,12 @@
-﻿public abstract class ProcedureBase : FsmState
+﻿namespace XDEDZL
 {
-
-
-    protected void ChangeState<T>() where T : ProcedureBase
+    public abstract class ProcedureBase : FsmState
     {
-        FsmManager.Instance.ChangeState<ProcedureFsm, T>();
+
+
+        protected void ChangeState<T>() where T : ProcedureBase
+        {
+            Game.FsmModel.ChangeState<ProcedureFsm, T>();
+        }
     }
 }

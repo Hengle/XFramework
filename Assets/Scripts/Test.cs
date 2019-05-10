@@ -7,6 +7,7 @@ using System;
 using UnityEngine.Networking;
 using System.Collections;
 using XDEDZL.Collections;
+using XDEDZL;
 using XDEDZL.UI;
 using XDEDZL.Extd;
 using UnityEditor;
@@ -31,7 +32,6 @@ public class Test : MonoSingleton<Test>
         {
             Debug.Log(matchs[i].Value);
         }
-
     }
 
     private void OnPostRender()
