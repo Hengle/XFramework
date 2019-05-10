@@ -6,7 +6,7 @@ using System;
 using XDEDZL.UI;
 using XDEDZL.Extd;
 
-[CustomEditor(typeof(GameEntrance))]
+//[CustomEditor(typeof(Game))]
 public class GameEntranceInspector : Editor
 {
     private string[] typeNames = null;

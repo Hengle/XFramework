@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using XDEDZL;
 
+/// <summary>
+/// 这个类挂在初始场景中,是整个游戏的入口
+/// </summary>
 public class Game : MonoBehaviour
 {
     public static ProcedureManager ProcedureModel;

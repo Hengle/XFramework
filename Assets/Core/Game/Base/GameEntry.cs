@@ -50,7 +50,7 @@ namespace XDEDZL
             module.Init();
             if (module == null)
             {
-                throw new System.Exception(moduleType.Name + " is not a module");
+                throw new Exception(moduleType.Name + " is not a module");
             }
 
             LinkedListNode<GameModule> current = gameModules.First;
