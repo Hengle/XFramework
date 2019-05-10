@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace XDEDZL
 {
-    public class ProcedureManager : GameModule
+    public class ProcedureManager : IGameModule
     {
         /// <summary>
         /// 流程状态机
@@ -29,17 +29,19 @@ namespace XDEDZL
             fsm.ChangeState<TProcedure>();
         }
 
-        internal override void Update(float elapseSeconds, float realElapseSeconds)
+        public int Priority { get { return 1; } }
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
         {
 
         }
 
-        internal override void Init()
+        public void Init()
         {
 
         }
 
-        internal override void Shutdown()
+        public void Shutdown()
         {
 
         }

@@ -7,7 +7,7 @@ namespace XDEDZL
     /// <summary>
     /// 状态机管理类
     /// </summary>
-    public class FsmManager : GameModule
+    public class FsmManager : IGameModule
     {
         /// <summary>
         /// 存储所有状态机的字典
@@ -129,17 +129,19 @@ namespace XDEDZL
             fsmDic.Add(typeof(T).Name, ReflectionUtility.CreateInstance<T>());
         }
 
-        internal override void Update(float elapseSeconds, float realElapseSeconds)
-        {
-            OnUpdate();
-        }
-
-        internal override void Init()
+        public int Priority { get { return 0; } }
+        public void Init()
         {
             fsmDic = new Dictionary<string, FsmBase>();
         }
 
-        internal override void Shutdown()
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            OnUpdate();
+        }
+
+
+        public void Shutdown()
         {
 
         }

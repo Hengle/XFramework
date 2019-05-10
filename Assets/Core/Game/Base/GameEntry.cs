@@ -5,7 +5,7 @@ namespace XDEDZL
 {
     public static class GameEntry
     {
-        private static LinkedList<GameModule> gameModules = new LinkedList<GameModule>();
+        private static LinkedList<IGameModule> gameModules = new LinkedList<IGameModule>();
 
         /// <summary>
         /// 每帧运行
@@ -25,18 +25,18 @@ namespace XDEDZL
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetModule<T>() where T : GameModule
+        public static T GetModule<T>() where T : IGameModule
         {
             Type moduleType = typeof(T);
             foreach (var module in gameModules)
             {
                 if(module.GetType() == moduleType)
                 {
-                    return module as T;
+                    return (T)module;
                 }
             }
 
-            return CreateModule(moduleType) as T;
+            return (T)CreateModule(moduleType);
         }
 
         /// <summary>
@@ -44,16 +44,16 @@ namespace XDEDZL
         /// </summary>
         /// <param name="moduleType"></param>
         /// <returns></returns>
-        private static GameModule CreateModule(Type moduleType)
+        private static IGameModule CreateModule(Type moduleType)
         {
-            GameModule module = (GameModule)Activator.CreateInstance(moduleType);
+            IGameModule module = (IGameModule)Activator.CreateInstance(moduleType);
             module.Init();
             if (module == null)
             {
                 throw new Exception(moduleType.Name + " is not a module");
             }
 
-            LinkedListNode<GameModule> current = gameModules.First;
+            LinkedListNode<IGameModule> current = gameModules.First;
             while (current != null)
             {
                 if (module.Priority > current.Value.Priority)
