@@ -129,7 +129,7 @@ namespace XDEDZL.Extd
         /// <returns></returns>
         public static Terrain Right(this Terrain terrain)
         {
-#if UNITY_2018
+#if UNITY_2018_3_OR_NEWER
             return terrain.rightNeighbor;
 #else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 1.5f, 10000, terrain.terrainData.size.z * 0.5f);
@@ -146,7 +146,7 @@ namespace XDEDZL.Extd
         /// <returns></returns>
         public static Terrain Top(this Terrain terrain)
         {
-#if UNITY_2018
+#if UNITY_2018_3_OR_NEWER
             return terrain.topNeighbor;
 #else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 1.5f);
@@ -163,7 +163,7 @@ namespace XDEDZL.Extd
         /// <returns></returns>
         public static Terrain Left(this Terrain terrain)
         {
-#if UNITY_2018
+#if UNITY_2018_3_OR_NEWER
             return terrain.leftNeighbor;
 #else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(-terrain.terrainData.size.x * 0.5f, 10000, terrain.terrainData.size.z * 0.5f);
@@ -180,7 +180,7 @@ namespace XDEDZL.Extd
         /// <returns></returns>
         public static Terrain Bottom(this Terrain terrain)
         {
-#if UNITY_2018
+#if UNITY_2018_3_OR_NEWER
             return terrain.bottomNeighbor;
 #else
         Vector3 rayStart = terrain.GetPosition() + new Vector3(terrain.terrainData.size.x * 0.5f, 10000, -terrain.terrainData.size.z * 0.5f);
