@@ -49,23 +49,12 @@ namespace XDEDZL.Pool
                 pool = CreatPool(PoolTemplateDic[name]);
             }
 
-            GameObject obj = pool.Allocate();
+            GameObject obj = pool.Allocate().obj;
             obj.transform.position = pos;
             obj.transform.rotation = quaternion;
             obj.SetActive(true);
 
             return obj;
-        }
-
-        /// <summary>
-        /// 清理对象池
-        /// </summary>
-        public void Clear()
-        {
-            foreach (var item in poolDic)
-            {
-                item.Value.Clear();
-            }
         }
     }
 }

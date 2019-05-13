@@ -32,6 +32,10 @@
         /// 用于表示对象是否被回收
         /// </summary>
         bool IsRecycled { get; set; }
+        /// <summary>
+        /// 是否可以被回收
+        /// </summary>
+        bool IsLocked { get; set; }
 
         void OnRecycled();
     }
