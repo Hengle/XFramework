@@ -7,7 +7,7 @@
 using System;
 using UnityEngine;
 
-namespace XDEDZL.Extd
+namespace XDEDZL
 {
     /// <summary>
     /// 序列化的Vector3，用以解决Vector3不能序列化的问题

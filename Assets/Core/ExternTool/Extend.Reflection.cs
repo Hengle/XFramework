@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace XDEDZL.Extd
+namespace XDEDZL
 {
-    public static class ExtdReflection
+    public static partial class Extend
     {
         /// <summary>
         /// 通过反射和函数名调用非公有方法

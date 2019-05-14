@@ -2,7 +2,7 @@
 using UnityEditor;
 using System;
 using System.Reflection;
-using XDEDZL.Extd;
+using XDEDZL;
 
 [CustomEditor(typeof(TargetCamera),true),CanEditMultipleObjects]
 public class TargetCameraInspector : Editor

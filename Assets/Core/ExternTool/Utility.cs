@@ -8,116 +8,119 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-/// <summary>
-/// 使用工具类
-/// </summary>
-public static class Utility
+namespace XDEDZL
 {
-    public delegate T Del<T>(T a);
-
-    private static RaycastHit hit;
     /// <summary>
-    /// 发射射线并返回RaycastInfo
+    /// 使用工具类
     /// </summary>
-    public static RaycastHit SendRay(int layer = -1)
+    public static partial class Utility
     {
-        RaycastHit hitInfo;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, float.MaxValue, layer))
-        {
-            return hitInfo;
-        }
-        else
-        {
-            return default(RaycastHit);
-        }
-    }
-    public static RaycastHit SendRayDown(Vector3 start, int layer = -1)
-    {
-        RaycastHit hitInfo;
-        start.y += 10000;
-        if (Physics.Raycast(start, Vector3.down, out hitInfo, float.MaxValue, layer))
-        {
-            return hitInfo;
-        }
-        else
-        {
-            return default(RaycastHit);
-        }
-    }
+        public delegate T Del<T>(T a);
 
-    /// <summary>
-    /// 创建立方体
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <param name="size"></param>
-    /// <returns></returns>
-    public static GameObject CreatPrimitiveType(PrimitiveType type, Vector3 pos = default(Vector3), float size = 1)
-    {
-        GameObject obj = GameObject.CreatePrimitive(type);
-        obj.transform.position = pos;
-        obj.transform.localScale = Vector3.one * size;
-        return obj;
-    }
-    public static GameObject CreatPrimitiveType(PrimitiveType type, Color color, Vector3 pos = default(Vector3), float size = 1)
-    {
-        GameObject obj = CreatPrimitiveType(type, pos, size);
-        obj.GetComponent<MeshRenderer>().material.color = color;
-        return obj;
-    }
+        private static RaycastHit hit;
+        /// <summary>
+        /// 发射射线并返回RaycastInfo
+        /// </summary>
+        public static RaycastHit SendRay(int layer = -1)
+        {
+            RaycastHit hitInfo;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, float.MaxValue, layer))
+            {
+                return hitInfo;
+            }
+            else
+            {
+                return default(RaycastHit);
+            }
+        }
+        public static RaycastHit SendRayDown(Vector3 start, int layer = -1)
+        {
+            RaycastHit hitInfo;
+            start.y += 10000;
+            if (Physics.Raycast(start, Vector3.down, out hitInfo, float.MaxValue, layer))
+            {
+                return hitInfo;
+            }
+            else
+            {
+                return default(RaycastHit);
+            }
+        }
 
-    /// <summary>
-    /// 获取一组位置
-    /// </summary>
-    public static Vector3[] GetPositions(Transform[] trans)
-    {
-        Vector3[] poses = new Vector3[trans.Length];
-        for (int i = 0, length = trans.Length; i < length; i++)
+        /// <summary>
+        /// 创建立方体
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static GameObject CreatPrimitiveType(PrimitiveType type, Vector3 pos = default(Vector3), float size = 1)
         {
-            poses[i] = trans[i].position;
+            GameObject obj = GameObject.CreatePrimitive(type);
+            obj.transform.position = pos;
+            obj.transform.localScale = Vector3.one * size;
+            return obj;
         }
-        return poses;
-    }
-    public static Vector3[] GetPositions(List<Transform> trans)
-    {
-        Vector3[] poses = new Vector3[trans.Count];
-        for (int i = 0, length = trans.Count; i < length; i++)
+        public static GameObject CreatPrimitiveType(PrimitiveType type, Color color, Vector3 pos = default(Vector3), float size = 1)
         {
-            poses[i] = trans[i].position;
+            GameObject obj = CreatPrimitiveType(type, pos, size);
+            obj.GetComponent<MeshRenderer>().material.color = color;
+            return obj;
         }
-        return poses;
-    }
 
-    /// <summary>
-    /// 获取一组欧拉角
-    /// </summary>
-    public static Vector3[] GetAngles(Transform[] trans)
-    {
-        Vector3[] angles = new Vector3[trans.Length];
-        for (int i = 0, length = trans.Length; i < length; i++)
+        /// <summary>
+        /// 获取一组位置
+        /// </summary>
+        public static Vector3[] GetPositions(Transform[] trans)
         {
-            angles[i] = trans[i].localEulerAngles;
+            Vector3[] poses = new Vector3[trans.Length];
+            for (int i = 0, length = trans.Length; i < length; i++)
+            {
+                poses[i] = trans[i].position;
+            }
+            return poses;
         }
-        return angles;
-    }
-    public static Vector3[] GetAngles(List<Transform> trans)
-    {
-        Vector3[] angles = new Vector3[trans.Count];
-        for (int i = 0, length = trans.Count; i < length; i++)
+        public static Vector3[] GetPositions(List<Transform> trans)
         {
-            angles[i] = trans[i].localEulerAngles;
+            Vector3[] poses = new Vector3[trans.Count];
+            for (int i = 0, length = trans.Count; i < length; i++)
+            {
+                poses[i] = trans[i].position;
+            }
+            return poses;
         }
-        return angles;
-    }
 
-    /// <summary>
-    /// 执行一个方法并返回它的执行时间
-    /// </summary>
-    /// <param name="action"></param>
-    /// <returns></returns>
-    public static float DebugActionRunTime(Action action)
-    {
-        float time = DateTime.Now.Millisecond + DateTime.Now.Second * 1000;
-        action();
-        return DateTime.Now.Millisecond + DateTime.Now.Second * 1000 - time;
+        /// <summary>
+        /// 获取一组欧拉角
+        /// </summary>
+        public static Vector3[] GetAngles(Transform[] trans)
+        {
+            Vector3[] angles = new Vector3[trans.Length];
+            for (int i = 0, length = trans.Length; i < length; i++)
+            {
+                angles[i] = trans[i].localEulerAngles;
+            }
+            return angles;
+        }
+        public static Vector3[] GetAngles(List<Transform> trans)
+        {
+            Vector3[] angles = new Vector3[trans.Count];
+            for (int i = 0, length = trans.Count; i < length; i++)
+            {
+                angles[i] = trans[i].localEulerAngles;
+            }
+            return angles;
+        }
+
+        /// <summary>
+        /// 执行一个方法并返回它的执行时间
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static float DebugActionRunTime(Action action)
+        {
+            float time = DateTime.Now.Millisecond + DateTime.Now.Second * 1000;
+            action();
+            return DateTime.Now.Millisecond + DateTime.Now.Second * 1000 - time;
+        }
     }
 }

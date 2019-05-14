@@ -10,7 +10,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using XDEDZL.UI;
-using XDEDZL.Extd;
+using XDEDZL;
 
 public class ButtonListPanel : BasePanel {
 

@@ -26,6 +26,6 @@ namespace XDEDZL.Pool
         /// <summary>
         /// 销毁对象池
         /// </summary>
-        public abstract void Destroy();
+        public abstract void OnDestroy();
     }
 }

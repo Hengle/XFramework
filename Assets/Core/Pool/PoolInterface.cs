@@ -36,7 +36,13 @@
         /// 是否可以被回收
         /// </summary>
         bool IsLocked { get; set; }
-
+        /// <summary>
+        /// 被创建时调用
+        /// </summary>
+        //void OnInit();
+        /// <summary>
+        /// 回收事件
+        /// </summary>
         void OnRecycled();
     }
 

@@ -9,7 +9,6 @@ using System.Collections;
 using XDEDZL.Collections;
 using XDEDZL;
 using XDEDZL.UI;
-using XDEDZL.Extd;
 using UnityEditor;
 using System.Text.RegularExpressions;
 

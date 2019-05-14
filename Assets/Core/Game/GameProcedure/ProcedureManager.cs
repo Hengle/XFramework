@@ -9,7 +9,7 @@ namespace XDEDZL
         /// <summary>
         /// 流程状态机
         /// </summary>
-        private ProcedureFsm fsm;
+        private ProcedureFsm m_Fsm;
 
         /// <summary>
         /// 开启一个流程
@@ -17,7 +17,7 @@ namespace XDEDZL
         /// <typeparam name="TState"></typeparam>
         public void StartProcedure<TState>() where TState : ProcedureBase
         {
-            fsm.StartFsm<TState>();
+            m_Fsm.StartFsm<TState>();
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace XDEDZL
         /// <typeparam name="TProcedure"></typeparam>
         public void ChangeProcedure<TProcedure>() where TProcedure : ProcedureBase
         {
-            fsm.ChangeState<TProcedure>();
+            m_Fsm.ChangeState<TProcedure>();
         }
 
         public int Priority { get { return 1; } }

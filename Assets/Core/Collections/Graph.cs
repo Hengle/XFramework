@@ -1,5 +1,5 @@
 ﻿using System;
-using XDEDZL.Extd;
+using XDEDZL;
 
 namespace XDEDZL.Collections
 {

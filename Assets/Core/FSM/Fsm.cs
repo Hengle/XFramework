@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using XDEDZL.Utility;
 
 namespace XDEDZL
 {
@@ -47,7 +46,7 @@ namespace XDEDZL
         /// </summary>
         protected override FsmState CreateState<T>()
         {
-            FsmState state = ReflectionUtility.CreateInstance<T>();
+            FsmState state = Utility.Reflection.CreateInstance<T>();
 
             if (!(state is TState))
                 throw new System.Exception("状态类型设置错误");

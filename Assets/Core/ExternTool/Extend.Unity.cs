@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace XDEDZL.Extd
+namespace XDEDZL
 {
     /// <summary>
     /// 这个类管理一系列的拓展函数
     /// 以后把System和UnityEngine的扩展分开
     /// </summary>
-    public static class ExtdUnity
+    public static partial class Extend
     {
         #region Vector相关
         public static Vector3 WithX(this Vector3 v, float x)

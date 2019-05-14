@@ -13,16 +13,15 @@ namespace XDEDZL.Pool
             /// <summary>
             /// 可用的对象
             /// </summary>
-            private readonly Stack<T> m_AvailableCache;
+            private Stack<T> m_AvailableCache;
             /// <summary>
             /// 被占有的对象
             /// </summary>
-            private readonly List<T> m_OccupiedCache;
+            private List<T> m_OccupiedCache;
 
             /// <summary>
             /// 构造函数
             /// </summary>
-            /// <param name="_template"></param>
             /// <param name="_initCount"></param>
             /// <param name="_lookPoolSize"></param>
             public Pool(int _initCount = 5, int _maxCount = int.MaxValue)
@@ -108,9 +107,10 @@ namespace XDEDZL.Pool
             /// <summary>
             /// 销毁自身
             /// </summary>
-            public override void Destroy()
+            public override void OnDestroy()
             {
-                // 
+                m_AvailableCache.Clear();
+                m_OccupiedCache.Clear();
             }
 
             /// <summary>

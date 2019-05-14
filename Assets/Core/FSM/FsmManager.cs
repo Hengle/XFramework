@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using XDEDZL.Utility;
 
 namespace XDEDZL
 {
@@ -12,14 +11,14 @@ namespace XDEDZL
         /// <summary>
         /// 存储所有状态机的字典
         /// </summary>
-        private Dictionary<string, FsmBase> fsmDic;
+        private Dictionary<string, FsmBase> m_FsmDic;
 
         /// <summary>
         /// 每帧调用处于激活状态的状态机
         /// </summary>
         public void OnUpdate()
         {
-            foreach (var fsm in fsmDic.Values)
+            foreach (var fsm in m_FsmDic.Values)
             {
                 if (fsm.IsActive)
                     fsm.OnUpdate();
@@ -33,7 +32,7 @@ namespace XDEDZL
         {
             get
             {
-                return fsmDic.Count;
+                return m_FsmDic.Count;
             }
         }
 
@@ -50,7 +49,7 @@ namespace XDEDZL
         /// </summary>
         public bool HasFsm(Type type)
         {
-            return fsmDic.ContainsKey(type.Name);
+            return m_FsmDic.ContainsKey(type.Name);
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace XDEDZL
             {
                 CreateFsm<TFsm>();
             }
-            return fsmDic[typeof(TFsm).Name] as TFsm;
+            return m_FsmDic[typeof(TFsm).Name] as TFsm;
         }
 
         /// <summary>
@@ -74,7 +73,7 @@ namespace XDEDZL
         {
             if (HasFsm<TFsm>())
             {
-                return fsmDic[typeof(TFsm).Name].CurrentState;
+                return m_FsmDic[typeof(TFsm).Name].CurrentState;
             }
             else
             {
@@ -86,7 +85,7 @@ namespace XDEDZL
         {
             if (HasFsm<TFsm>())
             {
-                return fsmDic[typeof(TFsm).Name].CurrentState as TState;
+                return m_FsmDic[typeof(TFsm).Name].CurrentState as TState;
             }
             else
             {
@@ -105,7 +104,7 @@ namespace XDEDZL
             {
                 CreateFsm<TFsm>();
             }
-            fsmDic[typeof(TFsm).Name].ChangeState<KState>();
+            m_FsmDic[typeof(TFsm).Name].ChangeState<KState>();
         }
 
         public void ChanegState(Type typeFsm, Type typeState)
@@ -126,13 +125,13 @@ namespace XDEDZL
         /// </summary>
         public void CreateFsm<T>() where T : FsmBase
         {
-            fsmDic.Add(typeof(T).Name, ReflectionUtility.CreateInstance<T>());
+            m_FsmDic.Add(typeof(T).Name, Utility.Reflection.CreateInstance<T>());
         }
 
         public int Priority { get { return 0; } }
         public void Init()
         {
-            fsmDic = new Dictionary<string, FsmBase>();
+            m_FsmDic = new Dictionary<string, FsmBase>();
         }
 
         public void Update(float elapseSeconds, float realElapseSeconds)

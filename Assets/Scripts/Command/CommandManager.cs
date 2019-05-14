@@ -5,7 +5,7 @@
 // 版本： V 1.0
 // ==========================================
 using System.Collections.Generic;
-using XDEDZL.Extd;
+using XDEDZL;
 
 /// <summary>
 /// 命令管理类，暂时只用于撤销命令

@@ -3,6 +3,9 @@ using System;
 
 namespace XDEDZL.Pool
 {
+    /// <summary>
+    /// 对象池管理
+    /// </summary>
     public partial class ObjectPoolManager : IGameModule
     {
         private Dictionary<string, PoolBase> m_ObjectPools;
@@ -34,7 +37,7 @@ namespace XDEDZL.Pool
         /// <typeparam name="T">对象池类型</typeparam>
         /// <param name="initCount">初始数量</param>
         /// <param name="maxCount">最大数量</param>
-        public void CreateObjectPool<T>(int initCount,int maxCount) where T : IPoolable, new()
+        public void CreateObjectPool<T>(int initCount = 0,int maxCount = int.MaxValue) where T : IPoolable, new()
         {
             if (HasPool<T>())
                 return;
@@ -43,11 +46,16 @@ namespace XDEDZL.Pool
             m_ObjectPools.Add(typeof(T).Name, pool);
         }
 
+        /// <summary>
+        /// 销毁一个对象池
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>是否成功销毁</returns>
         public bool DestoryPool<T>() where T : IPoolable, new()
         {
             if (HasPool<T>())
             {
-                // 销毁这个对象池
+                m_ObjectPools[typeof(T).Name].OnDestroy();
                 return true;
             }
 
@@ -86,18 +94,36 @@ namespace XDEDZL.Pool
             throw new Exception("试图在对象池创建前获取对象");
         }
 
+        /// <summary>
+        /// 回收一个对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>是否回收成功</returns>
+        public bool Recycle<T>(T obj) where T : IPoolable, new()
+        {
+            if (HasPool<T>())
+            {
+                return ((Pool<T>)m_ObjectPools[typeof(T).Name]).Recycle(obj);
+            }
+            return false;
+        }
+
         #region 接口实现
 
         public int Priority { get { return 2; } }
 
         public void Init()
         {
-            throw new System.NotImplementedException();
+
         }
 
         public void Shutdown()
         {
-            throw new System.NotImplementedException();
+            foreach (var pool in m_ObjectPools.Values)
+            {
+                pool.OnDestroy();
+            }
+            m_ObjectPools.Clear();
         }
 
         public void Update(float elapseSeconds, float realElapseSeconds)

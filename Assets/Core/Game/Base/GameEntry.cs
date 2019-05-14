@@ -5,7 +5,7 @@ namespace XDEDZL
 {
     public static class GameEntry
     {
-        private static LinkedList<IGameModule> gameModules = new LinkedList<IGameModule>();
+        private static LinkedList<IGameModule> m_GameModules = new LinkedList<IGameModule>();
 
         /// <summary>
         /// 每帧运行
@@ -14,7 +14,7 @@ namespace XDEDZL
         /// <param name="realElapseSeconds">真实运行时间</param>
         public static void ModelUpdate(float elapseSeconds, float realElapseSeconds)
         {
-            foreach (var module in gameModules)
+            foreach (var module in m_GameModules)
             {
                 module.Update(elapseSeconds, realElapseSeconds);
             }
@@ -28,7 +28,7 @@ namespace XDEDZL
         public static T GetModule<T>() where T : IGameModule
         {
             Type moduleType = typeof(T);
-            foreach (var module in gameModules)
+            foreach (var module in m_GameModules)
             {
                 if(module.GetType() == moduleType)
                 {
@@ -53,7 +53,7 @@ namespace XDEDZL
                 throw new Exception(moduleType.Name + " is not a module");
             }
 
-            LinkedListNode<IGameModule> current = gameModules.First;
+            LinkedListNode<IGameModule> current = m_GameModules.First;
             while (current != null)
             {
                 if (module.Priority > current.Value.Priority)
@@ -66,11 +66,11 @@ namespace XDEDZL
 
             if (current != null)
             {
-                gameModules.AddBefore(current, module);
+                m_GameModules.AddBefore(current, module);
             }
             else
             {
-                gameModules.AddLast(module);
+                m_GameModules.AddLast(module);
             }
 
             return module;

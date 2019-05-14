@@ -138,7 +138,7 @@ namespace XDEDZL.Pool
             throw new NotImplementedException();
         }
 
-        public override void Destroy()
+        public override void OnDestroy()
         {
             throw new NotImplementedException();
         }

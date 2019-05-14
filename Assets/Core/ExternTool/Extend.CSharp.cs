@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XDEDZL.Extd
+namespace XDEDZL
 {
-    public static class ExtdCSharp
+    public static partial class Extend
     {
         #region Collection
 
