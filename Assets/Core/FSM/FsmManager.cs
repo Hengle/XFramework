@@ -13,6 +13,11 @@ namespace XDEDZL
         /// </summary>
         private Dictionary<string, FsmBase> m_FsmDic;
 
+        public FsmManager()
+        {
+            m_FsmDic = new Dictionary<string, FsmBase>();
+        }
+
         /// <summary>
         /// 每帧调用处于激活状态的状态机
         /// </summary>
@@ -129,10 +134,6 @@ namespace XDEDZL
         }
 
         public int Priority { get { return 0; } }
-        public void Init()
-        {
-            m_FsmDic = new Dictionary<string, FsmBase>();
-        }
 
         public void Update(float elapseSeconds, float realElapseSeconds)
         {

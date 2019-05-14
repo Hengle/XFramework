@@ -56,7 +56,7 @@ public class BattleSystem
         // 。。。。。。。。。。。。。
 
         // 通知所有观察者并传递数据
-        DataSubjectManager.Instance.Notify(btData, (int)BattleDataType.Win);
+        Game.ObserverModel.Notify(btData, (int)BattleDataType.Win);
     }
 
     public void BattleLose()
@@ -64,7 +64,7 @@ public class BattleSystem
         // 处理战斗失败要做的事情
         // 。。。。。。。。。。。。。
 
-        DataSubjectManager.Instance.Notify(btData, (int)BattleDataType.Lose);
+        Game.ObserverModel.Notify(btData, (int)BattleDataType.Lose);
     }
 }
 
@@ -106,13 +106,13 @@ public class PlayerDataMgr : IObserver
     // 此类可能是要继承Mono的，如果是，则在start中注册
     public PlayerDataMgr()
     {
-        DataSubjectManager.Instance.AddListener(DataType.BATTLE, this);
+        Game.ObserverModel.AddListener(DataType.BATTLE, this);
     }
 
     // 在合适的时候移除观察者
     ~PlayerDataMgr()
     {
-        DataSubjectManager.Instance.RemoverListener(DataType.BATTLE, this);
+        Game.ObserverModel.RemoverListener(DataType.BATTLE, this);
     }
 
     // 固定写法

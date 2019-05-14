@@ -38,7 +38,7 @@ public class Ecel2Json
             ReadExcel(path);
         }
 
-        Debug.Log("Excel2Json成功");
+        Debug.Log("Excel2Json结束");
     }
 
     /// <summary>

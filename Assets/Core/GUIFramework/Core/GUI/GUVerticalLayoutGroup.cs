@@ -4,10 +4,10 @@ using System;
 
 namespace XDEDZL.UI
 {
-    [RequireComponent(typeof(VerticalLayoutGroup))]
-    public class GUVerticalLayoutGroup : BaseGUI
+    [RequireComponent(typeof(LayoutGroup))]
+    public class GULayoutGroup : BaseGUI
     {
-        public VerticalLayoutGroup verticalLayoutGroup;
+        public LayoutGroup m_LayoutGroup;
 
         /// <summary>
         /// 实体回收事件
@@ -25,7 +25,7 @@ namespace XDEDZL.UI
 
         private void Reset()
         {
-            verticalLayoutGroup = transform.GetComponent<VerticalLayoutGroup>();
+            m_LayoutGroup = transform.GetComponent<LayoutGroup>();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace XDEDZL.UI
         /// <param name="index"></param>
         public void RemoveEntity(int index)
         {
-            RemoveEntity(verticalLayoutGroup.transform.GetChild(index).gameObject);
+            RemoveEntity(m_LayoutGroup.transform.GetChild(index).gameObject);
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace XDEDZL.UI
         /// </summary>
         public void Clear()
         {
-            for (int i = verticalLayoutGroup.transform.childCount; i > 0; i--)
+            for (int i = m_LayoutGroup.transform.childCount; i > 0; i--)
             {
-                Destroy(verticalLayoutGroup.transform.GetChild(i - 1).gameObject);
+                Destroy(m_LayoutGroup.transform.GetChild(i - 1).gameObject);
             }
         }
 

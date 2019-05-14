@@ -11,10 +11,6 @@
         /// <remarks>优先级较高的模块会优先轮询</remarks>
         int Priority{ get; }
         /// <summary>
-        /// 启用一个游戏模块
-        /// </summary>
-        void Init();
-        /// <summary>
         /// 游戏框架模块轮询
         /// </summary>
         /// <param name="elapseSeconds">逻辑运行时间，以秒为单位</param>

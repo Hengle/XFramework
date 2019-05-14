@@ -10,6 +10,9 @@ public class Game : MonoBehaviour
     public static ProcedureManager ProcedureModel;
     public static FsmManager FsmModel;
     public static ObjectPoolManager PoolModel;
+    public static ResourceManager ResModel;
+    public static GraphicsManager GraphicsModel;
+    public static DataSubjectManager ObserverModel;
 
     void Awake()
     {
@@ -26,5 +29,8 @@ public class Game : MonoBehaviour
         ProcedureModel = GameEntry.GetModule<ProcedureManager>();
         FsmModel = GameEntry.GetModule<FsmManager>();
         PoolModel = GameEntry.GetModule<ObjectPoolManager>();
+        ResModel = GameEntry.GetModule<ResourceManager>();
+        GraphicsModel = GameEntry.GetModule<GraphicsManager>();
+        ObserverModel = GameEntry.GetModule<DataSubjectManager>();
     }
 }

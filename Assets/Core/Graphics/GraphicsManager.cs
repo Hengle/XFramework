@@ -2,37 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// GL管理器
-/// </summary>
-public class GraphicsManager : Singleton<GraphicsManager>
+namespace XDEDZL
 {
-    private Dictionary<Camera, GraphicsMono> graphicsDic;
-
-    private GraphicsManager()
+    /// <summary>
+    /// GL管理器
+    /// </summary>
+    public class GraphicsManager : IGameModule
     {
-        graphicsDic = new Dictionary<Camera, GraphicsMono>();
-    }
+        private Dictionary<Camera, GraphicsMono> m_GraphicsDic;
 
-    public void AddGraphics(Camera camera,System.Action action)
-    {
-        if (graphicsDic.ContainsKey(camera))
+        private GraphicsManager()
         {
-            camera.GetComponent<GraphicsMono>().AddGraphics(action);
+            m_GraphicsDic = new Dictionary<Camera, GraphicsMono>();
         }
-        else
-        {
-            GraphicsMono temp = camera.gameObject.AddComponent<GraphicsMono>();
-            graphicsDic.Add(camera, temp);
-            temp.AddGraphics(action);
-        }
-    }
 
-    public void RemoveGraphics(Camera camera,System.Action action)
-    {
-        if (graphicsDic.ContainsKey(camera))
+        public int Priority { get { return 10; } }
+
+        public void Shutdown()
         {
-            graphicsDic[camera].RemoveGraphics(action);
+
+        }
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+
+        }
+
+        public void AddGraphics(Camera camera, System.Action action)
+        {
+            if (m_GraphicsDic.ContainsKey(camera))
+            {
+                camera.GetComponent<GraphicsMono>().AddGraphics(action);
+            }
+            else
+            {
+                GraphicsMono temp = camera.gameObject.AddComponent<GraphicsMono>();
+                m_GraphicsDic.Add(camera, temp);
+                temp.AddGraphics(action);
+            }
+        }
+
+        public void RemoveGraphics(Camera camera, System.Action action)
+        {
+            if (m_GraphicsDic.ContainsKey(camera))
+            {
+                m_GraphicsDic[camera].RemoveGraphics(action);
+            }
         }
     }
 }

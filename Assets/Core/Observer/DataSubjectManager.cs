@@ -8,7 +8,7 @@ namespace XDEDZL
     /// <summary>
     /// 数据主题管理类
     /// </summary>
-    public class DataSubjectManager : Singleton<DataSubjectManager>
+    public class DataSubjectManager : IGameModule
     {
         /// <summary>
         /// 每一个Subject都是一个被观察的对象
@@ -22,6 +22,18 @@ namespace XDEDZL
         /// 存储数据类型和对应主题的字典
         /// </summary>
         private Dictionary<DataType, Subject> m_subjectDic = new Dictionary<DataType, Subject>();
+
+        public int Priority => throw new System.NotImplementedException();
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Shutdown()
+        {
+            throw new System.NotImplementedException();
+        }
 
         /// <summary>
         /// 增加数据监听

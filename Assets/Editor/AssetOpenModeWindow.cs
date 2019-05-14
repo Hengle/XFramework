@@ -10,9 +10,9 @@ public class AssetOpenModeWindow : EditorWindow
     private static CodeOpneMode csOpenMode = CodeOpneMode.Default; 
     private static CodeOpneMode jsonOpenMode = CodeOpneMode.VSCode; 
 
-    private AssetOpenModeWindow window;
-    private float currentWidth;
-    private float currentHeight;
+    private AssetOpenModeWindow m_Window;
+    private float m_CurrentWidth;
+    private float m_CurrentHeight;
 
     private void OnEnable()
     {

@@ -112,11 +112,6 @@ namespace XDEDZL.Pool
 
         public int Priority { get { return 2; } }
 
-        public void Init()
-        {
-
-        }
-
         public void Shutdown()
         {
             foreach (var pool in m_ObjectPools.Values)
