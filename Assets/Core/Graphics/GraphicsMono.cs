@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class GraphicsMono : MonoBehaviour
 {
-    private System.Action action;
+    private System.Action m_Action;
 
     private void OnPostRender()
     {
-        action?.Invoke();
+        m_Action?.Invoke();
     }
 
     public void AddGraphics(System.Action _action)
     {
-        action += _action;
+        m_Action += _action;
     }
 
     public void RemoveGraphics(System.Action _action)
     {
-        action -= _action;
+        m_Action -= _action;
     }
 }

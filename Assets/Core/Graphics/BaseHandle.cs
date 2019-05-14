@@ -8,9 +8,9 @@ using UnityEngine;
 public class BaseHandle
 {
     protected Camera camera { get { return RuntimeHandle.camera; } }
-    protected Transform target { get { return RuntimeHandle.target; } }
-    protected float screenScale{ get { return RuntimeHandle.screenScale; } }
-    protected Matrix4x4 localToWorld { get { return RuntimeHandle.localToWorld; } }
+    protected Transform target { get { return RuntimeHandle.m_Target; } }
+    protected float screenScale{ get { return RuntimeHandle.m_ScreenScale; } }
+    protected Matrix4x4 localToWorld { get { return RuntimeHandle.m_LocalToWorld; } }
 
     protected float colliderPixel = 10;  // 鼠标距离轴多少时算有碰撞（单位：像素）
 
@@ -157,9 +157,9 @@ public class PositionHandle : BaseHandle
     /// <returns></returns>
     private bool HitQuad(Vector3 origin, Vector3 offset, Camera camera)
     {
-        offset.x *= RuntimeHandle.quadDir.x;
-        offset.y *= RuntimeHandle.quadDir.y;
-        offset.z *= RuntimeHandle.quadDir.z;
+        offset.x *= RuntimeHandle.m_QuadDir.x;
+        offset.y *= RuntimeHandle.m_QuadDir.y;
+        offset.z *= RuntimeHandle.m_QuadDir.z;
         Vector2 mousePos = Input.mousePosition;
         Vector2 screenOrigin = camera.WorldToScreenPoint(origin);
         Vector2 screenOffset = camera.WorldToScreenPoint(origin + offset);
