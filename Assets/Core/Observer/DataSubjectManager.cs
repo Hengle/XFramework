@@ -21,18 +21,23 @@ namespace XDEDZL
         /// <summary>
         /// 存储数据类型和对应主题的字典
         /// </summary>
-        private Dictionary<DataType, Subject> m_subjectDic = new Dictionary<DataType, Subject>();
+        private Dictionary<DataType, Subject> m_subjectDic;
 
-        public int Priority => throw new System.NotImplementedException();
+        public DataSubjectManager()
+        {
+            m_subjectDic = new Dictionary<DataType, Subject>();
+        }
+
+        public int Priority { get { return 50; } }
 
         public void Update(float elapseSeconds, float realElapseSeconds)
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void Shutdown()
         {
-            throw new System.NotImplementedException();
+
         }
 
         /// <summary>

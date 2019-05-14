@@ -7,12 +7,13 @@ using XDEDZL.Pool;
 /// </summary>
 public class Game : MonoBehaviour
 {
-    public static ProcedureManager ProcedureModel;
-    public static FsmManager FsmModel;
-    public static ObjectPoolManager PoolModel;
-    public static ResourceManager ResModel;
-    public static GraphicsManager GraphicsModel;
-    public static DataSubjectManager ObserverModel;
+    public static ProcedureManager ProcedureModel { get; private set; }
+    public static FsmManager FsmModel { get; private set; }
+    public static ObjectPoolManager PoolModel { get; private set; }
+    public static ResourceManager ResModel { get; private set; }
+    public static GraphicsManager GraphicsModel { get; private set; }
+    public static DataSubjectManager ObserverModel { get; private set; }
+    public static Messenger MessengerModel { get; private set; }
 
     void Awake()
     {
@@ -32,5 +33,6 @@ public class Game : MonoBehaviour
         ResModel = GameEntry.GetModule<ResourceManager>();
         GraphicsModel = GameEntry.GetModule<GraphicsManager>();
         ObserverModel = GameEntry.GetModule<DataSubjectManager>();
+        MessengerModel = GameEntry.GetModule<Messenger>();
     }
 }

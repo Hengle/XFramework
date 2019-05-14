@@ -9,14 +9,14 @@ namespace XDEDZL
         private readonly AssetBundleManifest manifest;
         private readonly AssetBundle mainfestAB;
 
-        public int Priority => throw new System.NotImplementedException();
+        public int Priority { get { return 100; } }
 
         public ResourceManager()
         {
-            abDic = new Dictionary<string, AssetBundle>();
-            mainfestAB = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/AssetBundle/AssetBundle");
-            if (mainfestAB != null)
-                manifest = mainfestAB.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            //abDic = new Dictionary<string, AssetBundle>();
+            //mainfestAB = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/AssetBundle/AssetBundle");
+            //if (mainfestAB != null)
+            //    manifest = mainfestAB.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
         }
 
         public T Load<T>(string path, string name) where T : Object
