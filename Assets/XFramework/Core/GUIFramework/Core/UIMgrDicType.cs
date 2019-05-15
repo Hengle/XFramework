@@ -26,26 +26,26 @@ namespace XDEDZL.UI
         /// <summary>
         /// 存储所有面板Prefab的路径
         /// </summary>
-        private Dictionary<string, string> panelPathDict;
+        private Dictionary<string, string> m_PanelPathDict;
         /// <summary>
         /// 保存所有实例化面板的游戏物体身上的BasePanel组件
         /// </summary>
-        private Dictionary<string, BasePanel> panelDict;
+        private Dictionary<string, BasePanel> m_PanelDict;
         /// <summary>
         /// 处于打开状态的面板字典，key为层级
         /// </summary>
-        private Dictionary<int, List<BasePanel>> onDisplayPanelDic;
+        private Dictionary<int, List<BasePanel>> m_OnDisplayPanelDic;
 
         public UIMgrDicType()
         {
-            onDisplayPanelDic = new Dictionary<int, List<BasePanel>>();
+            m_OnDisplayPanelDic = new Dictionary<int, List<BasePanel>>();
             InitPathDic();
             MonoEvent.Instance.UPDATE += OnUpdate;
         }
 
         private void OnUpdate()
         {
-            foreach (var item in onDisplayPanelDic.Values)
+            foreach (var item in m_OnDisplayPanelDic.Values)
             {
                 for (int i = 0, length = item.Count; i < length; i++)
                 {
@@ -63,9 +63,9 @@ namespace XDEDZL.UI
             if (null == panel)
                 return;
 
-            if (onDisplayPanelDic.ContainsKey(panel.Level))
+            if (m_OnDisplayPanelDic.ContainsKey(panel.Level))
             {
-                if (onDisplayPanelDic[panel.Level].Contains(panel))
+                if (m_OnDisplayPanelDic[panel.Level].Contains(panel))
                 {
                     ClosePanel(uiname);
                     return;
@@ -73,13 +73,13 @@ namespace XDEDZL.UI
             }
             else
             {
-                onDisplayPanelDic.Add(panel.Level, new List<BasePanel>());
+                m_OnDisplayPanelDic.Add(panel.Level, new List<BasePanel>());
             }
 
-            onDisplayPanelDic[panel.Level].Add(panel);
-            if (onDisplayPanelDic.ContainsKey(panel.Level - 1)) // 可以改为 if(panel.level > 0)
+            m_OnDisplayPanelDic[panel.Level].Add(panel);
+            if (m_OnDisplayPanelDic.ContainsKey(panel.Level - 1)) // 可以改为 if(panel.level > 0)
             {
-                onDisplayPanelDic[panel.Level - 1].End().OnPause();
+                m_OnDisplayPanelDic[panel.Level - 1].End().OnPause();
             }
 
             panel.OnOpen();
@@ -91,17 +91,17 @@ namespace XDEDZL.UI
         public void ClosePanel(string uiname)
         {
             BasePanel panel = GetPanel(uiname);
-            if (onDisplayPanelDic.ContainsKey(panel.Level) && onDisplayPanelDic[panel.Level].Contains(panel))
+            if (m_OnDisplayPanelDic.ContainsKey(panel.Level) && m_OnDisplayPanelDic[panel.Level].Contains(panel))
             {
                 panel.OnClose();
-                onDisplayPanelDic[panel.Level].Remove(panel);
+                m_OnDisplayPanelDic[panel.Level].Remove(panel);
             }
 
             int index = panel.Level + 1;
             List<BasePanel> temp;
-            while (onDisplayPanelDic.ContainsKey(index))
+            while (m_OnDisplayPanelDic.ContainsKey(index))
             {
-                temp = onDisplayPanelDic[index];
+                temp = m_OnDisplayPanelDic[index];
                 if (temp.Count > 0)
                 {
                     temp.End().OnClose();
@@ -112,9 +112,9 @@ namespace XDEDZL.UI
                     break;
                 }
             }
-            if (onDisplayPanelDic.ContainsKey(panel.Level - 1))
+            if (m_OnDisplayPanelDic.ContainsKey(panel.Level - 1))
             {
-                onDisplayPanelDic[panel.Level - 1].End().OnResume();
+                m_OnDisplayPanelDic[panel.Level - 1].End().OnResume();
             }
         }
 
@@ -123,17 +123,17 @@ namespace XDEDZL.UI
         /// </summary>
         public BasePanel GetPanel(string uiname)
         {
-            if (panelDict == null)
+            if (m_PanelDict == null)
             {
-                panelDict = new Dictionary<string, BasePanel>();
+                m_PanelDict = new Dictionary<string, BasePanel>();
             }
 
-            panelDict.TryGetValue(uiname, out BasePanel panel);
+            m_PanelDict.TryGetValue(uiname, out BasePanel panel);
 
             if (panel == null)
             {
                 // 根据prefab去实例化面板
-                panelPathDict.TryGetValue(uiname, out string path);
+                m_PanelPathDict.TryGetValue(uiname, out string path);
                 Debug.Log(path);
                 GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
 
@@ -151,7 +151,7 @@ namespace XDEDZL.UI
                 {
                     throw new System.Exception("面板类名错误");
                 }
-                panelDict.Add(uiname, basePanel);
+                m_PanelDict.Add(uiname, basePanel);
 
                 Transform uiGroup = CanvasTransform.Find("Level" + basePanel.Level);
                 if (uiGroup == null)
@@ -179,13 +179,13 @@ namespace XDEDZL.UI
         public void CloseTopPanel()
         {
             int level = 0;
-            foreach (var item in onDisplayPanelDic.Keys)
+            foreach (var item in m_OnDisplayPanelDic.Keys)
             {
                 if (item > level)
                     level = item;
             }
-            onDisplayPanelDic[level].End().OnClose();
-            onDisplayPanelDic.Remove(level);
+            m_OnDisplayPanelDic[level].End().OnClose();
+            m_OnDisplayPanelDic.Remove(level);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace XDEDZL.UI
         /// </summary>
         public void CloseLevelPanel(int level)
         {
-            foreach (var item in onDisplayPanelDic[level])
+            foreach (var item in m_OnDisplayPanelDic[level])
             {
                 item.OnClose();
             }
@@ -204,7 +204,7 @@ namespace XDEDZL.UI
         /// </summary>
         private void InitPathDic()
         {
-            panelPathDict = new Dictionary<string, string>();
+            m_PanelPathDict = new Dictionary<string, string>();
             string rootPath = "UIPanelPrefabs/";
             string uipaths = Resources.Load<TextAsset>("UIPath").text;
             uipaths = uipaths.Replace("\"", "");
@@ -218,7 +218,7 @@ namespace XDEDZL.UI
                 if (nameAndPath == null || nameAndPath.Length != 2)
                     continue;
                 string temp = nameAndPath[1] == "" ? nameAndPath[0] : nameAndPath[1] + "/" + nameAndPath[0];
-                panelPathDict.Add(nameAndPath[0], rootPath + temp);
+                m_PanelPathDict.Add(nameAndPath[0], rootPath + temp);
             }
         }
     }

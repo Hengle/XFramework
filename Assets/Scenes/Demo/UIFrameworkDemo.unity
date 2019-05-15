@@ -281,6 +281,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: RootBtn
       objectReference: {fileID: 0}
+    - target: {fileID: 4981182210140809175, guid: 77389584accecc6489986eea09f27652,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7695377475053464327, guid: 77389584accecc6489986eea09f27652,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -428,7 +433,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &963384509
 RectTransform:
   m_ObjectHideFlags: 0
@@ -811,6 +816,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Describe
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704677895247711801, guid: 5c5909ed703514349ac794caca4e09e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5148882017195591299, guid: 5c5909ed703514349ac794caca4e09e6,
         type: 3}

@@ -21,11 +21,11 @@ namespace XDEDZL
         /// <summary>
         /// 存储数据类型和对应主题的字典
         /// </summary>
-        private Dictionary<DataType, Subject> m_subjectDic;
+        private Dictionary<DataType, Subject> m_SubjectDic;
 
         public DataSubjectManager()
         {
-            m_subjectDic = new Dictionary<DataType, Subject>();
+            m_SubjectDic = new Dictionary<DataType, Subject>();
         }
 
         public int Priority { get { return 50; } }
@@ -48,12 +48,12 @@ namespace XDEDZL
         public void AddListener(DataType dataType, IObserver observer)
         {
             Subject subject = null;
-            if (!m_subjectDic.ContainsKey(dataType))
+            if (!m_SubjectDic.ContainsKey(dataType))
             {
                 subject = new Subject();
-                m_subjectDic[dataType] = subject;
+                m_SubjectDic[dataType] = subject;
             }
-            m_subjectDic[dataType].Attach(observer.OnDataChange);
+            m_SubjectDic[dataType].Attach(observer.OnDataChange);
         }
 
         /// <summary>
@@ -63,9 +63,9 @@ namespace XDEDZL
         /// <param name="observer">监听这个数据的观察者</param>
         public void RemoverListener(DataType dataType, IObserver observer)
         {
-            if (m_subjectDic.ContainsKey(dataType))
+            if (m_SubjectDic.ContainsKey(dataType))
             {
-                m_subjectDic[dataType].Detach(observer.OnDataChange);
+                m_SubjectDic[dataType].Detach(observer.OnDataChange);
             }
         }
 
@@ -77,8 +77,8 @@ namespace XDEDZL
         /// <param name="obj">映射参数</param>
         public void Notify(BaseData data, int type = 0, object obj = null)
         {
-            if (m_subjectDic.ContainsKey(data.dataType))
-                m_subjectDic[data.dataType].Notify(data, type, obj);
+            if (m_SubjectDic.ContainsKey(data.dataType))
+                m_SubjectDic[data.dataType].Notify(data, type, obj);
         }
     }
 }

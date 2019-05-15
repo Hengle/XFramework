@@ -1,7 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1131429503
+CRC: 2510581138
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: hhh.ab
+      Name: material.ab
       Dependencies: {}
+    Info_1:
+      Name: prefab.ab
+      Dependencies:
+        Dependency_0: material.ab
+    Info_2:
+      Name: prefab/prefab2.ab
+      Dependencies:
+        Dependency_0: material.ab

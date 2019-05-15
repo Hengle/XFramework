@@ -4,12 +4,20 @@ using UnityEngine;
 
 namespace XDEDZL
 {
+    /// <summary>
+    /// 流程的优先级应比状态机低
+    /// </summary>
     public class ProcedureManager : IGameModule
     {
         /// <summary>
         /// 流程状态机
         /// </summary>
         private ProcedureFsm m_Fsm;
+
+        public ProcedureManager()
+        {
+            m_Fsm = GameEntry.GetModule<FsmManager>().GetFsm<ProcedureFsm>();
+        }
 
         /// <summary>
         /// 开启一个流程

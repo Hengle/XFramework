@@ -15,28 +15,28 @@ public class MySqlMgr : Singleton<MySqlMgr>
     /// <summary>
     /// 数据库地址
     /// </summary>
-    private string datasource;
+    private string m_Datasource;
     /// <summary>
     /// 数据库端口
     /// </summary>
-    private string port;
+    private string m_Port;
     /// <summary>
     /// 数据库名
     /// </summary>
-    private string database;
+    private string m_Database;
     /// <summary>
     /// 用户名
     /// </summary>
-    private string user;
+    private string m_User;
     /// <summary>
     /// 密码
     /// </summary>
-    private string pwd;
+    private string m_Pwd;
 
     /// <summary>
     /// 当前数据库链接
     /// </summary>
-    private MySqlConnection coonn;
+    private MySqlConnection m_Conn;
 
     /// <summary>
     /// 带参构造函数
@@ -55,16 +55,16 @@ public class MySqlMgr : Singleton<MySqlMgr>
         //this.user = getJsonData.inputDate.data[0].user;
         //this.pwd = getJsonData.inputDate.data[0].pwd;
 
-        this.datasource = "";
-        this.port = "";
-        this.database = "";
-        this.user = "";
-        this.pwd = "";
+        m_Datasource = "";
+        m_Port = "";
+        m_Database = "";
+        m_User = "";
+        m_Pwd = "";
     }
 
     public void Update<T, P>(string Keyword, T value, string column, P data, string tableName)
     {
-        MySqlConnection conn = MySqlOpr.GetMySqlConnection(datasource, port, database, user, pwd, true);  // 连接数据库
+        MySqlConnection conn = MySqlOpr.GetMySqlConnection(m_Datasource, m_Port, m_Database, m_User, m_Pwd, true);  // 连接数据库
 
         if (conn == null)
         {
@@ -88,7 +88,7 @@ public class MySqlMgr : Singleton<MySqlMgr>
     public Dictionary<K, T> TableToEntity<K, T>(string tableName, string dicId, string columnNames, string condition = null) where T : class, new()
     {
         Dictionary<K, T> returnDatas = new Dictionary<K, T>();
-        MySqlConnection conn = MySqlOpr.GetMySqlConnection(datasource, port, database, user, pwd, true);  // 连接数据库
+        MySqlConnection conn = MySqlOpr.GetMySqlConnection(m_Datasource, m_Port, m_Database, m_User, m_Pwd, true);  // 连接数据库
 
         if (conn == null)
         {

@@ -25,15 +25,15 @@ namespace XDEDZL.UI
         /// <summary>
         /// 存储所有面板Prefab的路径
         /// </summary>
-        private Dictionary<string, string> panelPathDict;
+        private Dictionary<string, string> m_PanelPathDict;
         /// <summary>
         /// 保存所有实例化面板的游戏物体身上的BasePanel组件
         /// </summary>
-        private Dictionary<string, BasePanel> panelDict;
+        private Dictionary<string, BasePanel> m_PanelDict;
         /// <summary>
         /// 存储面板的栈
         /// </summary>
-        private Stack<BasePanel> panelStack;
+        private Stack<BasePanel> m_PanelStack;
 
         public UIMgrStackType()
         {
@@ -43,7 +43,7 @@ namespace XDEDZL.UI
 
         private void OnUpdate()
         {
-            foreach (var item in panelStack)
+            foreach (var item in m_PanelStack)
             {
                 item.OnUpdate();
             }
@@ -54,15 +54,15 @@ namespace XDEDZL.UI
         /// </summary>
         public void PushPanel(string uiname)
         {
-            if (panelStack == null)
-                panelStack = new Stack<BasePanel>();
+            if (m_PanelStack == null)
+                m_PanelStack = new Stack<BasePanel>();
 
             BasePanel nextPanel = GetPanel(uiname); // 计划打开的页面
             BasePanel currentPanel = null;             // 最近一次关闭的界面
                                                        // 判断一下栈里面是否有页面
-            if (panelStack.Count > 0)
+            if (m_PanelStack.Count > 0)
             {
-                BasePanel topPanel = panelStack.Peek(); // 获取栈顶页面
+                BasePanel topPanel = m_PanelStack.Peek(); // 获取栈顶页面
 
                 // 如果即将打开的页面是栈顶页面，即关闭栈顶页面
                 if (topPanel == nextPanel)
@@ -71,7 +71,7 @@ namespace XDEDZL.UI
                     return;
                 }
                 // 当栈内有面板时，进行判断
-                while (panelStack.Count > 0)
+                while (m_PanelStack.Count > 0)
                 {
                     if (topPanel.Level < nextPanel.Level)
                     {
@@ -79,9 +79,9 @@ namespace XDEDZL.UI
                     }
                     // 如果栈顶页面的层级不小于要打开的页面层级，关闭它并保存
                     currentPanel = PopPanel();
-                    if (panelStack.Count > 0)
+                    if (m_PanelStack.Count > 0)
                     {
-                        topPanel = panelStack.Peek();
+                        topPanel = m_PanelStack.Peek();
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace XDEDZL.UI
             if (currentPanel != nextPanel)
             {
                 nextPanel.OnOpen();
-                panelStack.Push(nextPanel); // 将打开的面板入栈
+                m_PanelStack.Push(nextPanel); // 将打开的面板入栈
             }
         }
 
@@ -98,12 +98,12 @@ namespace XDEDZL.UI
         /// </summary>
         public BasePanel PopPanel()
         {
-            if (panelStack == null)
-                panelStack = new Stack<BasePanel>();
+            if (m_PanelStack == null)
+                m_PanelStack = new Stack<BasePanel>();
 
-            if (panelStack.Count <= 0) return null;
+            if (m_PanelStack.Count <= 0) return null;
 
-            BasePanel topPanel = panelStack.Pop(); // 获取并移除栈顶面板
+            BasePanel topPanel = m_PanelStack.Pop(); // 获取并移除栈顶面板
             topPanel.OnClose();                     // 关闭面板
             return topPanel;
         }
@@ -114,17 +114,17 @@ namespace XDEDZL.UI
         /// <returns></returns>
         public BasePanel GetPanel(string uiname)
         {
-            if (panelDict == null)
+            if (m_PanelDict == null)
             {
-                panelDict = new Dictionary<string, BasePanel>();
+                m_PanelDict = new Dictionary<string, BasePanel>();
             }
 
-            panelDict.TryGetValue(uiname, out BasePanel panel);
+            m_PanelDict.TryGetValue(uiname, out BasePanel panel);
 
             if (panel == null)
             {
                 // 根据prefab去实例化面板
-                panelPathDict.TryGetValue(uiname, out string path);
+                m_PanelPathDict.TryGetValue(uiname, out string path);
                 Debug.Log(path);
                 GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
 
@@ -142,7 +142,7 @@ namespace XDEDZL.UI
                 {
                     throw new System.Exception("面板类名错误");
                 }
-                panelDict.Add(uiname, basePanel);
+                m_PanelDict.Add(uiname, basePanel);
 
                 Transform uiGroup = CanvasTransform.Find("Level" + basePanel.Level);
                 if (uiGroup == null)
@@ -189,10 +189,10 @@ namespace XDEDZL.UI
         {
             get
             {
-                if (panelStack == null || panelStack.Count < 1)
+                if (m_PanelStack == null || m_PanelStack.Count < 1)
                     return null;
                 else
-                    return panelStack?.Peek();
+                    return m_PanelStack?.Peek();
             }
         }
         /// <summary>
@@ -210,9 +210,9 @@ namespace XDEDZL.UI
         /// </summary>
         public void CloseAll()
         {
-            while (panelStack.Count > 0)
+            while (m_PanelStack.Count > 0)
             {
-                panelStack.Pop().OnClose();
+                m_PanelStack.Pop().OnClose();
             }
         }
 
@@ -221,7 +221,7 @@ namespace XDEDZL.UI
         /// </summary>
         private void InitPathDic()
         {
-            panelPathDict = new Dictionary<string, string>();
+            m_PanelPathDict = new Dictionary<string, string>();
             string rootPath = "UIPanelPrefabs/";
             string uipaths = Resources.Load<TextAsset>("UIPath").text;
             uipaths = uipaths.Replace("\"", "");
@@ -235,7 +235,7 @@ namespace XDEDZL.UI
                 if (nameAndPath == null || nameAndPath.Length != 2)
                     continue;
                 string temp = nameAndPath[1] == "" ? nameAndPath[0] : nameAndPath[1] + "/" + nameAndPath[0];
-                panelPathDict.Add(nameAndPath[0], rootPath + temp);
+                m_PanelPathDict.Add(nameAndPath[0], rootPath + temp);
             }
         }
 
@@ -244,12 +244,12 @@ namespace XDEDZL.UI
         /// </summary>
         public void Clear()
         {
-            while (panelStack?.Count > 0)
+            while (m_PanelStack?.Count > 0)
             {
                 PopPanel();
             }
-            panelDict?.Clear();
-            panelStack?.Clear();
+            m_PanelDict?.Clear();
+            m_PanelStack?.Clear();
         }
 
         public void OpenPanel(string uiname)
