@@ -19,7 +19,7 @@ namespace XDEDZL.UI
         private GameObject entityTemplate;
 
         private void Start()
-        {
+        {  
             entityRecycle = (entity) => { Destroy(entity); };
         }
 

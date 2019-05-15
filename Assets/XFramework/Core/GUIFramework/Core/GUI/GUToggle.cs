@@ -1,20 +1,22 @@
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Events;
-using XDEDZL.UI;
 
-[RequireComponent(typeof(Toggle))]
-public class GUToggle : BaseGUI
+namespace XDEDZL.UI
 {
-    public Toggle toggle;
-
-    public void AddListener(UnityAction<bool> action)
+    [RequireComponent(typeof(Toggle))]
+    public class GUToggle : BaseGUI
     {
-        toggle.onValueChanged.AddListener(action);
-    }
+        public Toggle toggle;
 
-    private void Reset()
-    {
-        this.toggle = GetComponent<Toggle>();
+        public void AddListener(UnityAction<bool> action)
+        {
+            toggle.onValueChanged.AddListener(action);
+        }
+
+        private void Reset()
+        {
+            this.toggle = GetComponent<Toggle>();
+        }
     }
 }
