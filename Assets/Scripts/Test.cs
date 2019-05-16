@@ -16,7 +16,7 @@ public class Test : MonoSingleton<Test>
 {
     void Start() 
     {
-        Instantiate(Game.ResModel.Load<GameObject>("prefab/prefab2", "Cylinder"));
+        Instantiate(Game.ResModule.Load<GameObject>("prefab/prefab2", "Cylinder"));
 
         //Regex reg = new Regex("[0-9]*[.]{1}[0-9]*");
         //MatchCollection matchs = reg.Matches("(1.25,2,5.33,5.2222222)");

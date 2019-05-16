@@ -6,7 +6,7 @@
 
         protected void ChangeState<T>() where T : ProcedureBase
         {
-            Game.FsmModel.ChangeState<ProcedureFsm, T>();
+            Game.FsmModule.ChangeState<ProcedureFsm, T>();
         }
     }
 }
