@@ -89,6 +89,7 @@ public class AssetBundleEditor : MonoBehaviour
         // 递归设置下一层目录文件信息
         DirectoryInfo[] folders = dirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly);
 
+        // 递归的跳出条件
         if (folders == null || folders.Length == 0)
         {
             return;

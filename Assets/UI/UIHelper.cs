@@ -2,11 +2,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using XDEDZL.UI;
+using XDEDZL;
 
 /// <summary>
 /// UI管理助手
 /// </summary>
-public class UIHelper : Singleton<UIHelper>
+public class UIHelper : IGameModule
 {
     /// <summary>
     /// UI管理器
@@ -26,6 +27,7 @@ public class UIHelper : Singleton<UIHelper>
         }
     }
 
+
     /// <summary>
     /// 提示
     /// </summary>
@@ -44,7 +46,7 @@ public class UIHelper : Singleton<UIHelper>
     /// </summary>
     private Text VerifyText;
 
-    private UIHelper()
+    public UIHelper()
     {
         UImanager = new UIMgrDicType();
         InitTip();
@@ -125,5 +127,17 @@ public class UIHelper : Singleton<UIHelper>
         VerifyOperate = action;
         VerifyText.text = showText;
         Open(UIName.Verify);
+    }
+
+    public int Priority { get { return UImanager.Priority; } }
+
+    public void Update(float elapseSeconds, float realElapseSeconds)
+    {
+        UImanager.Update(elapseSeconds, realElapseSeconds);
+    }
+
+    public void Shutdown()
+    {
+        UImanager.Shutdown();
     }
 }

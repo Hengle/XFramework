@@ -284,7 +284,7 @@ PrefabInstance:
     - target: {fileID: 4981182210140809175, guid: 77389584accecc6489986eea09f27652,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7695377475053464327, guid: 77389584accecc6489986eea09f27652,
         type: 3}
@@ -433,7 +433,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &963384509
 RectTransform:
   m_ObjectHideFlags: 0
@@ -743,7 +743,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1391829838
 RectTransform:
   m_ObjectHideFlags: 0
@@ -820,7 +820,7 @@ PrefabInstance:
     - target: {fileID: 3704677895247711801, guid: 5c5909ed703514349ac794caca4e09e6,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5148882017195591299, guid: 5c5909ed703514349ac794caca4e09e6,
         type: 3}
@@ -1030,7 +1030,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1913052497}
   - component: {fileID: 1913052499}
-  - component: {fileID: 1913052498}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1052,18 +1051,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1913052498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1913052496}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 722208663857ba349bed9513df56d69d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1913052499
 MonoBehaviour:
   m_ObjectHideFlags: 0

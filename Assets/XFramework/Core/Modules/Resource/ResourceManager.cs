@@ -42,6 +42,11 @@ namespace XDEDZL
 
         public T Load<T>(string path, string name) where T : Object
         {
+            if (path.Substring(0, 4) == "Res/")
+            {
+                path = path.Substring(3, path.Length - 4);
+                return Resources.Load<T>(path);
+            }
 #if AB
             return GetAssetBundle(path).LoadAsset<T>(name);
 #else
@@ -59,6 +64,7 @@ namespace XDEDZL
             m_ABDic.TryGetValue(path, out AssetBundle ab);
             if (ab == null)
             {
+                path = path.ToLower();
                 string abName = string.IsNullOrEmpty(path) ? "" : "/" + path;
 
                 ab = AssetBundle.LoadFromFile(ABPath + abName + ".ab");
@@ -81,6 +87,17 @@ namespace XDEDZL
             }
 
             return ab;
+        }
+
+        /// <summary>
+        /// 卸载AB包
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="unLoadAllObjects"></param>
+        public void UnLoad(string path,bool unLoadAllObjects = true)
+        {
+            GetAssetBundle(path).Unload(unLoadAllObjects);
+            m_ABDic.Remove(path);
         }
 
         public void Update(float elapseSeconds, float realElapseSeconds)

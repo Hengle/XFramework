@@ -38,15 +38,6 @@ namespace XDEDZL.UI
         public UIMgrStackType()
         {
             InitPathDic();
-            MonoEvent.Instance.UPDATE += OnUpdate;
-        }
-
-        private void OnUpdate()
-        {
-            foreach (var item in m_PanelStack)
-            {
-                item.OnUpdate();
-            }
         }
 
         /// <summary>
@@ -195,6 +186,7 @@ namespace XDEDZL.UI
                     return m_PanelStack?.Peek();
             }
         }
+
         /// <summary>
         /// 返回一个特定类型的栈顶界面，如果不匹配返回Null
         /// </summary>
@@ -265,6 +257,21 @@ namespace XDEDZL.UI
         public void CloseTopPanel()
         {
             PopPanel();
+        }
+
+        public int Priority { get { return 200; } }
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            foreach (var item in m_PanelStack)
+            {
+                item.OnUpdate();
+            }
+        }
+
+        public void Shutdown()
+        {
+            
         }
     }
 }

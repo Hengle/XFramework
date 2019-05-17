@@ -17,32 +17,22 @@ public class Test : MonoSingleton<Test>
     AsyncOperation isDown;
     void Start() 
     {
+        GC.Collect();
+        Debug.Log(GC.GetTotalMemory(true));
+        Instantiate(Game.ResModule.Load<GameObject>("NotCommit/Prefabs", "Barbarian"));
 
-        for (int i = 0; i < 6000; i++)
-        {
-            Debug.Log(UnityEngine.Random.Range(1, 4));
-        }
-        
-        //GameObject obj = Game.ResModule.Load<GameObject>("xxx/prefabs", "Barbarian");
+        Game.ResModule.GetAssetBundle("notcommit/models");
+        Game.ResModule.GetAssetBundle("notcommit/prefabs");
 
-        //Debug.Log(Utility.DebugActionRunTime(() =>
-        //{
-        //    for (int i = 0; i < 1000; i++)
-        //    {
-        //        Instantiate(obj);
-        //    }
-        //}));
+        Debug.Log(GC.GetTotalMemory(true));
 
-        //Debug.Log(Utility.DebugActionRunTime(() =>
-        //{
-        //    for (int i = 0; i < 1000; i++)
-        //    {
-        //        Instantiate(Game.ResModule.Load<GameObject>("xxx/prefabs", "Barbarian"));
-        //    }
-        //}));
-       
-        //AssetBundle ab = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/AssetBundles/prefab.ab");
-        //AssetBundleManifest mainfest = ab.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+        //Game.ResModule.GetAssetBundle("notcommit/models").Unload(false);
+        //Game.ResModule.GetAssetBundle("notcommit/prefabs").Unload(false);
+
+        GC.Collect();
+        Debug.Log(GC.GetTotalMemory(true));
+
+        //Instantiate(Game.ResModule.Load<GameObject>("notcommit/prefabs", "Barbarian"));
     }
 
 

@@ -26,7 +26,7 @@ public class GroupPanel : BasePanel {
     /// </summary>
     public override void OnOpen()
     {
-        CreatePanel createPanel = (CreatePanel)UIHelper.Instance.GetPanel(UIName.Create);
+        CreatePanel createPanel = (CreatePanel)Game.UIModule.GetPanel(UIName.Create);
         // 设父物体以及自己在子物体中的顺序
         transform.SetParent(createPanel.groupBtn.transform.parent, true);
         transform.SetSiblingIndex(createPanel.groupBtn.transform.GetSiblingIndex() + 1);

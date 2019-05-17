@@ -11,7 +11,7 @@ namespace XDEDZL.UI
     /// <summary>
     /// UI管理器接口
     /// </summary>
-    public interface IUIManager
+    public interface IUIManager : IGameModule
     {
         /// <summary>
         /// 打开面板

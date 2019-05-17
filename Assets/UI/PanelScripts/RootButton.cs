@@ -16,7 +16,7 @@ public class RootButton : MonoBehaviour {
     public void OnClick()
     {
         // 显示主界面
-        UIHelper.Instance.Open(UIName.Main);
+        Game.UIModule.Open(UIName.Main);
     }
 
     private void Update()
@@ -24,7 +24,7 @@ public class RootButton : MonoBehaviour {
         // 打开/关闭设置界面
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            UIHelper.Instance.Open(UIName.Setting);
+            Game.UIModule.Open(UIName.Setting);
         }
     }
 }

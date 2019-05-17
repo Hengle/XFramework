@@ -40,18 +40,6 @@ namespace XDEDZL.UI
         {
             m_OnDisplayPanelDic = new Dictionary<int, List<BasePanel>>();
             InitPathDic();
-            MonoEvent.Instance.UPDATE += OnUpdate;
-        }
-
-        private void OnUpdate()
-        {
-            foreach (var item in m_OnDisplayPanelDic.Values)
-            {
-                for (int i = 0, length = item.Count; i < length; i++)
-                {
-                    item[i].OnUpdate();
-                }
-            }
         }
 
         /// <summary>
@@ -220,6 +208,24 @@ namespace XDEDZL.UI
                 string temp = nameAndPath[1] == "" ? nameAndPath[0] : nameAndPath[1] + "/" + nameAndPath[0];
                 m_PanelPathDict.Add(nameAndPath[0], rootPath + temp);
             }
+        }
+
+        public int Priority { get { return 200; } }
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            foreach (var item in m_OnDisplayPanelDic.Values)
+            {
+                for (int i = 0, length = item.Count; i < length; i++)
+                {
+                    item[i].OnUpdate();
+                }
+            }
+        }
+
+        public void Shutdown()
+        {
+            
         }
     }
 }
