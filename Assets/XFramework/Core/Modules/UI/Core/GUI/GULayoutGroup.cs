@@ -19,7 +19,7 @@ namespace XDEDZL.UI
         private GameObject entityTemplate;
 
         private void Start()
-        {  
+        {
             entityRecycle = (entity) => { Destroy(entity); };
         }
 
@@ -88,9 +88,9 @@ namespace XDEDZL.UI
         /// <summary>
         /// 创建一个实体并返回，后期改为从对象池中获取
         /// </summary>
-        private GameObject CreateEntity()
+        public GameObject CreateEntity()
         {
-            return Instantiate(entityTemplate,transform);
+            return Instantiate(entityTemplate, transform);
         }
 
         /// <summary>
@@ -104,6 +104,10 @@ namespace XDEDZL.UI
             }
         }
 
+        /// <summary>
+        /// 设置实体模板
+        /// </summary>
+        /// <param name="template">模板</param>
         public void SetEntity(GameObject template)
         {
             entityTemplate = template;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace XDEDZL.UI
 {
@@ -12,17 +13,17 @@ namespace XDEDZL.UI
             draggable = GetComponent<Draggable>();
         }
 
-        public void AddOnBegainDrag(UnityAction call)
+        public void AddOnBegainDrag(UnityAction<PointerEventData> call)
         {
             draggable.onBeginDrag.AddListener(call);
         }
 
-        public void AddOnDrag(UnityAction call)
+        public void AddOnDrag(UnityAction<PointerEventData> call)
         {
             draggable.onDrag.AddListener(call);
         }
 
-        public void AddOnEndDrag(UnityAction call)
+        public void AddOnEndDrag(UnityAction<PointerEventData> call)
         {
             draggable.onEndDrag.AddListener(call);
         }

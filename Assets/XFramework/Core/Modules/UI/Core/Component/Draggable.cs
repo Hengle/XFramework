@@ -39,9 +39,9 @@ namespace XDEDZL.UI
         public float Right { get; private set; }
         public Padding padding;
 
-        public UnityEvent onBeginDrag = new UnityEvent();
-        public UnityEvent onDrag = new UnityEvent();
-        public UnityEvent onEndDrag = new UnityEvent();
+        public DragEvent onBeginDrag = new DragEvent();
+        public DragEvent onDrag = new DragEvent();
+        public DragEvent onEndDrag = new DragEvent();
 
         public void Start()
         {
@@ -58,7 +58,7 @@ namespace XDEDZL.UI
                 RectTransformUtility.ScreenPointToWorldPointInRectangle(targetRect, eventData.position, eventData.pressEventCamera, out globalMousePos);
                 differ = globalMousePos - targetRect.position;
             }
-            onBeginDrag.Invoke();
+            onBeginDrag.Invoke(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -86,12 +86,12 @@ namespace XDEDZL.UI
                     }
                 }
             }
-            onDrag.Invoke();
+            onDrag.Invoke(eventData);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            onEndDrag.Invoke();
+            onEndDrag.Invoke(eventData);
         }
 
         private void InitArea()
@@ -112,5 +112,7 @@ namespace XDEDZL.UI
             public float Left;
             public float Right;
         }
+
+        public class DragEvent : UnityEvent<PointerEventData> { }
     }
 }
