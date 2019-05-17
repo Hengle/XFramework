@@ -18,6 +18,7 @@ public class Game : MonoBehaviour
     void Awake()
     {
         InitModel();
+        DontDestroyOnLoad(this);
     }
 
     void Update()

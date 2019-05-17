@@ -4,7 +4,6 @@ using System.Reflection;
 using UnityEngine;
 using System.Text;
 using System;
-using UnityEngine.Networking;
 using System.Collections;
 using XDEDZL.Collections;
 using XDEDZL;
@@ -14,18 +13,38 @@ using System.Text.RegularExpressions;
 
 public class Test : MonoSingleton<Test>
 {
+
+    AsyncOperation isDown;
     void Start() 
     {
-        Instantiate(Game.ResModule.Load<GameObject>("prefab/prefab2", "Cylinder"));
 
-        //Regex reg = new Regex("[0-9]*[.]{1}[0-9]*");
-        //MatchCollection matchs = reg.Matches("(1.25,2,5.33,5.2222222)");
-        //Debug.Log(matchs.Count);
-        //for (int i = 0; i < matchs.Count; i++)
+        for (int i = 0; i < 6000; i++)
+        {
+            Debug.Log(UnityEngine.Random.Range(1, 4));
+        }
+        
+        //GameObject obj = Game.ResModule.Load<GameObject>("xxx/prefabs", "Barbarian");
+
+        //Debug.Log(Utility.DebugActionRunTime(() =>
         //{
-        //    Debug.Log(matchs[i].Value);
-        //}
+        //    for (int i = 0; i < 1000; i++)
+        //    {
+        //        Instantiate(obj);
+        //    }
+        //}));
+
+        //Debug.Log(Utility.DebugActionRunTime(() =>
+        //{
+        //    for (int i = 0; i < 1000; i++)
+        //    {
+        //        Instantiate(Game.ResModule.Load<GameObject>("xxx/prefabs", "Barbarian"));
+        //    }
+        //}));
+       
+        //AssetBundle ab = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/AssetBundles/prefab.ab");
+        //AssetBundleManifest mainfest = ab.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
     }
+
 
     private void OnPostRender()
     {
@@ -42,6 +61,15 @@ public class Test : MonoSingleton<Test>
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            for (int i = 0; i < 6000; i++)
+            {
+                Debug.Log(UnityEngine.Random.Range(1, 4));
+            }
+        }
+
+
         if (Input.GetKeyDown(KeyCode.J))
         {
             Debug.LogError(Application.dataPath);
@@ -71,21 +99,6 @@ public class Test : MonoSingleton<Test>
         }
         return -1;
     }
-
-    IEnumerator WebGet()
-    {
-        UnityWebRequest webRequest = UnityWebRequestAssetBundle.GetAssetBundle("http://www.baidu.com");
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isHttpError || webRequest.isNetworkError)
-            Debug.Log(webRequest.error);
-        else
-        {
-            //AssetDatabase
-            Debug.Log(webRequest.downloadHandler.text);
-        }
-    }
-
 
     #region Graph Test
 
@@ -149,6 +162,21 @@ public class Test : MonoSingleton<Test>
         {
             Debug.Log(a);
         });
+    }
+
+    #endregion
+
+    #region 正则表达式
+
+    public void AAAA()
+    {
+        //Regex reg = new Regex("[0-9]*[.]{1}[0-9]*");
+        //MatchCollection matchs = reg.Matches("(1.25,2,5.33,5.2222222)");
+        //Debug.Log(matchs.Count);
+        //for (int i = 0; i < matchs.Count; i++)
+        //{
+        //    Debug.Log(matchs[i].Value);
+        //}
     }
 
     #endregion

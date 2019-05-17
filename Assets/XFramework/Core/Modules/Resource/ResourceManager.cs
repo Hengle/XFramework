@@ -1,4 +1,4 @@
-﻿#define ABTes
+﻿#define ABTest
 #if!UNITY_EDITOR || ABTest
 #define AB
 #endif
@@ -54,7 +54,7 @@ namespace XDEDZL
         /// </summary>
         /// <param name="path">相对路径</param>
         /// <returns></returns>
-        private AssetBundle GetAssetBundle(string path)
+        public AssetBundle GetAssetBundle(string path)
         {
             m_ABDic.TryGetValue(path, out AssetBundle ab);
             if (ab == null)
