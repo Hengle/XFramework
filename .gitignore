@@ -2,11 +2,15 @@ Library
 Temp
 obj
 Logs
-Assets/zNewTechniqueTest
 UnityPackageManager
 xdedzl.csproj
 xdedzl.Editor.csproj
 xdedzl.sln
 .vs
 *.csproj
+Assets/zNewTechniqueTest
 Assets/zNewTechniqueTest.meta
+Assets/ResourcesAB/NotCommit
+Assets/ResourcesAB/NotCommit.meta
+Assets/StreamingAssets/AssetBundles
+Assets/StreamingAssets/AssetBundles.meta
