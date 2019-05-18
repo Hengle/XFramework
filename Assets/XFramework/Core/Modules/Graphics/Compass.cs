@@ -1,23 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Compass : MonoBehaviour
 {
     private Material shapesMaterial;
     private Vector3 pos;
-    private List<int> temp;
 
     private void Start()
     {
         shapesMaterial = new Material(Shader.Find("RunTimeHandles/Shape"));
         shapesMaterial.color = Color.white;
-
-        temp = new List<int>();
-        temp.Add(1);
-        temp.Add(2);
-        temp.Add(3);
-        temp.Add(4);
     }
 
     private void OnPostRender()

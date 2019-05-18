@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.Reflection;
 using XDEDZL;
 
-[CustomEditor(typeof(TargetCamera),true),CanEditMultipleObjects]
+[CustomEditor(typeof(TargetCamera), true), CanEditMultipleObjects]
 public class TargetCameraInspector : Editor
 {
     private TargetCamera targetCamera;
@@ -13,6 +14,7 @@ public class TargetCameraInspector : Editor
     private SerializedProperty smoothFollow;
     private SerializedProperty mouseOrbit;
     private SerializedProperty lookAt;
+    private SerializedProperty supervisory;
 
     private void OnEnable()
     {
@@ -22,6 +24,7 @@ public class TargetCameraInspector : Editor
         smoothFollow = serializedObject.FindProperty("smoothFollow");
         mouseOrbit = serializedObject.FindProperty("mouseOrbit");
         lookAt = serializedObject.FindProperty("lookAt");
+        supervisory = serializedObject.FindProperty("supervisory");
     }
 
     public override void OnInspectorGUI()
@@ -47,6 +50,10 @@ public class TargetCameraInspector : Editor
                 //EditorGUILayout.PropertyField(lookAt, true);
                 SerializableObj(targetCamera.lookAt);
                 break;
+            case TargetCamera.Mode.Supervisory:
+                //EditorGUILayout.PropertyField(lookAt, true);
+                SerializableObj(targetCamera.supervisory);
+                break;
             default:
                 break;
         }
@@ -63,7 +70,7 @@ public class TargetCameraInspector : Editor
         Type type = obj.GetType();
         FieldInfo[] fieldInfos = type.GetFields();
 
-        GUI.backgroundColor = new Color32(0,170,255,30);
+        GUI.backgroundColor = new Color32(0, 170, 255, 30);
         EditorGUILayout.BeginVertical("box");
         GUI.backgroundColor = Color.white;
         foreach (var field in fieldInfos)

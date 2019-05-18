@@ -252,9 +252,62 @@ public class TargetCamera : MonoBehaviour
         }
     }
 
+    [Serializable]
+    public class CameraSupervisory : BaseCameraMode
+    {
+        public float orbitDamping = 5;
+        [Space(5)]
+        public string horizontalAxis = "Mouse X";
+        public float horizontalSpeed = 5f;
+        public float minHorAngle = -20;
+        public float maxHorAngle = 80;
+        [Space(5)]
+        public string verticalAxis = "Mouse Y";
+        public float verticalSpeed = 2.5f;
+        public float minVerAngle = -30;
+        public float maxVerAngle = 30;
+        [Space(5)]
+        public string fovAxis = "Mouse ScrollWheel";
+        public float fovSpeed = 10;
+        public float fovDamping = 2;
+        public float minFov = 10;
+        public float maxFov = 60;
+
+        private Camera camera;
+        private float orbitX;
+        private float orbitY;
+        private float orbitDis;
+        private float fov;
+
+
+        public override void Initialize(Transform self)
+        {
+            camera = self.GetComponent<Camera>();
+            fov = camera.fieldOfView;
+        }
+
+        public override void Update(Transform self, Transform target, Vector3 targetOffset)
+        {
+            orbitX += Input.GetAxis(horizontalAxis) * horizontalSpeed;
+            orbitY -= Input.GetAxis(verticalAxis) * verticalSpeed;
+            orbitX = Mathf.Clamp(orbitX, minHorAngle, maxHorAngle);
+            orbitY = Mathf.Clamp(orbitY, minVerAngle, maxVerAngle);
+            self.localRotation = Quaternion.Slerp(self.rotation, Quaternion.Euler(orbitY, orbitX, 0), orbitDamping * Time.deltaTime);
+
+            fov -= Input.GetAxis(fovAxis) * fovSpeed;
+            fov = Mathf.Clamp(fov, minFov, maxFov);
+            camera.fieldOfView = Mathf.Lerp(camera.fieldOfView, fov, fovDamping * Time.deltaTime);
+        }
+
+        public override void OnDisable(Transform self, Transform target, Vector3 targetOffset)
+        {
+            camera.fieldOfView = 60;
+        }
+    }
+
     #endregion
 
-    public enum Mode { AttachTo, SmoothFollow, MouseOrbit, LookAt };
+    public enum Mode { AttachTo, SmoothFollow, MouseOrbit, LookAt, Supervisory };
     public Mode mode = Mode.SmoothFollow;
 
     public Transform target;
@@ -266,6 +319,7 @@ public class TargetCamera : MonoBehaviour
     public CameraSmoothFollow smoothFollow = new CameraSmoothFollow();
     public CameraMouseOrbit mouseOrbit = new CameraMouseOrbit();
     public CameraLookAt lookAt = new CameraLookAt();
+    public CameraSupervisory supervisory = new CameraSupervisory();
 
     private Mode prevMode;
     private BaseCameraMode[] cameraModes;
@@ -279,7 +333,7 @@ public class TargetCamera : MonoBehaviour
     {
         cameraModes = new BaseCameraMode[]
         {
-            attachTo, smoothFollow, mouseOrbit, lookAt
+            attachTo, smoothFollow, mouseOrbit, lookAt, supervisory
         };
 
         foreach (BaseCameraMode cam in cameraModes)

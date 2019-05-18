@@ -15,7 +15,7 @@ public class AssetOpenModeWindow : EditorWindow
     private float m_CurrentHeight;
 
     private void OnEnable()
-    {
+    { 
         Load(); 
     }
 

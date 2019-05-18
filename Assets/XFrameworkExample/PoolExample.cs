@@ -18,7 +18,7 @@ public class PoolExample : MonoBehaviour
         Debug.Log(aa.GetHashCode());
         aa = Game.PoolModule.Allocate<TestPoolObj>();
         Game.PoolModule.Recycle(aa);
-        Debug.Log(aa.GetHashCode());
+        Debug.Log(aa.GetHashCode()); 
         aa = Game.PoolModule.Allocate<TestPoolObj>();
         Game.PoolModule.Recycle(aa);
         Debug.Log(aa.GetHashCode());
@@ -26,7 +26,7 @@ public class PoolExample : MonoBehaviour
         Game.PoolModule.Recycle(aa);
         Debug.Log(aa.GetHashCode());
         aa = Game.PoolModule.Allocate<TestPoolObj>();
-        Game.PoolModule.Recycle(aa);
+        Game.PoolModule.Recycle(aa); 
         Debug.Log(aa.GetHashCode());
     }
 

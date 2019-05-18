@@ -18,7 +18,7 @@
         void Update(float elapseSeconds, float realElapseSeconds);
         /// <summary>
         /// 关闭模块
-        /// </summary>
+        /// </summary> 
         void Shutdown();
     }
 }
