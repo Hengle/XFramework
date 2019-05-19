@@ -8,44 +8,6 @@ using UnityEngine;
 /// </summary>
 public static class Math2d
 {
-    #region 通过Vector3获取Vector2
-
-    public static Vector2 WithoutX(this Vector3 vec)
-    {
-        return new Vector2(vec.y, vec.z);
-    }
-
-    public static Vector2 WithoutY(this Vector3 vec)
-    {
-        return new Vector2(vec.x, vec.z);
-    }
-
-    public static Vector2 WithoutZ(this Vector3 vec)
-    {
-        return new Vector2(vec.x, vec.y);
-    }
-
-    #endregion
-
-    #region 通过Vector2获取Vector3
-
-    public static Vector3 AddX(this Vector2 vec, float value = 0)
-    {
-        return new Vector3(value, vec.x, vec.y);
-    }
-
-    public static Vector3 AddY(this Vector2 vec, float value = 0)
-    {
-        return new Vector3(vec.x, value, vec.y);
-    }
-
-    public static Vector3 AddZ(this Vector2 vec, float value = 0)
-    {
-        return new Vector3(vec.x, vec.y, value);
-    }
-
-    #endregion
-
     /// <summary>
     /// 判断两线段的是否相交
     /// </summary>

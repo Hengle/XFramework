@@ -35,6 +35,40 @@ namespace XDEDZL
             return new Vector2(v.x, y);
         }
 
+        public static Vector2 YZ(this Vector3 vec)
+        {
+            return new Vector2(vec.y, vec.z);
+        }
+
+        public static Vector2 XZ(this Vector3 vec)
+        {
+            return new Vector2(vec.x, vec.z);
+        }
+
+        public static Vector2 XY(this Vector3 vec)
+        {
+            return new Vector2(vec.x, vec.y);
+        }
+
+        #region 通过Vector2获取Vector3
+
+        public static Vector3 AddX(this Vector2 vec, float value = 0)
+        {
+            return new Vector3(value, vec.x, vec.y);
+        }
+
+        public static Vector3 AddY(this Vector2 vec, float value = 0)
+        {
+            return new Vector3(vec.x, value, vec.y);
+        }
+
+        public static Vector3 AddZ(this Vector2 vec, float value = 0)
+        {
+            return new Vector3(vec.x, vec.y, value);
+        }
+
+        #endregion
+
         public static Vector3Serializer Serializer(this Vector3 v)
         {
             return new Vector3Serializer(v);

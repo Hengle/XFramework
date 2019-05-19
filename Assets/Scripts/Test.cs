@@ -10,10 +10,11 @@ using XDEDZL;
 using XDEDZL.UI;
 using UnityEditor;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public class Test : MonoSingleton<Test>
 {
-
+    float a => 10;
     AsyncOperation isDown;
     void Start() 
     {
@@ -33,6 +34,8 @@ public class Test : MonoSingleton<Test>
         Debug.Log(GC.GetTotalMemory(true));
 
         //Instantiate(Game.ResModule.Load<GameObject>("notcommit/prefabs", "Barbarian"));
+
+        
     }
 
 
