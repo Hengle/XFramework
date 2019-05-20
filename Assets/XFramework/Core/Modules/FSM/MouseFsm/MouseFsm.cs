@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 鼠标事件

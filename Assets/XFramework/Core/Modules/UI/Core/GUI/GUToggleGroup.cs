@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [RequireComponent(typeof(ToggleGroup))]
     public class GUToggleGroup : BaseGUI

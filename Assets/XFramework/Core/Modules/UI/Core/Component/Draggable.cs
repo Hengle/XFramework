@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [RequireComponent(typeof(RectTransform))]
     public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler

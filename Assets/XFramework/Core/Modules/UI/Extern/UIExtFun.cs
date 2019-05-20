@@ -1,7 +1,7 @@
 ﻿using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// 对Unity UI的扩展方法

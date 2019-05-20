@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XDEDZL
+namespace XFramework
 {
     public class SoundManager : Singleton<SoundManager>
     {

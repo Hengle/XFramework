@@ -1,5 +1,5 @@
 ﻿
-namespace XDEDZL.Collections
+namespace XFramework.Collections
 {
     public interface IGraph<T>
     {

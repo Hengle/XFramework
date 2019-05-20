@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [RequireComponent(typeof(LongOrDoubleBtn))]
     public class GULongOrDoubleBtn : BaseGUI

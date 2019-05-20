@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TestWindow : EditorWindow
 {
-    [MenuItem("XDEDZL/TestWindow")]
+    [MenuItem("XFramework/TestWindow")]
     private static void Open()
     {
         GetWindow(typeof(TestWindow));

@@ -1,7 +1,7 @@
 ﻿using System;
-using XDEDZL;
+using XFramework;
 
-namespace XDEDZL.Collections
+namespace XFramework.Collections
 {
     /// <summary>
     /// 无向图

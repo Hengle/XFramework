@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     public class SliderMixInput : MonoBehaviour
     {

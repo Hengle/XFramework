@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// 面板基类

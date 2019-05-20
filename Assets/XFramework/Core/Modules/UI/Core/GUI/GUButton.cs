@@ -1,4 +1,4 @@
-﻿namespace XDEDZL.UI
+﻿namespace XFramework.UI
 {
     [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Button))]
     public class GUButton : BaseGUI

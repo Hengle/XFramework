@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using XDEDZL.Pool;
+using XFramework.Pool;
 
 public class PoolExample : MonoBehaviour
 {

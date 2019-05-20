@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace XDEDZL.OldFsm
+namespace XFramework.OldFsm
 {
     /// <summary>
     /// This class is adapted and modified from the FSM implementation class available on UnifyCommunity website

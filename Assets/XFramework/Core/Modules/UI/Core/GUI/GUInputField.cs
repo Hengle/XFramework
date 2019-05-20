@@ -1,7 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine.Events;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [UnityEngine.RequireComponent(typeof(Image))]
     public class GUInputField : BaseGUI

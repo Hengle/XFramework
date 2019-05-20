@@ -38,7 +38,7 @@ public class ImporterSettingWindow : EditorWindow
     }
 
 
-    [MenuItem("XDEDZL/AssetImporter/ImporterSettingWindow")]
+    [MenuItem("XFramework/AssetImporter/ImporterSettingWindow")]
     public static void ImporterSet()
     {
         EditorWindow.GetWindow(typeof(ImporterSettingWindow));

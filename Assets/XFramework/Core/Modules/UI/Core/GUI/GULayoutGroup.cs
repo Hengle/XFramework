@@ -2,7 +2,7 @@
 using UnityEngine;
 using System;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [RequireComponent(typeof(LayoutGroup))]
     public class GULayoutGroup : BaseGUI

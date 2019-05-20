@@ -1,7 +1,7 @@
 ///<summary>
 ///数据类基类
 ///<summary>
-namespace XDEDZL
+namespace XFramework
 {
     //数据类型枚举
     public enum DataType

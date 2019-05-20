@@ -1,7 +1,7 @@
 ﻿using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [UnityEngine.RequireComponent(typeof(Draggable))]
     public class GUDragable : BaseGUI

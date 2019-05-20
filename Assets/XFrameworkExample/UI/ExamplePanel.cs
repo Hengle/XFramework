@@ -1,4 +1,4 @@
-﻿using XDEDZL.UI;
+﻿using XFramework.UI;
 
 /*
  * 代码中需要用到的UI组件才需挂载GUxxx

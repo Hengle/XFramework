@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 状态机

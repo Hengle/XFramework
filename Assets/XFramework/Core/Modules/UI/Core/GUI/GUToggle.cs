@@ -2,7 +2,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [RequireComponent(typeof(Toggle))]
     public class GUToggle : BaseGUI

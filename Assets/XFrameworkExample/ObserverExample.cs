@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using XDEDZL;
+using XFramework;
 
 /*
  * 以战斗系统为例

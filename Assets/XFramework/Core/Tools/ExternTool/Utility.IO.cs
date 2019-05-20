@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 
-namespace XDEDZL
+namespace XFramework
 {
     public enum CreatType
     {

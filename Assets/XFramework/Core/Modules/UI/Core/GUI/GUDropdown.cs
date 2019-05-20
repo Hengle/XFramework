@@ -1,5 +1,5 @@
 ﻿
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Dropdown))]
     public class GUDropdown : BaseGUI

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using XDEDZL;
+using XFramework;
 
 public class State1 : MouseState
 {

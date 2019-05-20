@@ -6,7 +6,7 @@
  * UIManager只负责管理多个UI面板之间的逻辑，其余扩展性的功能交给UIHelper
  */
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// UI管理器接口

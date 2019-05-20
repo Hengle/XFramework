@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XDEDZL.Pool
+namespace XFramework.Pool
 {
     public class GameObjectFactory : Singleton<GameObjectFactory>
     {

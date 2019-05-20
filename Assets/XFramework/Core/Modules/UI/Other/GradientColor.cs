@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// 继承自Graphic的组件都可以添加此效果

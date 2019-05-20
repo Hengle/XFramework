@@ -8,9 +8,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using XDEDZL.Pool;
+using XFramework.Pool;
 
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 所有的MeshPrefab 的管理类, 单例

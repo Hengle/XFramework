@@ -9,8 +9,8 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using XDEDZL.UI;
-using XDEDZL;
+using XFramework.UI;
+using XFramework;
 
 public class ButtonListPanel : BasePanel {
 

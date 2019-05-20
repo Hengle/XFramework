@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [RequireComponent(typeof(ScrollRect))]
     public class GUScrollRect : BaseGUI

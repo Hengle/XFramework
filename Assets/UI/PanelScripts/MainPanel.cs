@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using XDEDZL.UI;
+using XFramework.UI;
 
 public class MainPanel : BasePanel {
 

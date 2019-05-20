@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
-using XDEDZL.UI;
-using XDEDZL;
+using XFramework.UI;
+using XFramework;
 
 /// <summary>
 /// UI管理助手

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
-using XDEDZL.Pool;
-using XDEDZL.OldFsm;
+using XFramework.Pool;
+using XFramework.OldFsm;
 
 /// <summary>
 /// 直升机状态

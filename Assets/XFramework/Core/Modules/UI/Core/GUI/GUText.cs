@@ -1,6 +1,6 @@
 ﻿using UnityEngine.UI;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Text))]
     public class GUText : BaseGUI

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace XDEDZL
+namespace XFramework
 {
     public static partial class Utility
     {

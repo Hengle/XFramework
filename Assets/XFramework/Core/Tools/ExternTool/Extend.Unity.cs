@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 这个类管理一系列的拓展函数

@@ -2,7 +2,7 @@
 using UnityEngine;
 using System;
 
-namespace XDEDZL.Pool
+namespace XFramework.Pool
 {
     /// <summary>
     /// 对象池

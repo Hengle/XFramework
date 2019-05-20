@@ -7,7 +7,7 @@ namespace Quick.Code
     public class CodeConfig
     {
         public const string FindBaseGUI = "(this[\"{0}\"] as {1})";
-        public const string nameSpcae = "using UnityEngine;\nusing UnityEngine.UI;\nusing XDEDZL.UI;\n\n";
+        public const string nameSpcae = "using UnityEngine;\nusing UnityEngine.UI;\nusing XFramework.UI;\n\n";
         public const string classStart = "public class {0} : BasePanel\n{{\n\n";
         public const string classEnd = "\n}\n";
         public const string EmptyFun = "\tprivate void {0}()\n\t{{\n\n\t}}\n\n";

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 使用工具类

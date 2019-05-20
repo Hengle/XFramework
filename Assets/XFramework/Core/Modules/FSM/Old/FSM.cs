@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XDEDZL.OldFsm
+namespace XFramework.OldFsm
 {
     public class FSM : MonoBehaviour
     {

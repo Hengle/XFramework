@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// 一个使用字典管理的UI管理器

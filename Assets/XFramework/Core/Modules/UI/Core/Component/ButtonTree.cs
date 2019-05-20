@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     public class ButtonTree : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace XDEDZL.Pool
+namespace XFramework.Pool
 {
     /// <summary>
     /// 对象池管理

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XDEDZL
+namespace XFramework
 {
     public static class GameEntry
     {

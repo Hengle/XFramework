@@ -38,7 +38,7 @@ public class AssetOpenModeWindow : EditorWindow
     }
 
 
-    [MenuItem("XDEDZL/Asset/OpenMode")]
+    [MenuItem("XFramework/Asset/OpenMode")]
     private static void OpenWidown()
     {
         GetWindow(typeof(AssetOpenModeWindow));

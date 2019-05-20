@@ -1,7 +1,7 @@
 ///<summary>
 ///主题 有多少个basedata类型 就会有多少主题
 ///<summary>
-namespace XDEDZL
+namespace XFramework
 {
     using System.Collections.Generic;
 

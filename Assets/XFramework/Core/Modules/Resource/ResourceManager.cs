@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace XDEDZL
+namespace XFramework
 {
     public class ResourceManager : IGameModule
     {

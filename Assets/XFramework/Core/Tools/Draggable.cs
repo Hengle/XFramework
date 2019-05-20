@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 2D/3D物体拖拽（需在相机上挂对应的Physics Raycaster）

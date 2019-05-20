@@ -59,7 +59,7 @@ public class AutoImporterWindow : EditorWindow
         GUILayout.EndVertical();
     }
 
-    [MenuItem("XDEDZL/AssetImporter/AutoImporterWindow")]
+    [MenuItem("XFramework/AssetImporter/AutoImporterWindow")]
     public static void ImporterSet()
     {
         EditorWindow.GetWindow(typeof(AutoImporterWindow));

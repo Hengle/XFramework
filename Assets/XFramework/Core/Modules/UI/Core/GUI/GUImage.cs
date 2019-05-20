@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     [UnityEngine.RequireComponent(typeof(UnityEngine.UI.Image))]
     public class GUImage : BaseGUI

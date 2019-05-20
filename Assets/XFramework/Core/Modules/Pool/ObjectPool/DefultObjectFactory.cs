@@ -1,4 +1,4 @@
-﻿namespace XDEDZL.Pool
+﻿namespace XFramework.Pool
 {
     /// <summary>
     /// 一个new出对象的工厂

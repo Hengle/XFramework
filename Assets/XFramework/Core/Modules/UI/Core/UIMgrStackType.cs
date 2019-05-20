@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// 栈入式UI管理器

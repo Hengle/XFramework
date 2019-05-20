@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace XDEDZL.Mathematics
+namespace XFramework.Mathematics
 {
     /// <summary>
     /// 有关3D数学的计算

@@ -1,4 +1,4 @@
-﻿namespace XDEDZL
+﻿namespace XFramework
 {
     /// <summary>
     /// 模块基类

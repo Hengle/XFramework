@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     public abstract class BaseGUI : MonoBehaviour
     {

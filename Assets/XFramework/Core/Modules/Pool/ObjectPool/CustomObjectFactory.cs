@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XDEDZL.Pool
+namespace XFramework.Pool
 {
     public class CustomObjectFactory<T> : IObjectFactory<T>
     {

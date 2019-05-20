@@ -1,5 +1,5 @@
 ﻿
-namespace XDEDZL
+namespace XFramework
 {
     /// <summary>
     /// 流程状态机

@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEditor.UI;
 
-namespace XDEDZL.UI.Editor
+namespace XFramework.UI.Editor
 {
     [CustomEditor(typeof(LongOrDoubleBtn), true)]
     [CanEditMultipleObjects]

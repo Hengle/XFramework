@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace XDEDZL.Collections
+namespace XFramework.Collections
 {
     /// <summary>
     /// 有向图

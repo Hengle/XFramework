@@ -1,7 +1,7 @@
 ///<summary>
 ///观察者接口
 ///<summary>
-namespace XDEDZL
+namespace XFramework
 {
     public interface IObserver
     {

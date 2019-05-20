@@ -2,13 +2,13 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System;
-using XDEDZL.UI;
+using XFramework.UI;
 
 namespace Quick.Code
 {
     public class GenerateCodeWindow : EditorWindow
     {
-        [MenuItem("XDEDZL/UI/QuickGenCode")]
+        [MenuItem("XFramework/UI/QuickGenCode")]
         public static void OpenWindow()
         {
             if (codeWindow == null)

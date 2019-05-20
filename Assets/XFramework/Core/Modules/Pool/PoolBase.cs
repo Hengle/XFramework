@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XDEDZL.Pool
+namespace XFramework.Pool
 {
     public abstract class PoolBase 
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XDEDZL.UI
+namespace XFramework.UI
 {
     /// <summary>
     /// UI元素数据类

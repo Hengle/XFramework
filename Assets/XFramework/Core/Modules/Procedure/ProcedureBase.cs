@@ -1,4 +1,4 @@
-﻿namespace XDEDZL
+﻿namespace XFramework
 {
     public abstract class ProcedureBase : FsmState
     {

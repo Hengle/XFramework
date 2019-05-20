@@ -5,9 +5,9 @@ using UnityEngine;
 using System.Text;
 using System;
 using System.Collections;
-using XDEDZL.Collections;
-using XDEDZL;
-using XDEDZL.UI;
+using XFramework.Collections;
+using XFramework;
+using XFramework.UI;
 using UnityEditor;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -72,7 +72,7 @@ public class Test : MonoSingleton<Test>
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/xdedzl/Library/ScriptAssemblies/Assembly-CSharp.dll");
+            Assembly asmb = Assembly.LoadFrom(@"file:///E:/github/XFramework/Library/ScriptAssemblies/Assembly-CSharp.dll");
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace XDEDZL.Pool
+﻿namespace XFramework.Pool
 {
     /// <summary>
     /// 池

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace XDEDZL.Collections
+namespace XFramework.Collections
 {
     public class List<T> : IList<T>
     {

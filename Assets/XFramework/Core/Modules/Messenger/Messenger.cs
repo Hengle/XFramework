@@ -10,7 +10,7 @@ public enum MessageEventType
     B,
 }
 
-namespace XDEDZL
+namespace XFramework
 {
     //=====================================================================================/
     /// <summary>

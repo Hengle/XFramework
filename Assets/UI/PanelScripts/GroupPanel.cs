@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
-using XDEDZL.UI;
+using XFramework.UI;
 
 /// <summary>
 /// 五群界面
