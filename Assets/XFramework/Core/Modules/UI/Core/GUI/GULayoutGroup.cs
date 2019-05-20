@@ -1,31 +1,46 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
-using System;
+using UnityEngine.Events;
 
 namespace XFramework.UI
 {
     [RequireComponent(typeof(LayoutGroup))]
     public class GULayoutGroup : BaseGUI
     {
-        public LayoutGroup m_LayoutGroup;
+        public LayoutGroup layoutGroup;
+
+        /// <summary>
+        /// 实体模板
+        /// </summary>
+        private GameObject m_EntityTemplate;
 
         /// <summary>
         /// 实体回收事件
         /// </summary>
-        private Action<GameObject> entityRecycle;
+        public EntityEvent onEntityRecycle;
+        /// <summary>
+        /// 实体创建事件
+        /// </summary>
+        public EntityEvent onEntityCreate;
+        /// <summary>
+        /// 实体添加事件
+        /// </summary>
+        public EntityEvent onEntityAdd;
         /// <summary>
         /// 内容模板
         /// </summary>
-        private GameObject entityTemplate;
 
         private void Start()
         {
-            entityRecycle = (entity) => { Destroy(entity); };
+            //entityRecycle.AddListener((entity) =>
+            //{
+            //    Destroy(entity);
+            //});
         }
 
         private void Reset()
         {
-            m_LayoutGroup = transform.GetComponent<LayoutGroup>();
+            layoutGroup = transform.GetComponent<LayoutGroup>();
         }
 
         /// <summary>
@@ -33,7 +48,10 @@ namespace XFramework.UI
         /// </summary>
         public GameObject AddEntity()
         {
-            return CreateEntity();
+            // TODO之后可能是从对象池种获取
+            GameObject obj = CreateEntity();
+            onEntityAdd.Invoke(obj);
+            return obj;
         }
 
         /// <summary>
@@ -41,7 +59,7 @@ namespace XFramework.UI
         /// </summary>
         public void RemoveEntity(GameObject gameObject)
         {
-            entityRecycle?.Invoke(gameObject);
+            onEntityRecycle.Invoke(gameObject);
         }
 
         /// <summary>
@@ -50,15 +68,7 @@ namespace XFramework.UI
         /// <param name="index"></param>
         public void RemoveEntity(int index)
         {
-            RemoveEntity(m_LayoutGroup.transform.GetChild(index).gameObject);
-        }
-
-        /// <summary>
-        /// 设置实体回收事件
-        /// </summary>
-        public void SetRecycle(Action<GameObject> _entityRecycle)
-        {
-            entityRecycle = _entityRecycle;
+            RemoveEntity(layoutGroup.transform.GetChild(index).gameObject);
         }
 
         /// <summary>
@@ -90,7 +100,9 @@ namespace XFramework.UI
         /// </summary>
         public GameObject CreateEntity()
         {
-            return Instantiate(entityTemplate, transform);
+            GameObject obj = Instantiate(m_EntityTemplate, transform);
+            onEntityCreate.Invoke(obj);
+            return obj;
         }
 
         /// <summary>
@@ -98,9 +110,9 @@ namespace XFramework.UI
         /// </summary>
         public void Clear()
         {
-            for (int i = m_LayoutGroup.transform.childCount; i > 0; i--)
+            for (int i = layoutGroup.transform.childCount; i > 0; i--)
             {
-                Destroy(m_LayoutGroup.transform.GetChild(i - 1).gameObject);
+                Destroy(layoutGroup.transform.GetChild(i - 1).gameObject);
             }
         }
 
@@ -110,8 +122,10 @@ namespace XFramework.UI
         /// <param name="template">模板</param>
         public void SetEntity(GameObject template)
         {
-            entityTemplate = template;
-            entityTemplate.transform.position = Vector3.up * 100000;
+            m_EntityTemplate = template;
+            m_EntityTemplate.transform.position = Vector3.up * 100000;
         }
+
+        public class EntityEvent : UnityEvent<GameObject> { }
     }
 }

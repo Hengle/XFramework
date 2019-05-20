@@ -7,16 +7,17 @@ using UnityEngine;
 public class AssetOpenModeWindow : EditorWindow
 {
     private static CodeOpneMode shaderOpenMode = CodeOpneMode.VSCode;
-    private static CodeOpneMode csOpenMode = CodeOpneMode.Default; 
-    private static CodeOpneMode jsonOpenMode = CodeOpneMode.VSCode; 
+    private static CodeOpneMode csOpenMode = CodeOpneMode.Default;
+    private static CodeOpneMode jsonOpenMode = CodeOpneMode.VSCode;
+    private static CodeOpneMode txtOpenMode = CodeOpneMode.VSCode;
 
     private AssetOpenModeWindow m_Window;
     private float m_CurrentWidth;
     private float m_CurrentHeight;
 
     private void OnEnable()
-    { 
-        Load(); 
+    {
+        Load();
     }
 
     private void OnGUI()
@@ -28,6 +29,7 @@ public class AssetOpenModeWindow : EditorWindow
         shaderOpenMode = (CodeOpneMode)EditorGUILayout.EnumPopup("Shader", shaderOpenMode);
         csOpenMode = (CodeOpneMode)EditorGUILayout.EnumPopup("CS", csOpenMode);
         jsonOpenMode = (CodeOpneMode)EditorGUILayout.EnumPopup("Json", jsonOpenMode);
+        txtOpenMode = (CodeOpneMode)EditorGUILayout.EnumPopup("Txt", jsonOpenMode);
 
         EditorGUILayout.EndVertical();
     }
@@ -38,7 +40,7 @@ public class AssetOpenModeWindow : EditorWindow
     }
 
 
-    [MenuItem("XFramework/Asset/OpenMode")]
+    [MenuItem("SFramework/Asset/OpenMode")]
     private static void OpenWidown()
     {
         GetWindow(typeof(AssetOpenModeWindow));
@@ -53,11 +55,15 @@ public class AssetOpenModeWindow : EditorWindow
         {
             return OpenAssetWithEnd(shaderOpenMode, fileFullPath);
         }
-        else if(fileFullPath.EndsWith(".cs"))
+        else if (fileFullPath.EndsWith(".cs"))
         {
             return OpenAssetWithEnd(csOpenMode, fileFullPath);
         }
         else if (fileFullPath.EndsWith(".json"))
+        {
+            return OpenAssetWithEnd(jsonOpenMode, fileFullPath);
+        }
+        else if (fileFullPath.EndsWith(".txt"))
         {
             return OpenAssetWithEnd(jsonOpenMode, fileFullPath);
         }
@@ -67,7 +73,7 @@ public class AssetOpenModeWindow : EditorWindow
     /// <summary>
     /// 打开文件
     /// </summary>
-    private static bool OpenAssetWithEnd(CodeOpneMode mode,string strFileName)
+    private static bool OpenAssetWithEnd(CodeOpneMode mode, string strFileName)
     {
         string fullName = GetFileFullname(mode);
         if (fullName == null)
@@ -109,6 +115,7 @@ public class AssetOpenModeWindow : EditorWindow
         EditorPrefs.SetInt("shaderMode", (int)shaderOpenMode);
         EditorPrefs.SetInt("csMode", (int)csOpenMode);
         EditorPrefs.SetInt("jsonMode", (int)jsonOpenMode);
+        EditorPrefs.SetInt("txtMode", (int)jsonOpenMode);
     }
 
     /// <summary>
@@ -119,6 +126,7 @@ public class AssetOpenModeWindow : EditorWindow
         shaderOpenMode = (CodeOpneMode)EditorPrefs.GetInt("shaderMode", 1);
         csOpenMode = (CodeOpneMode)EditorPrefs.GetInt("csMode", 0);
         jsonOpenMode = (CodeOpneMode)EditorPrefs.GetInt("jsonMode", 1);
+        txtOpenMode = (CodeOpneMode)EditorPrefs.GetInt("txtMode", 1);
     }
 
     enum CodeOpneMode

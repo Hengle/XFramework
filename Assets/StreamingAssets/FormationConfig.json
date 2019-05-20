@@ -1,0 +1,32 @@
+[
+  {
+    "Name":"QYZGQ_M",
+    "UnitNames": [ "Tank_96A", "Armortruck04" ],
+    "UnitCounts": [ 9, 0 ],
+    "RangeType":"AttackRange"
+  },
+  {
+    "Name":"QYZGQ_A",
+    "UnitNames": [ "cn_whe_08wheeled", "Tank_96A" ],
+    "UnitCounts": [ 16, 9 ],
+    "RangeType":"AttackRange"
+  },
+  {
+    "Name":"ZSGJQ",
+    "UnitNames": [ "cn_tra_zbd05z", "Tank_96A"],
+    "UnitCounts": [ 18, 7 ],
+    "RangeType":"AttackRange"
+  },
+  {
+    "Name":"PBQ",
+    "UnitNames": [ "cn_whe_ZZH09_122", "cn_whe_ZZH09_105" ],
+    "UnitCounts": [ 9, 0 ],
+    "RangeType":"AritillerRange"
+  },
+  {
+    "Name":"ZSBZQ",
+    "UnitNames": [ "Armortruck04", "cn_whe_08wheeled" ],
+    "UnitCounts": [ 10, 6 ],
+    "RangeType":"None"
+  }
+]

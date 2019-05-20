@@ -3,6 +3,7 @@
 ///<summary>
 namespace XFramework
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -21,18 +22,18 @@ namespace XFramework
         /// <summary>
         /// 存储数据类型和对应主题的字典
         /// </summary>
-        private Dictionary<DataType, Subject> m_SubjectDic;
+        private Dictionary<int, Subject> m_SubjectDic;
 
         public DataSubjectManager()
         {
-            m_SubjectDic = new Dictionary<DataType, Subject>();
+            m_SubjectDic = new Dictionary<int, Subject>();
         }
 
         public int Priority { get { return 50; } }
 
         public void Update(float elapseSeconds, float realElapseSeconds)
         {
-            
+
         }
 
         public void Shutdown()
@@ -45,15 +46,16 @@ namespace XFramework
         /// </summary>
         /// <param name="dataType">数据类型</param>
         /// <param name="observer">监听这个数据的观察者</param>
-        public void AddListener(DataType dataType, IObserver observer)
+        public void AddListener(Enum dataType, IObserver observer)
         {
             Subject subject = null;
-            if (!m_SubjectDic.ContainsKey(dataType))
+            int type = Convert.ToInt32(dataType);
+            if (!m_SubjectDic.ContainsKey(type))
             {
                 subject = new Subject();
-                m_SubjectDic[dataType] = subject;
+                m_SubjectDic[type] = subject;
             }
-            m_SubjectDic[dataType].Attach(observer.OnDataChange);
+            m_SubjectDic[type].Attach(observer.OnDataChange);
         }
 
         /// <summary>
@@ -61,11 +63,12 @@ namespace XFramework
         /// </summary>
         /// <param name="dataType">数据类型</param>
         /// <param name="observer">监听这个数据的观察者</param>
-        public void RemoverListener(DataType dataType, IObserver observer)
+        public void RemoverListener(Enum dataType, IObserver observer)
         {
-            if (m_SubjectDic.ContainsKey(dataType))
+            int type = Convert.ToInt32(dataType);
+            if (m_SubjectDic.ContainsKey(type))
             {
-                m_SubjectDic[dataType].Detach(observer.OnDataChange);
+                m_SubjectDic[type].Detach(observer.OnDataChange);
             }
         }
 

@@ -5,6 +5,11 @@ using XFramework;
  * 以战斗系统为例
  */
 
+//数据类型枚举
+public enum DataType
+{
+    BATTLE = 0,
+}
 
 /// <summary>
 /// 挂在场景中
@@ -32,7 +37,7 @@ public class ObserverExample : MonoBehaviour
         {
             bat.BattleLose();
         }
-    } 
+    }
 }
 
 #region 战斗模块  
@@ -81,11 +86,11 @@ public class BattleData : BaseData
         winCount = 2;
     }
 
-    public override DataType dataType
+    public override int dataType
     {
         get
         {
-            return DataType.BATTLE;
+            return (int)DataType.BATTLE;
         }
     }
 }
@@ -120,7 +125,7 @@ public class PlayerDataMgr : IObserver
     {
         switch (eventData.dataType)
         {
-            case DataType.BATTLE:
+            case (int)DataType.BATTLE:
                 BattleData data = eventData as BattleData;
                 switch (type)
                 {

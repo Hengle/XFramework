@@ -14,28 +14,13 @@ using System.Linq;
 
 public class Test : MonoSingleton<Test>
 {
-    float a => 10;
-    AsyncOperation isDown;
     void Start() 
     {
-        GC.Collect();
-        Debug.Log(GC.GetTotalMemory(true));
-        Instantiate(Game.ResModule.Load<GameObject>("NotCommit/Prefabs", "Barbarian"));
-
-        Game.ResModule.GetAssetBundle("notcommit/models");
-        Game.ResModule.GetAssetBundle("notcommit/prefabs");
-
-        Debug.Log(GC.GetTotalMemory(true));
-
-        //Game.ResModule.GetAssetBundle("notcommit/models").Unload(false);
-        //Game.ResModule.GetAssetBundle("notcommit/prefabs").Unload(false);
-
-        GC.Collect();
-        Debug.Log(GC.GetTotalMemory(true));
-
-        //Instantiate(Game.ResModule.Load<GameObject>("notcommit/prefabs", "Barbarian"));
-
-        
+        FormationData[] aaa = FormationData.GetData();
+        foreach (var item in aaa)
+        {
+            Debug.Log(item.rangeType);
+        }
     }
 
 
