@@ -40,7 +40,7 @@ public class AssetOpenModeWindow : EditorWindow
     }
 
 
-    [MenuItem("SFramework/Asset/OpenMode")]
+    [MenuItem("XFramework/Asset/OpenMode")]
     private static void OpenWidown()
     {
         GetWindow(typeof(AssetOpenModeWindow));
