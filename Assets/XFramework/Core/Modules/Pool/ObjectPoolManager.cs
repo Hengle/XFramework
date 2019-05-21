@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System;
 
 namespace XFramework.Pool
 {
@@ -37,12 +36,12 @@ namespace XFramework.Pool
         /// <typeparam name="T">对象池类型</typeparam>
         /// <param name="initCount">初始数量</param>
         /// <param name="maxCount">最大数量</param>
-        public void CreateObjectPool<T>(int initCount = 0,int maxCount = int.MaxValue) where T : IPoolable, new()
+        public void CreatePool<T>(int initCount = 0, int maxCount = int.MaxValue) where T : IPoolable, new()
         {
             if (HasPool<T>())
                 return;
 
-            Pool<T> pool = new Pool<T>(initCount,maxCount);
+            Pool<T> pool = new Pool<T>(initCount, maxCount);
             m_ObjectPools.Add(typeof(T).Name, pool);
         }
 
@@ -86,12 +85,12 @@ namespace XFramework.Pool
         /// <typeparam name="T"></typeparam>
         public T Allocate<T>() where T : IPoolable, new()
         {
-            if (HasPool<T>())
+            if (!HasPool<T>())
             {
-                return ((Pool<T>)m_ObjectPools[typeof(T).Name]).Allocate();
+                CreatePool<T>();
             }
 
-            throw new Exception("试图在对象池创建前获取对象");
+            return ((Pool<T>)m_ObjectPools[typeof(T).Name]).Allocate();
         }
 
         /// <summary>

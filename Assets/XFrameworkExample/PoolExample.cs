@@ -6,7 +6,7 @@ public class PoolExample : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Game.PoolModule.CreateObjectPool<TestPoolObj>();
+        Game.PoolModule.CreatePool<TestPoolObj>();
         TestPoolObj aa = Game.PoolModule.Allocate<TestPoolObj>();
         Debug.Log(aa.GetHashCode());
         Game.PoolModule.Recycle(aa);

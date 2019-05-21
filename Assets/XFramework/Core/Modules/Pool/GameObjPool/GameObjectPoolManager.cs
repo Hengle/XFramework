@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace XFramework.Pool
 {
-    public class GameObjectFactory : Singleton<GameObjectFactory>
+    public class GameObjectPoolManager : IGameModule
     {
         /// <summary>
         /// 利用GameObject的int型Hash值，索引对应的Pool对象
@@ -16,7 +14,7 @@ namespace XFramework.Pool
         /// </summary>
         public Dictionary<string, GameObject> PoolTemplateDic { get; private set; }
 
-        public GameObjectFactory()
+        public GameObjectPoolManager()
         {
             PoolTemplateDic = new Dictionary<string, GameObject>();
             poolDic = new Dictionary<string, GameObjectPool>();
@@ -55,6 +53,18 @@ namespace XFramework.Pool
             obj.SetActive(true);
 
             return obj;
+        }
+
+        public int Priority => 1000;
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            // TODO 定时回收对象
+        }
+
+        public void Shutdown()
+        {
+            // 清空所有对象池
         }
     }
 }

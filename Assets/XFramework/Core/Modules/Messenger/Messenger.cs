@@ -1,15 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// 消息类型
-/// </summary>
-public enum MessageEventType
-{    
-    A,
-    B,
-}
-
 namespace XFramework
 {
     //=====================================================================================/
@@ -27,7 +18,7 @@ namespace XFramework
 
         public delegate void Callback<T, U, V>(T arg1, U arg2, V arg3);
 
-        public Dictionary<MessageEventType, Delegate> m_eventDictionary = new Dictionary<MessageEventType, Delegate>();
+        public Dictionary<int, Delegate> m_eventDictionary = new Dictionary<int, Delegate>();
 
         public int Priority { get { return 100; } }
 
@@ -38,70 +29,78 @@ namespace XFramework
 
         #region AddEventListener
 
-        public void AddEventListener(MessageEventType eventType, Callback handler)
+        public void AddEventListener(Enum eventType, Callback handler)
         {
-            OnListenerAdding(eventType, handler);
-            m_eventDictionary[eventType] = (Callback)m_eventDictionary[eventType] + handler;
+            int id = Convert.ToInt32(eventType);
+            OnListenerAdding(id, handler);
+            m_eventDictionary[id] = (Callback)m_eventDictionary[id] + handler;
         }
 
         //一个参数 parameter
-        public void AddEventListener<T>(MessageEventType eventType, Callback<T> handler)
+        public void AddEventListener<T>(Enum eventType, Callback<T> handler)
         {
-            OnListenerAdding(eventType, handler);
-            m_eventDictionary[eventType] = (Callback<T>)m_eventDictionary[eventType] + handler;
+            int id = Convert.ToInt32(eventType);
+            OnListenerAdding(id, handler);
+            m_eventDictionary[id] = (Callback<T>)m_eventDictionary[id] + handler;
         }
 
         //两个参数 parameter
-        public void AddEventListener<T, U>(MessageEventType eventType, Callback<T, U> handler)
+        public void AddEventListener<T, U>(Enum eventType, Callback<T, U> handler)
         {
-            OnListenerAdding(eventType, handler);
-            m_eventDictionary[eventType] = (Callback<T, U>)m_eventDictionary[eventType] + handler;
+            int id = Convert.ToInt32(eventType);
+            OnListenerAdding(id, handler);
+            m_eventDictionary[id] = (Callback<T, U>)m_eventDictionary[id] + handler;
         }
 
         //三个参数 parameter
-        public void AddEventListener<T, U, V>(MessageEventType eventType, Callback<T, U, V> handler)
+        public void AddEventListener<T, U, V>(Enum eventType, Callback<T, U, V> handler)
         {
-            OnListenerAdding(eventType, handler);
-            m_eventDictionary[eventType] = (Callback<T, U, V>)m_eventDictionary[eventType] + handler;
+            int id = Convert.ToInt32(eventType);
+            OnListenerAdding(id, handler);
+            m_eventDictionary[id] = (Callback<T, U, V>)m_eventDictionary[id] + handler;
         }
 
         #endregion AddEventListener
 
         #region RemoveEventListener
 
-        public void RemoveEventListener(MessageEventType eventType, Callback handler)
+        public void RemoveEventListener(Enum eventType, Callback handler)
         {
-            OnListenerRemoving(eventType, handler);
-            m_eventDictionary[eventType] = (Callback)m_eventDictionary[eventType] - handler;
-            OnListenerRemoved(eventType);
+            int id = Convert.ToInt32(eventType);
+            OnListenerRemoving(id, handler);
+            m_eventDictionary[id] = (Callback)m_eventDictionary[id] - handler;
+            OnListenerRemoved(id);
         }
 
-        public void RemoveEventListener<T>(MessageEventType eventType, Callback<T> handler)
+        public void RemoveEventListener<T>(Enum eventType, Callback<T> handler)
         {
-            OnListenerRemoving(eventType, handler);
-            m_eventDictionary[eventType] = (Callback<T>)m_eventDictionary[eventType] - handler;
-            OnListenerRemoved(eventType);
+            int id = Convert.ToInt32(eventType);
+            OnListenerRemoving(id, handler);
+            m_eventDictionary[id] = (Callback<T>)m_eventDictionary[id] - handler;
+            OnListenerRemoved(id);
         }
 
-        public void RemoveEventListener<T, U>(MessageEventType eventType, Callback<T, U> handler)
+        public void RemoveEventListener<T, U>(Enum eventType, Callback<T, U> handler)
         {
-            OnListenerRemoving(eventType, handler);
-            m_eventDictionary[eventType] = (Callback<T, U>)m_eventDictionary[eventType] - handler;
-            OnListenerRemoved(eventType);
+            int id = Convert.ToInt32(eventType);
+            OnListenerRemoving(id, handler);
+            m_eventDictionary[id] = (Callback<T, U>)m_eventDictionary[id] - handler;
+            OnListenerRemoved(id);
         }
 
-        public void RemoveEventListener<T, U, V>(MessageEventType eventType, Callback<T, U, V> handler)
+        public void RemoveEventListener<T, U, V>(Enum eventType, Callback<T, U, V> handler)
         {
-            OnListenerRemoving(eventType, handler);
-            m_eventDictionary[eventType] = (Callback<T, U, V>)m_eventDictionary[eventType] - handler;
-            OnListenerRemoved(eventType);
+            int id = Convert.ToInt32(eventType);
+            OnListenerRemoving(id, handler);
+            m_eventDictionary[id] = (Callback<T, U, V>)m_eventDictionary[id] - handler;
+            OnListenerRemoved(id);
         }
 
         #endregion RemoveEventListener
 
         #region OnListenerAdding OnListenerRemoving
 
-        private void OnListenerAdding(MessageEventType eventType, Delegate listenerBeingAdded)
+        private void OnListenerAdding(int eventType, Delegate listenerBeingAdded)
         {
             if (!m_eventDictionary.ContainsKey(eventType))
             {
@@ -116,7 +115,7 @@ namespace XFramework
             }
         }
 
-        private void OnListenerRemoving(MessageEventType eventType, Delegate listenerBeingRemoved)
+        private void OnListenerRemoving(int eventType, Delegate listenerBeingRemoved)
         {
             if (m_eventDictionary.ContainsKey(eventType))
             {
@@ -137,7 +136,7 @@ namespace XFramework
             }
         }
 
-        private void OnListenerRemoved(MessageEventType eventType)
+        private void OnListenerRemoved(int eventType)
         {
             if (m_eventDictionary[eventType] == null)
             {
@@ -149,14 +148,12 @@ namespace XFramework
 
         #region BroadCastEventMsg
 
-        public void BroadCastEventMsg(MessageEventType eventType)
+        public void BroadCastEventMsg(Enum eventType)
         {
-            Delegate d;
-            if (m_eventDictionary.TryGetValue(eventType, out d))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.TryGetValue(id, out Delegate d))
             {
-                Callback callback = d as Callback;
-
-                if (callback != null)
+                if (d is Callback callback)
                 {
                     callback();
                 }
@@ -167,14 +164,12 @@ namespace XFramework
             }
         }
 
-        public void BroadCastEventMsg<T>(MessageEventType eventType, T arg1)
+        public void BroadCastEventMsg<T>(Enum eventType, T arg1)
         {
-            Delegate d;
-            if (m_eventDictionary.TryGetValue(eventType, out d))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.TryGetValue(id, out Delegate d))
             {
-                Callback<T> callback = d as Callback<T>;
-
-                if (callback != null)
+                if (d is Callback<T> callback)
                 {
                     callback(arg1);
                 }
@@ -185,14 +180,13 @@ namespace XFramework
             }
         }
 
-        public void BroadCastEventMsg<T, U>(MessageEventType eventType, T arg1, U arg2)
+        public void BroadCastEventMsg<T, U>(Enum eventType, T arg1, U arg2)
         {
-            Delegate d;
-            if (m_eventDictionary.TryGetValue(eventType, out d))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.TryGetValue(id, out Delegate d))
             {
-                Callback<T, U> callback = d as Callback<T, U>;
 
-                if (callback != null)
+                if (d is Callback<T, U> callback)
                 {
                     callback(arg1, arg2);
                 }
@@ -203,10 +197,10 @@ namespace XFramework
             }
         }
 
-        public void BroadCastEventMsg<T, U, V>(MessageEventType eventType, T arg1, U arg2, V arg3)
+        public void BroadCastEventMsg<T, U, V>(Enum eventType, T arg1, U arg2, V arg3)
         {
-            Delegate d;
-            if (m_eventDictionary.TryGetValue(eventType, out d))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.TryGetValue(id, out Delegate d))
             {
                 Callback<T, U, V> callback = d as Callback<T, U, V>;
 
@@ -225,11 +219,12 @@ namespace XFramework
 
         #region CheckEventListener
 
-        public bool CheckEventListener(MessageEventType eventType, Callback handler)
+        public bool CheckEventListener(Enum eventType, Callback handler)
         {
-            if (m_eventDictionary.ContainsKey(eventType))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.ContainsKey(id))
             {
-                Delegate d = m_eventDictionary[eventType];
+                Delegate d = m_eventDictionary[id];
 
                 if (d == null)
                 {
@@ -247,11 +242,12 @@ namespace XFramework
         }
 
         //Single parameter
-        public bool CheckEventListener<T>(MessageEventType eventType, Callback<T> handler)
+        public bool CheckEventListener<T>(Enum eventType, Callback<T> handler)
         {
-            if (m_eventDictionary.ContainsKey(eventType))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.ContainsKey(id))
             {
-                Delegate d = m_eventDictionary[eventType];
+                Delegate d = m_eventDictionary[id];
 
                 if (d == null)
                 {
@@ -269,11 +265,12 @@ namespace XFramework
         }
 
         //Two parameters
-        public bool CheckEventListener<T, U>(MessageEventType eventType, Callback<T, U> handler)
+        public bool CheckEventListener<T, U>(Enum eventType, Callback<T, U> handler)
         {
-            if (m_eventDictionary.ContainsKey(eventType))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.ContainsKey(id))
             {
-                Delegate d = m_eventDictionary[eventType];
+                Delegate d = m_eventDictionary[id];
 
                 if (d == null)
                 {
@@ -291,11 +288,12 @@ namespace XFramework
         }
 
         //Three parameters
-        public bool CheckEventListener<T, U, V>(MessageEventType eventType, Callback<T, U, V> handler)
+        public bool CheckEventListener<T, U, V>(Enum eventType, Callback<T, U, V> handler)
         {
-            if (m_eventDictionary.ContainsKey(eventType))
+            int id = Convert.ToInt32(eventType);
+            if (m_eventDictionary.ContainsKey(id))
             {
-                Delegate d = m_eventDictionary[eventType];
+                Delegate d = m_eventDictionary[id];
 
                 if (d == null)
                 {
@@ -312,7 +310,7 @@ namespace XFramework
             return false;
         }
 
-        public Exception CreateBroadcastSignatureException(MessageEventType eventType)
+        public Exception CreateBroadcastSignatureException(Enum eventType)
         {
             return new System.Exception(string.Format("Broadcasting message \"{0}\" but listeners have a different signature than the broadcaster.", eventType));
         }

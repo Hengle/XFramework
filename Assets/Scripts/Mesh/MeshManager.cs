@@ -252,7 +252,7 @@ namespace XFramework
             for (int i = 0; i < count; i++)
             {
                 // 创建 MeshPrefab 加入list中
-                GameObject meshPrefab = Singleton<GameObjectFactory>.Instance.Instantiate("MeshPrefab");
+                GameObject meshPrefab = Game.GameObjPoolMoudle.Instantiate("MeshPrefab");
                 meshPrefab.SetActive(true);
 
                 list.Add(meshPrefab);

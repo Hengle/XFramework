@@ -401,7 +401,7 @@ public class Helicopter : FSM
         {
             //实例化导弹实体
             index = Random.Range(2, 4);
-            GameObject _missile = Singleton<GameObjectFactory>.Instance.Instantiate(missile.name, launchs[index].position, _launch.rotation);
+            GameObject _missile = Game.GameObjPoolMoudle.Instantiate(missile.name, launchs[index].position, _launch.rotation);
             if (enemy)
             {
                 //_missile.GetComponent<Missiles>().OnMissileInit(enemy);
@@ -416,7 +416,7 @@ public class Helicopter : FSM
             //实例化火箭弹
             index = Random.Range(0, 2);
             //GameObject _rocketSheel = Instantiate(rocketSheel, launchs[index].position, _launch.rotation);
-            GameObject _rocketSheel = Singleton<GameObjectFactory>.Instance.Instantiate(rocketSheel.name, launchs[index].position, _launch.rotation);
+            GameObject _rocketSheel = Game.GameObjPoolMoudle.Instantiate(rocketSheel.name, launchs[index].position, _launch.rotation);
             //_rocketSheel.GetComponent<Bullet>();
         }
 

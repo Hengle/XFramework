@@ -16,11 +16,19 @@ public class Test : MonoSingleton<Test>
 {
     void Start() 
     {
-        FormationData[] aaa = FormationData.GetData();
-        foreach (var item in aaa)
+        Debug.Log(Utility.DebugActionRunTime(() =>
         {
-            Debug.Log(item.rangeType);
-        }
+            //AssetBundle ab = AssetBundle.LoadFromMemory(File.ReadAllBytes(@"E:\Github\xdedzl\Assets\StreamingAssets\AssetBundles\notcommit\models.ab"));
+            //AssetBundle.LoadFromFile(@"E:\Github\xdedzl\Assets\StreamingAssets\AssetBundles\notcommit\models.ab");
+
+            var fileStream = new FileStream(@"E:\Github\xdedzl\Assets\StreamingAssets\AssetBundles\notcommit\models.ab", FileMode.Open, FileAccess.Read);
+            var myLoadedAssetBundle = AssetBundle.LoadFromStream(fileStream);
+            if (myLoadedAssetBundle == null)
+            {
+                Debug.Log("Failed to load AssetBundle!");
+                return;
+            }
+        }));
     }
 
 
