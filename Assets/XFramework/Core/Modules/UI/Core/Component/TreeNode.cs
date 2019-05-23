@@ -11,6 +11,10 @@ namespace XFramework.UI
     {
         private RectTransform m_Rect;
         /// <summary>
+        /// 当前结点所归属的树
+        /// </summary>
+        private Tree m_Tree;
+        /// <summary>
         /// 子结点
         /// </summary>
         private List<TreeNode> m_Childs;
@@ -23,9 +27,14 @@ namespace XFramework.UI
         /// </summary>
         private bool m_IsOn;
         /// <summary>
+        /// 层级
+        /// </summary>
+        private int m_level;
+
+        /// <summary>
         /// 显示文字
         /// </summary>
-        private string text;
+        public string Text { get; private set; }
 
         public TreeNode()
         {
@@ -35,46 +44,46 @@ namespace XFramework.UI
 
         public TreeNode(string text) : this()
         {
-            this.text = text;
+            this.Text = text;
         }
 
         /// <summary>
-        /// 创建一颗（子）树
+        /// 初始化场景中对应的实体
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="gameObject"></param>
-        public void CreateTree(TreeNode parent, GameObject gameObject)
+        /// <param name="tree"></param>
+        private void InitEnity(Tree tree)
         {
-            // 设置父物体
-            this.m_Parent = parent;
+            m_Tree = tree;
 
             // 创建自己
-            if(parent == null)
-                m_Rect = GameObject.Instantiate(gameObject, gameObject.transform.parent.Find("Root")).GetComponent<RectTransform>();
+            if (m_Parent == null)
+            {
+                m_Rect = Object.Instantiate(m_Tree.NodeTemplate, m_Tree.NodeTemplate.transform.parent.Find("Root")).GetComponent<RectTransform>();
+                m_level = 0;
+            }
             else
-                m_Rect = GameObject.Instantiate(gameObject, parent.m_Rect.Find("Child")).GetComponent<RectTransform>();
+            {
+                m_Rect = Object.Instantiate(m_Tree.NodeTemplate, m_Parent.m_Rect.Find("Child")).GetComponent<RectTransform>();
+                m_level = m_Parent.m_level + 1;
+            }
 
             // UI组件设置
             m_Rect.Find("Toggle").GetComponent<Toggle>().onValueChanged.AddListener((value) =>
             {
                 m_IsOn = value;
-                Refresh(value);
 
+                Refresh(value);
                 Root.RefreshPos();
+
+                tree.onOn_Off.Invoke(value, this);
             });
 
-            m_Rect.Find("Button").Find("Text").GetComponent<Text>().text = this.text;
-
-            // 继续创建
-            foreach (var child in m_Childs)
+            m_Rect.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
             {
-                child.CreateTree(this, gameObject);
-            }
+                tree.onSelectNode.Invoke(this);
+            });
 
-            if(parent == null)
-            {
-                RefreshPos();
-            }
+            m_Rect.Find("Button").Find("Text").GetComponent<Text>().text = this.Text;
         }
 
         /// <summary>
@@ -127,19 +136,77 @@ namespace XFramework.UI
         }
 
         /// <summary>
-        /// 添加一个子物体
+        /// 添加一个父子关系
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public TreeNode AddItem(TreeNode item)
+        public TreeNode AddChild(TreeNode item)
         {
             m_Childs.Add(item);
+            item.m_Parent = this;
             return this;
         }
 
-        public TreeNode AddItem(string text)
+        public TreeNode AddChild(string text)
         {
-            return AddItem(new TreeNode(text));
+            return AddChild(new TreeNode(text));
+        }
+
+        /// <summary>
+        /// 根据已有的父子关系创建一颗（子）树
+        /// </summary>
+        /// <param name="m_Parent"></param>
+        /// <param name="gameObject"></param>
+        public void CreateTree(Tree tree)
+        {
+            InitEnity(tree);
+
+            // 继续创建
+            foreach (var child in m_Childs)
+            {
+                child.CreateTree(m_Tree);
+            }
+
+            if (m_Parent == null)
+            {
+                RefreshPos();
+            }
+        }
+
+        /// <summary>
+        /// 添加一个父子关系并创建实体
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public TreeNode CreateChild(TreeNode item)
+        {
+            AddChild(item);
+
+            item.InitEnity(m_Tree);
+            Refresh(m_IsOn);
+            Root.RefreshPos();
+            return this;
+        }
+
+        public TreeNode CreateChild(string text)
+        {
+            TreeNode item = new TreeNode(text);
+            return CreateChild(item);
+        }
+
+        /// <summary>
+        /// 删除自身
+        /// </summary>
+        public void Delete()
+        {
+            if(m_Parent == null)
+            {
+                Debug.Log("根结点不能删除");
+                return;
+            }
+            Object.Destroy(m_Rect.gameObject);
+            m_Parent.m_Childs.Remove(this);
+            Root.RefreshPos();
         }
 
         /// <summary>
@@ -180,7 +247,7 @@ namespace XFramework.UI
         }
 
         /// <summary>
-        /// 跟结点
+        /// 根结点
         /// </summary>
         public TreeNode Root
         {
@@ -193,6 +260,51 @@ namespace XFramework.UI
                 }
                 return item;
             }
+        }
+
+        /// <summary>
+        /// 重置父物体
+        /// </summary>
+        /// <param name="parent"></param>
+        public void SetParent(TreeNode parent)
+        {
+            m_Parent.m_Childs.Remove(this);
+            parent.AddChild(this);
+        }
+
+        /// <summary>
+        /// 通过字符串找寻子节点
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public TreeNode Find(string path)
+        {
+            var temp = path.Split(new char[] { '/' }, 2);
+            if (temp.Length == 1)
+                return this;
+
+            TreeNode node = null;
+            foreach (var item in m_Childs)
+            {
+                if (item.Text == temp[0])
+                {
+                    node = item;
+                    break;
+                }
+            }
+
+            if (node == null)
+                return node;
+            else
+                return node.Find(temp[1]);
+        }
+
+        /// <summary>
+        /// 根据索引获取子节点
+        /// </summary>
+        public TreeNode GetChild(int index)
+        {
+            return m_Childs[index];
         }
     }
 }

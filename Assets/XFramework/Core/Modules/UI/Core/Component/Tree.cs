@@ -2,58 +2,67 @@
 
 namespace XFramework.UI
 {
+    /// <summary>
+    /// 目录树
+    /// </summary>
     public class Tree : MonoBehaviour
     {
         /// <summary>
         /// 模板
         /// </summary>
-        private GameObject m_Template;
+        public GameObject NodeTemplate { get; private set; }
         /// <summary>
-        /// 树的跟节点
+        /// 树的根节点
         /// </summary>
-        private TreeNode m_RootTreeItem;
+        private TreeNode m_RootTreeNode;
 
-        private void Start()
+        public string rootText = "Root";
+
+        /// <summary>
+        /// 节点被选中的事件
+        /// </summary>
+        public TreeEvent onSelectNode = new TreeEvent();
+        /// <summary>
+        /// 节点展开关闭事件
+        /// </summary>
+        public SwitchEvent onOn_Off = new SwitchEvent();
+
+        private void Awake()
         {
-            m_Template = transform.Find("ItemTemplate").gameObject;
-
-            GenerateTree();
+            NodeTemplate = transform.Find("NodeTemplate").gameObject;
+            NodeTemplate.GetComponent<RectTransform>().anchoredPosition = new Vector2(10000, 10000);
         }
 
         /// <summary>
-        /// 创建的树的实体
+        /// 构造一棵树
         /// </summary>
-        private void CreateTreeEntity()
+        /// <param name="rootNode">父子关系已经设置好的根节点</param>
+        public void GenerateTree(TreeNode rootNode)
         {
-            m_RootTreeItem.CreateTree(null, m_Template);
+            if (m_RootTreeNode != null)
+                m_RootTreeNode.Delete();
+
+            m_RootTreeNode = rootNode;
+
+            m_RootTreeNode.CreateTree(this);
         }
 
         /// <summary>
-        /// 构造父子关系
+        /// 删除某个节点
         /// </summary>
-        public void GenerateTree()
+        /// <param name="path">路径</param>
+        public bool Delete(string path)
         {
-            TreeNode tree = new TreeNode("1");
-            m_RootTreeItem = tree;
-
-            tree.AddItem(new TreeNode("11")
-                    .AddItem(new TreeNode("111")
-                        .AddItem(new TreeNode("1111")
-                            .AddItem(new TreeNode("11111"))
-                            .AddItem(new TreeNode("11112")))
-                        .AddItem(new TreeNode("1112")))
-                    .AddItem(new TreeNode("112")))
-                .AddItem(new TreeNode("12")
-                    .AddItem(new TreeNode("121"))
-                    .AddItem(new TreeNode("122")
-                        .AddItem(new TreeNode("1221"))
-                        .AddItem(new TreeNode("1222")))
-                    .AddItem(new TreeNode("123")))
-                .AddItem(new TreeNode("13")
-                    .AddItem(new TreeNode("131")));
-
-            CreateTreeEntity();
-            //m_RootTreeItem.RefreshPos();
+            TreeNode node = m_RootTreeNode.Find(path);
+            if (node != null)
+            {
+                node.Delete();
+                return true;
+            }
+            return false;
         }
+
+        public class TreeEvent : UnityEngine.Events.UnityEvent<TreeNode> { }
+        public class SwitchEvent : UnityEngine.Events.UnityEvent<bool,TreeNode> { }
     }
 }
