@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// 状态机不要基础这个类，请继承Fsm<TState>
@@ -29,20 +30,25 @@ public abstract class FsmBase
     /// </summary>
     protected abstract FsmState CreateState<T>() where T : FsmState;
 
-    /// <summary>
-    /// 从某一状态开始一个状态机
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
+    protected abstract FsmState CreateState(Type type);
 
     /// <summary>
     /// 获取一个状态
     /// </summary>
     protected abstract FsmState GetState<T>() where T : FsmState;
 
+    protected abstract FsmState GetState(Type type);
+
+    /// <summary>
+    /// 从某一状态开始一个状态机
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract void StartFsm<TState>() where TState : FsmState;
+    public abstract void StartFsm(Type type);
 
     /// <summary>
     /// 状态切换
     /// </summary>
     public abstract void ChangeState<T>() where T : FsmState;
+    public abstract void ChangeState(Type type);
 }

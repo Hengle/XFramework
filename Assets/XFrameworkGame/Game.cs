@@ -21,10 +21,16 @@ public class Game : MonoBehaviour
     // 业务模块
     public static UIHelper UIModule { get; private set; }
 
+    // 初始流程
+    public string TypeName;
+
     void Awake()
     {
         InitModel();
         InitCustomModule();
+
+        ProcedureModule.StartProcedure(System.Type.GetType(TypeName));
+
         DontDestroyOnLoad(this);
     }
 

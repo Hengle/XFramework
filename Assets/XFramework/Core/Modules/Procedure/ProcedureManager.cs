@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 namespace XFramework
 {
@@ -26,6 +24,11 @@ namespace XFramework
         public void StartProcedure<TState>() where TState : ProcedureBase
         {
             m_Fsm.StartFsm<TState>();
+        }
+
+        public void StartProcedure(Type type)
+        {
+            m_Fsm.StartFsm(type);
         }
 
         /// <summary>
