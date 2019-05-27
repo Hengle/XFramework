@@ -34,9 +34,9 @@ public class CreateComponent
         RectTransform itemTemplate = new GameObject("NodeTemplate").AddComponent<RectTransform>();
         itemTemplate.SetParent(tree);
         itemTemplate.pivot = new Vector2(0, 1);
-        itemTemplate.anchorMin = new Vector2(0.5f, 1);
-        itemTemplate.anchorMax = new Vector2(0.5f, 1);
-        itemTemplate.anchoredPosition = new Vector2(-90, 0);
+        itemTemplate.anchorMin = new Vector2(0, 1);
+        itemTemplate.anchorMax = new Vector2(0, 1);
+        itemTemplate.anchoredPosition = new Vector2(0, 0);
         itemTemplate.sizeDelta = new Vector2(180, 30);
 
         RectTransform button = DefaultControls.CreateButton(GetStandardResources()).GetComponent<RectTransform>();
@@ -62,8 +62,11 @@ public class CreateComponent
         // 设置树的跟结点位置
         RectTransform treeRoot = new GameObject("Root").AddComponent<RectTransform>();
         treeRoot.SetParent(tree);
-        treeRoot.anchoredPosition = new Vector2(-90, 0);
-        treeRoot.sizeDelta = new Vector2(100, 30);
+        treeRoot.pivot = new Vector2(0, 1);
+        treeRoot.anchorMin = new Vector2(0, 1);
+        treeRoot.anchorMax = new Vector2(0, 1);
+        treeRoot.anchoredPosition = new Vector2(0, 0);
+        treeRoot.sizeDelta = new Vector2(0, 0);
     }
 
     private static DefaultControls.Resources GetStandardResources()

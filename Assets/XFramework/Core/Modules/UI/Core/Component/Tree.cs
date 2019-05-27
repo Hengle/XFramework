@@ -14,7 +14,8 @@ namespace XFramework.UI
         /// <summary>
         /// 树的根节点
         /// </summary>
-        private TreeNode m_RootTreeNode;
+        [HideInInspector]
+        public TreeNode m_RootTreeNode;
 
         public string rootText = "Root";
 
@@ -60,6 +61,32 @@ namespace XFramework.UI
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 树的自删除
+        /// </summary>
+        /// <returns></returns>
+        public bool Delete()
+        {
+            if (m_RootTreeNode == null)
+            {
+                return false;
+            }
+            else
+            {
+                m_RootTreeNode.Delete();
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 获取树的长度
+        /// </summary>
+        /// <returns></returns>
+        public float GetTreeHeight()
+        {
+            return m_RootTreeNode != null ? m_RootTreeNode.GetItemCount() * NodeTemplate.GetComponent<RectTransform>().sizeDelta.y : 0;
         }
 
         public class TreeEvent : UnityEngine.Events.UnityEvent<TreeNode> { }
